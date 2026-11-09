@@ -221,8 +221,8 @@
 <!-- ================= MAIN LAYOUT (2 Columns) ================= -->
 <main class="flex-1 max-w-7xl w-full mx-auto px-4 md:px-8 py-6">
 <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 h-full items-start">
-<!-- KOLOM KIRI: Filter Panel Interaktif (360px approx via 4 cols) -->
-<aside class="lg:col-span-4 bg-surface-container-lowest rounded-xl border border-surface-container-highest p-5 shadow-sm space-y-6">
+<!-- KOLOM KIRI (Desktop) / BAWAH (Mobile): Filter Panel Interaktif (360px approx via 4 cols) -->
+<aside class="order-2 lg:order-1 lg:col-span-4 bg-surface-container-lowest rounded-xl border border-surface-container-highest p-4 sm:p-5 shadow-sm space-y-5">
 <!-- Header Panel -->
 <div class="flex items-center justify-between pb-3 border-b border-surface-container">
 <div class="flex items-center gap-2">
@@ -352,8 +352,8 @@
 </div>
 </div>
 </aside>
-<!-- KOLOM KANAN: Peta Interaktif GIS Responsif & Active Marker Popup -->
-<section class="lg:col-span-8 relative rounded-2xl overflow-hidden border border-surface-container-highest shadow-md h-[680px] bg-surface-container-low flex flex-col isolate z-10" style="isolation: isolate; position: relative; z-index: 10;">
+<!-- KOLOM KANAN (Desktop) / ATAS (Mobile): Peta Interaktif GIS Responsif & Active Marker Popup -->
+<section class="order-1 lg:order-2 lg:col-span-8 relative rounded-2xl overflow-hidden border border-surface-container-highest shadow-md h-[460px] sm:h-[540px] lg:h-[680px] bg-surface-container-low flex flex-col isolate z-10" style="isolation: isolate; position: relative; z-index: 10;">
 <!-- Peta Canvas Representation (Modern Civic Urban Vector Map) -->
 <div class="relative w-full h-full bg-cover bg-center overflow-hidden" data-alt="A clean, high-precision overhead vector GIS satellite map of Bandung urban center showing clean roads, administrative boundaries, civic grid, and green spaces with a clean modern light-mode civic-tech palette of soft cool grays, crisp white lines, and subtle terracotta municipal borders under bright daytime lighting." data-location="Bandung" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuB3UTUQ-DDSd2K5zXG57om64GT4FzYdBtO7LxZgdkBx3gn5CPn62ASQuGKGIlWXTB9hOtqXXEvMCyMZWg6KvJayMPbWh2w7FLTmtftWgQIjklhtpaXVLyj7WuwcGyRkUOR7iBpTO-hqD894jJz0TJQznp3GnPNkHpQb9dLDDZ2ucjjPHXNVpnzjg6jA2UGqWpATn5B-UvIFu6-PF_RvmaFTIzMY5BfztuGiyc_70FE')">
 <!-- SVG Decorative Overlay simulating GIS grid lines and routes -->
@@ -446,7 +446,7 @@
 </div>
 <!-- ================= MARKER POPUP AKTIF TERPILIH ================= -->
 <!-- Positioned directly contextual to the active pin -->
-<div class="absolute top-10 left-[28%] md:left-[35%] z-30 w-[380px] max-w-[92vw] bg-surface-container-lowest rounded-2xl border border-surface-container-highest shadow-2xl p-4 transition-all">
+<div class="absolute bottom-3 inset-x-3 sm:bottom-auto sm:top-14 sm:inset-x-auto sm:left-[28%] md:left-[35%] z-30 w-auto sm:w-[380px] max-w-sm sm:max-w-none mx-auto bg-surface-container-lowest rounded-2xl border border-surface-container-highest shadow-2xl p-3.5 sm:p-4 transition-all">
 <!-- Top Badges & Dismiss -->
 <div class="flex items-start justify-between gap-2 mb-2.5">
 <div class="flex flex-wrap items-center gap-1.5">

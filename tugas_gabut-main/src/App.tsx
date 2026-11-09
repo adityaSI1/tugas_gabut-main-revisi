@@ -459,7 +459,7 @@ export default function App() {
   };
 
   return (
-    <div className={`flex flex-col h-screen w-screen ${darkMode ? 'dark bg-[#121214] text-[#e3e2e6]' : 'bg-[#fbf8fe] text-[#1b1b1f]'} overflow-hidden font-sans transition-colors`}>
+    <div className={`flex flex-col h-screen h-[100dvh] w-screen ${darkMode ? 'dark bg-[#121214] text-[#e3e2e6]' : 'bg-[#fbf8fe] text-[#1b1b1f]'} overflow-hidden font-sans transition-colors`}>
       {/* FLOATING FOCUS MODE RESTORE BUTTON */}
       {focusMode && (
         <button
@@ -816,6 +816,85 @@ export default function App() {
           onLoad={() => setIframeLoading(false)}
         />
       </main>
+
+      {/* MOBILE BOTTOM NAVIGATION BAR (KHUSUS PENGGUNA HP: ERGONOMIS & MUDAH DIJANGKAU IBU JARI) */}
+      {!focusMode && !isOfficerMode && (
+        <nav
+          aria-label="Navigasi Bawah Mobile"
+          className="lg:hidden shrink-0 bg-white/95 dark:bg-[#181920]/95 backdrop-blur-md border-t border-[#e5bdbb]/40 dark:border-white/10 px-3 py-1.5 flex items-center justify-around shadow-[0_-4px_16px_rgba(0,0,0,0.06)] z-[1000]"
+          style={{ paddingBottom: 'calc(0.35rem + env(safe-area-inset-bottom, 0px))' }}
+        >
+          <button
+            onClick={() => switchPage('beranda')}
+            className={`flex flex-col items-center justify-center py-1 px-2.5 rounded-xl transition-all ${
+              activeTab === 'beranda'
+                ? 'text-[#9e001f] dark:text-[#ffb4ab] font-bold'
+                : 'text-gray-500 dark:text-gray-400 hover:text-gray-800'
+            }`}
+          >
+            <div className={`p-1 rounded-lg ${activeTab === 'beranda' ? 'bg-[#ffdad8] dark:bg-white/10' : ''}`}>
+              <Home className="w-5 h-5" />
+            </div>
+            <span className="text-[10px] mt-0.5 tracking-tight font-medium">Beranda</span>
+          </button>
+
+          <button
+            onClick={() => switchPage('formulir')}
+            className={`flex flex-col items-center justify-center py-1 px-2.5 rounded-xl transition-all ${
+              activeTab === 'formulir'
+                ? 'text-[#9e001f] dark:text-[#ffb4ab] font-bold'
+                : 'text-gray-500 dark:text-gray-400 hover:text-gray-800'
+            }`}
+          >
+            <div className={`p-1 rounded-lg ${activeTab === 'formulir' ? 'bg-[#ffdad8] dark:bg-white/10' : ''}`}>
+              <FileEdit className="w-5 h-5" />
+            </div>
+            <span className="text-[10px] mt-0.5 tracking-tight font-medium">Buat Aduan</span>
+          </button>
+
+          {/* Special Floating Center Map Action Button */}
+          <button
+            onClick={() => switchPage('peta')}
+            className="flex flex-col items-center justify-center -mt-5 py-1 px-2 transition-all group"
+          >
+            <div className={`w-12 h-12 rounded-full flex items-center justify-center shadow-lg border-2 border-white dark:border-[#181920] transition-transform active:scale-95 ${
+              activeTab === 'peta'
+                ? 'bg-[#9e001f] text-white ring-2 ring-[#ffdad8]'
+                : 'bg-[#9e001f] text-white'
+            }`}>
+              <MapPin className="w-6 h-6" />
+            </div>
+            <span className={`text-[10px] mt-0.5 font-bold ${activeTab === 'peta' ? 'text-[#9e001f] dark:text-[#ffb4ab]' : 'text-gray-600 dark:text-gray-300'}`}>Peta GIS</span>
+          </button>
+
+          <button
+            onClick={() => {
+              setShowTracker(true);
+              handleSearchTicket(trackerQuery);
+            }}
+            className="flex flex-col items-center justify-center py-1 px-2.5 rounded-xl transition-all text-gray-500 dark:text-gray-400 hover:text-gray-800"
+          >
+            <div className="p-1 rounded-lg">
+              <Search className="w-5 h-5" />
+            </div>
+            <span className="text-[10px] mt-0.5 tracking-tight font-medium">Lacak Tiket</span>
+          </button>
+
+          <button
+            onClick={() => switchPage('pusat-bantuan')}
+            className={`flex flex-col items-center justify-center py-1 px-2.5 rounded-xl transition-all ${
+              activeTab === 'pusat-bantuan'
+                ? 'text-[#9e001f] dark:text-[#ffb4ab] font-bold'
+                : 'text-gray-500 dark:text-gray-400 hover:text-gray-800'
+            }`}
+          >
+            <div className={`p-1 rounded-lg ${activeTab === 'pusat-bantuan' ? 'bg-[#ffdad8] dark:bg-white/10' : ''}`}>
+              <HelpCircle className="w-5 h-5" />
+            </div>
+            <span className="text-[10px] mt-0.5 tracking-tight font-medium">Bantuan</span>
+          </button>
+        </nav>
+      )}
 
       {/* TRACKER MODAL */}
       {showTracker && (
