@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+
+<html lang="id"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Sistem Pengaduan Masyarakat - Formulir Pengaduan Warga Baru</title>
+<!-- Google Fonts: Plus Jakarta Sans & Inter -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Plus+Jakarta+Sans:wght@500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS with CDN -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "primary-container": "#c8102e",
+            "surface-bright": "#fbf8fe",
+            "on-error": "#ffffff",
+            "on-secondary": "#ffffff",
+            "on-primary": "#ffffff",
+            "tertiary": "#773e00",
+            "on-primary-container": "#ffdad8",
+            "on-primary-fixed-variant": "#92001c",
+            "secondary-container": "#316bf3",
+            "secondary-fixed-dim": "#b4c5ff",
+            "primary-fixed": "#ffdad8",
+            "inverse-on-surface": "#f3f0f5",
+            "outline": "#906f6e",
+            "surface-tint": "#bf0229",
+            "surface-container-highest": "#e4e1e7",
+            "on-primary-fixed": "#410007",
+            "on-tertiary": "#ffffff",
+            "tertiary-fixed-dim": "#ffb77d",
+            "inverse-surface": "#303034",
+            "primary-fixed-dim": "#ffb3b1",
+            "on-tertiary-fixed-variant": "#6e3900",
+            "secondary": "#0051d5",
+            "on-error-container": "#93000a",
+            "surface-variant": "#e4e1e7",
+            "on-secondary-fixed-variant": "#003ea8",
+            "on-secondary-container": "#fefcff",
+            "on-secondary-fixed": "#00174b",
+            "tertiary-container": "#9a5200",
+            "error": "#ba1a1a",
+            "surface-container-low": "#f5f2f8",
+            "background": "#fbf8fe",
+            "tertiary-fixed": "#ffdcc3",
+            "surface-dim": "#dcd9de",
+            "inverse-primary": "#ffb3b1",
+            "on-tertiary-container": "#ffdcc3",
+            "surface-container-high": "#eae7ed",
+            "surface": "#fbf8fe",
+            "surface-container-lowest": "#ffffff",
+            "on-surface": "#1b1b1f",
+            "error-container": "#ffdad6",
+            "on-tertiary-fixed": "#2f1500",
+            "on-surface-variant": "#5c403f",
+            "on-background": "#1b1b1f",
+            "primary": "#9e001f",
+            "surface-container": "#f0edf2",
+            "outline-variant": "#e5bdbb",
+            "secondary-fixed": "#dbe1ff"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "space-lg": "1.5rem",
+            "gutter": "1.5rem",
+            "space-sm": "0.5rem",
+            "gutter-mobile": "1rem",
+            "margin": "2rem",
+            "space-xs": "0.25rem",
+            "space-md": "1rem",
+            "margin-mobile": "1rem",
+            "space-xl": "2.5rem"
+          },
+          "fontFamily": {
+            "label-lg": ["Plus Jakarta Sans"],
+            "headline-sm": ["Plus Jakarta Sans"],
+            "headline-md": ["Plus Jakarta Sans"],
+            "display-lg": ["Plus Jakarta Sans"],
+            "display-lg-mobile": ["Plus Jakarta Sans"],
+            "headline-xl": ["Plus Jakarta Sans"],
+            "headline-lg": ["Plus Jakarta Sans"],
+            "label-sm": ["Plus Jakarta Sans"],
+            "body-md": ["Inter"],
+            "headline-xl-mobile": ["Plus Jakarta Sans"],
+            "body-sm": ["Inter"],
+            "headline-lg-mobile": ["Plus Jakarta Sans"],
+            "label-md": ["Plus Jakarta Sans"],
+            "body-lg": ["Inter"]
+          },
+          "fontSize": {
+            "label-lg": ["15px", {"lineHeight": "20px", "fontWeight": "600"}],
+            "headline-sm": ["16px", {"lineHeight": "24px", "fontWeight": "600"}],
+            "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+            "display-lg": ["48px", {"lineHeight": "56px", "fontWeight": "800"}],
+            "display-lg-mobile": ["32px", {"lineHeight": "40px", "fontWeight": "800"}],
+            "headline-xl": ["36px", {"lineHeight": "44px", "fontWeight": "700"}],
+            "headline-lg": ["28px", {"lineHeight": "36px", "fontWeight": "700"}],
+            "label-sm": ["11px", {"lineHeight": "16px", "fontWeight": "700"}],
+            "body-md": ["15px", {"lineHeight": "24px", "fontWeight": "400"}],
+            "headline-xl-mobile": ["26px", {"lineHeight": "34px", "fontWeight": "700"}],
+            "body-sm": ["13px", {"lineHeight": "20px", "fontWeight": "400"}],
+            "headline-lg-mobile": ["22px", {"lineHeight": "30px", "fontWeight": "700"}],
+            "label-md": ["13px", {"lineHeight": "18px", "fontWeight": "600"}],
+            "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}]
+          }
+        },
+      },
+    }
+  </script>
+</head>
+<body class="bg-surface text-on-surface antialiased min-h-screen flex flex-col font-body-md selection:bg-primary-fixed selection:text-on-primary-fixed">
+<!-- TopNavBar (Shared Component from JSON) -->
+<header class="sticky top-0 w-full z-[1000] bg-surface-container-lowest border-b border-outline-variant/40 shadow-sm">
+<div class="max-w-7xl mx-auto px-4 md:px-8 flex justify-between items-center h-16">
+<!-- Brand & Left Section -->
+<div class="flex items-center gap-8">
+<a class="flex items-center gap-2.5 text-primary" href="#">
+<div class="w-9 h-9 rounded-lg bg-primary-container text-on-primary flex items-center justify-center shadow-sm">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">account_balance</span>
+</div>
+<div class="flex flex-col">
+<span class="text-headline-md font-headline-md font-bold tracking-tight text-primary leading-tight">Sistem Pengaduan Masyarakat</span>
+<span class="text-label-sm font-label-sm text-on-surface-variant font-normal">Pemerintah Daerah Terintegrasi</span>
+</div>
+</a>
+<!-- Desktop Navigation Links from JSON -->
+<nav class="hidden lg:flex items-center gap-6 pt-1">
+<a class="text-on-surface-variant hover:text-on-surface transition-colors pb-1 text-label-md font-label-md" href="#">Beranda</a>
+<a class="text-on-surface-variant hover:text-on-surface transition-colors pb-1 text-label-md font-label-md" href="#">Peta Pengaduan</a>
+<a class="text-on-surface-variant hover:text-on-surface transition-colors pb-1 text-label-md font-label-md" href="#">Bantuan</a>
+<a class="text-on-surface-variant hover:text-on-surface transition-colors pb-1 text-label-md font-label-md" href="#">Kebijakan Privasi</a>
+</nav>
+</div>
+<!-- Trailing Action & User Status -->
+<div class="flex items-center gap-4">
+<button aria-label="Notifikasi" class="relative p-2 rounded-lg text-on-surface-variant hover:bg-surface-container-low transition-colors" type="button">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-primary-container"></span>
+</button>
+<button aria-label="Bantuan" class="p-2 rounded-lg text-on-surface-variant hover:bg-surface-container-low transition-colors" type="button">
+<span class="material-symbols-outlined">help_outline</span>
+</button>
+<div class="h-6 w-px bg-outline-variant/50 hidden sm:block"></div>
+<!-- User Profile Pill -->
+<div class="flex items-center gap-3 pl-1">
+<img alt="Foto profil pengguna warga" class="w-9 h-9 rounded-full object-cover ring-2 ring-outline-variant/60" data-alt="Close up photographic portrait of an Indonesian civic user wearing modern smart casual formal shirt with natural pleasant lighting in government digital tech office setting, crisp detail and natural tones." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCjtOv8z9Fz-RBIIQvANS9l5iZuciVQUr6Iv2XdfoCd5GLwGehOXAIUO8bhgSSeQRpVnimB5Hrm5jA1_dShD_6lQfpal4O0m76okjB-5eIRAqBAqXi3ZhmS8NcQTmEyHXPhjkvHsfbTdmf03kBvYOMgrMAt-JrZr--JkcCmplHfWPDMsIdbhfeGF5oOd4SRoitEOayitXBvmACLNKKC15rfGe-u842YKsdbuO2f4R8"/>
+<div class="hidden sm:flex flex-col text-left">
+<span class="text-label-md font-label-md text-on-surface font-semibold">Budi Pratama</span>
+<span class="text-label-sm font-label-sm text-on-surface-variant">NIK: 327320******004</span>
+</div>
+</div>
+</div>
+</div>
+</header>
+<!-- Main Wizard Content Canvas -->
+<main class="flex-grow max-w-5xl w-full mx-auto px-4 md:px-8 py-8 md:py-10">
+<!-- Header Title Section -->
+<div class="mb-8 text-center max-w-2xl mx-auto">
+<div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary-fixed text-on-primary-fixed-variant text-label-sm font-label-sm mb-3">
+<span class="material-symbols-outlined text-base" style="font-variation-settings: 'FILL' 1;">verified</span>
+<span>Kanal Resmi Penanganan Aduan Publik</span>
+</div>
+<h1 class="text-headline-xl font-headline-xl text-on-surface tracking-tight">Formulir Pengaduan Warga Baru</h1>
+<p class="text-body-md font-body-md text-on-surface-variant mt-2">
+        Sampaikan keluhan dan aspirasi infrastruktur serta layanan publik secara presisi. Laporan Anda diproses langsung melalui sistem triase terpadu dinas terkait.
+      </p>
+</div>
+<!-- Interactive 4-Step Progress Stepper -->
+<div class="bg-surface-container-lowest border border-outline-variant/60 rounded-xl p-6 mb-8 shadow-sm">
+<div class="relative flex items-center justify-between">
+<!-- Connecting Line Background -->
+<div class="absolute top-1/2 left-6 right-6 -translate-y-1/2 h-0.5 bg-surface-container-highest z-0"></div>
+<div class="absolute top-1/2 left-6 w-1/3 -translate-y-1/2 h-0.5 bg-primary-container z-0 transition-all duration-300"></div>
+<!-- Step 1: Detail Laporan (Selesai/Aktif) -->
+<div class="relative z-10 flex flex-col items-center group cursor-pointer">
+<div class="w-10 h-10 rounded-full bg-primary text-on-primary flex items-center justify-center font-label-md shadow-sm ring-4 ring-primary-fixed">
+<span class="material-symbols-outlined text-lg" style="font-variation-settings: 'FILL' 1;">check</span>
+</div>
+<span class="mt-2 text-label-md font-label-md text-primary font-bold">1. Detail Laporan</span>
+<span class="text-label-sm font-label-sm text-on-surface-variant hidden md:block">Informasi Aduan</span>
+</div>
+<!-- Step 2: Lokasi Geotagging (Aktif dengan pin) -->
+<div class="relative z-10 flex flex-col items-center group cursor-pointer">
+<div class="w-10 h-10 rounded-full bg-primary-container text-on-primary flex items-center justify-center font-label-md shadow-md ring-4 ring-primary-fixed animate-pulse">
+<span class="material-symbols-outlined text-xl" style="font-variation-settings: 'FILL' 1;">location_on</span>
+</div>
+<span class="mt-2 text-label-md font-label-md text-primary-container font-bold">2. Lokasi Geotagging</span>
+<span class="text-label-sm font-label-sm text-primary-container font-medium hidden md:block">Titik Koordinat Presisi</span>
+</div>
+<!-- Step 3: Lampiran Bukti (Menunggu) -->
+<div class="relative z-10 flex flex-col items-center">
+<div class="w-10 h-10 rounded-full bg-surface-container-high border-2 border-outline-variant text-on-surface-variant flex items-center justify-center font-label-md">
+<span>3</span>
+</div>
+<span class="mt-2 text-label-md font-label-md text-on-surface-variant">3. Lampiran Bukti</span>
+<span class="text-label-sm font-label-sm text-on-surface-variant hidden md:block">Foto &amp; Berkas</span>
+</div>
+<!-- Step 4: Pratinjau & Konfirmasi (Menunggu) -->
+<div class="relative z-10 flex flex-col items-center">
+<div class="w-10 h-10 rounded-full bg-surface-container-high border-2 border-outline-variant text-on-surface-variant flex items-center justify-center font-label-md">
+<span>4</span>
+</div>
+<span class="mt-2 text-label-md font-label-md text-on-surface-variant">4. Pratinjau</span>
+<span class="text-label-sm font-label-sm text-on-surface-variant hidden md:block">Verifikasi Final</span>
+</div>
+</div>
+</div>
+<!-- Multi-Step Form Card Container -->
+<div class="bg-surface-container-lowest border border-outline-variant/60 rounded-xl p-6 md:p-8 shadow-sm">
+<form class="space-y-8" onsubmit="event.preventDefault();">
+<!-- SECTION 1: Informasi Pokok Aduan -->
+<div>
+<div class="flex items-center gap-2.5 pb-4 border-b border-outline-variant/40 mb-6">
+<span class="material-symbols-outlined text-primary-container">article</span>
+<h2 class="text-headline-md font-headline-md text-on-surface">Data Pokok Pengaduan</h2>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<!-- Kategori Pengaduan -->
+<div class="space-y-2">
+<label class="block text-label-md font-label-md text-on-surface" for="kategori">
+                Kategori Pengaduan <span class="text-error">*</span>
+</label>
+<div class="relative">
+<select class="w-full bg-surface-container-lowest border border-outline-variant rounded-lg px-3.5 py-2.5 text-on-surface font-body-md focus:border-primary-container focus:ring-1 focus:ring-primary-container transition appearance-none" id="kategori">
+<option selected="">Infrastruktur Jalan &amp; Jembatan</option>
+<option>Drainase &amp; Banjir Perkotaan</option>
+<option>Penerangan Jalan Umum (PJU)</option>
+<option>Pengelolaan Sampah &amp; Lingkungan Hidup</option>
+<option>Ketertiban &amp; Fasilitas Publik</option>
+</select>
+<div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-on-surface-variant">
+<span class="material-symbols-outlined">expand_more</span>
+</div>
+</div>
+<p class="text-body-sm font-body-sm text-on-surface-variant">Pilih sektor dinas utama yang bertanggung jawab.</p>
+</div>
+<!-- Instansi Tujuan Rekomendasi (Opsional) -->
+<div class="space-y-2">
+<label class="block text-label-md font-label-md text-on-surface flex items-center justify-between" for="instansi">
+<span>Rekomendasi Dinas Teknis (Opsional)</span>
+<span class="text-label-sm font-label-sm text-on-surface-variant font-normal">Triase Otomatis AI</span>
+</label>
+<div class="relative">
+<select class="w-full bg-surface-container-lowest border border-outline-variant rounded-lg px-3.5 py-2.5 text-on-surface font-body-md focus:border-primary-container focus:ring-1 focus:ring-primary-container transition appearance-none" id="instansi">
+<option selected="">Dinas Bina Marga &amp; Penataan Ruang</option>
+<option>Dinas Perhubungan Daerah</option>
+<option>Dinas Sumber Daya Air</option>
+<option>Satuan Polisi Pamong Praja (Satpol PP)</option>
+</select>
+<div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-on-surface-variant">
+<span class="material-symbols-outlined">expand_more</span>
+</div>
+</div>
+<p class="text-body-sm font-body-sm text-on-surface-variant">Direkomendasikan otomatis berdasarkan kategori yang dipilih.</p>
+</div>
+<!-- Judul Pengaduan (Full Width) -->
+<div class="md:col-span-2 space-y-2">
+<label class="block text-label-md font-label-md text-on-surface" for="judul">
+                Judul Pengaduan <span class="text-error">*</span>
+</label>
+<input class="w-full bg-surface-container-lowest border border-outline-variant rounded-lg px-3.5 py-2.5 text-on-surface font-body-md focus:border-primary-container focus:ring-1 focus:ring-primary-container transition" id="judul" placeholder="Tuliskan ringkasan pokok permasalahan..." type="text" value="Jalan Ambles dan Berlubang Parah di Depan Puskesmas Sukajadi"/>
+<p class="text-body-sm font-body-sm text-on-surface-variant">Buat judul yang spesifik dan langsung menyebut lokasi fisik inti.</p>
+</div>
+<!-- Kronologi/Deskripsi (Full Width) -->
+<div class="md:col-span-2 space-y-2">
+<div class="flex justify-between items-center">
+<label class="block text-label-md font-label-md text-on-surface" for="deskripsi">
+                  Kronologi &amp; Uraian Rinci <span class="text-error">*</span>
+</label>
+<span class="text-label-sm font-label-sm text-on-surface-variant">218 / 1.000 Karakter</span>
+</div>
+<textarea class="w-full bg-surface-container-lowest border border-outline-variant rounded-lg p-3.5 text-on-surface font-body-md focus:border-primary-container focus:ring-1 focus:ring-primary-container transition" id="deskripsi" placeholder="Jelaskan detail permasalahan, estimasi durasi kerusakan, dampak terhadap mobilitas warga, serta penanganan darurat yang pernah dilakukan..." rows="4">Aspal jalan ambles dengan kedalaman sekitar 25-30 cm tepat di seberang pintu gerbang utama Puskesmas Sukajadi. Kerusakan sudah berlangsung selama 5 hari terakhir pasca hujan deras dan memicu kemacetan serta membahayakan ambulans dan pengendara motor.</textarea>
+<p class="text-body-sm font-body-sm text-on-surface-variant">Sertakan detail dampak langsung terhadap pelayanan umum atau keselamatan warga sekitar.</p>
+</div>
+</div>
+</div>
+<!-- SECTION 2: Lokasi Geotagging & Mini-Map Presisi -->
+<div class="pt-4 border-t border-outline-variant/40">
+<div class="flex items-center justify-between pb-4 mb-4">
+<div class="flex items-center gap-2.5">
+<span class="material-symbols-outlined text-primary-container">location_searching</span>
+<div>
+<h2 class="text-headline-md font-headline-md text-on-surface">Lokasi Geotagging Presisi</h2>
+<p class="text-body-sm font-body-sm text-on-surface-variant">Geser pin peta untuk memastikan koordinat akurat penanganan lapangan.</p>
+</div>
+</div>
+<button class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-outline-variant bg-surface-container-lowest text-on-surface text-label-md font-label-md hover:bg-surface-container-low transition" type="button">
+<span class="material-symbols-outlined text-sm">my_location</span>
+<span>Gunakan GPS Saat Ini</span>
+</button>
+</div>
+<!-- Interactive Geotagging Canvas -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+<!-- Map Visualization Box -->
+<div class="lg:col-span-2 relative h-72 rounded-xl overflow-hidden border border-outline-variant/60 shadow-inner bg-surface-container-high">
+<!-- Map Background Mockup -->
+<div class="w-full h-full bg-cover bg-center filter saturate-150" data-alt="Modern high contrast vector digital civic GIS map cartography centered on Sukajadi road intersection Bandung, showing clean city streets, clear road blocks, administrative municipal outlines, and muted warm civil government UI colors." data-location="Bandung" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuB3UTUQ-DDSd2K5zXG57om64GT4FzYdBtO7LxZgdkBx3gn5CPn62ASQuGKGIlWXTB9hOtqXXEvMCyMZWg6KvJayMPbWh2w7FLTmtftWgQIjklhtpaXVLyj7WuwcGyRkUOR7iBpTO-hqD894jJz0TJQznp3GnPNkHpQb9dLDDZ2ucjjPHXNVpnzjg6jA2UGqWpATn5B-UvIFu6-PF_RvmaFTIzMY5BfztuGiyc_70FE')">
+</div>
+<!-- Map Overlay Glass UI -->
+<div class="absolute top-3 left-3 bg-surface-container-lowest/90 backdrop-blur-md px-3 py-1.5 rounded-lg border border-outline-variant/60 text-label-sm font-label-sm text-on-surface flex items-center gap-2 shadow-sm">
+<span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping"></span>
+<span>Akurasi GPS: Presisi ±3 Meter</span>
+</div>
+<!-- Draggable Center Pin Representation -->
+<div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+<div class="flex flex-col items-center transform -translate-y-4">
+<div class="bg-primary text-on-primary text-label-sm font-label-sm px-2 py-0.5 rounded shadow-md mb-1 flex items-center gap-1">
+<span>Titik Aduan</span>
+</div>
+<span class="material-symbols-outlined text-primary-container text-4xl drop-shadow-md" style="font-variation-settings: 'FILL' 1;">location_on</span>
+<div class="w-3 h-1.5 rounded-full bg-black/40 blur-[1px]"></div>
+</div>
+</div>
+<!-- Map Controls -->
+<div class="absolute bottom-3 right-3 flex flex-col gap-1">
+<button class="w-8 h-8 rounded-lg bg-surface-container-lowest shadow border border-outline-variant flex items-center justify-center text-on-surface hover:bg-surface-container-low" type="button">
+<span class="material-symbols-outlined text-base">add</span>
+</button>
+<button class="w-8 h-8 rounded-lg bg-surface-container-lowest shadow border border-outline-variant flex items-center justify-center text-on-surface hover:bg-surface-container-low" type="button">
+<span class="material-symbols-outlined text-base">remove</span>
+</button>
+</div>
+</div>
+<!-- Coordinate and Manual Address Inputs -->
+<div class="space-y-4">
+<div class="p-4 rounded-xl bg-surface-container-low border border-outline-variant/60 space-y-3">
+<div class="flex items-center gap-2 text-label-md font-label-md text-primary font-semibold">
+<span class="material-symbols-outlined text-lg">pin_drop</span>
+<span>Koordinat Geografis</span>
+</div>
+<div class="grid grid-cols-2 gap-2">
+<div>
+<label class="block text-label-sm font-label-sm text-on-surface-variant">Lintang (Latitude)</label>
+<input class="w-full mt-1 bg-surface-container-lowest border border-outline-variant rounded-md px-2.5 py-1.5 text-body-sm font-body-sm font-mono text-on-surface" readonly="" type="text" value="-6.890451"/>
+</div>
+<div>
+<label class="block text-label-sm font-label-sm text-on-surface-variant">Bujur (Longitude)</label>
+<input class="w-full mt-1 bg-surface-container-lowest border border-outline-variant rounded-md px-2.5 py-1.5 text-body-sm font-body-sm font-mono text-on-surface" readonly="" type="text" value="107.597824"/>
+</div>
+</div>
+<div class="text-label-sm font-label-sm text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">lock</span>
+<span>Terkunci dari pergeseran penanda peta</span>
+</div>
+</div>
+<!-- Manual Address Field -->
+<div class="space-y-1.5">
+<label class="block text-label-md font-label-md text-on-surface" for="alamat">
+                  Patokan / Alamat Lengkap <span class="text-error">*</span>
+</label>
+<textarea class="w-full bg-surface-container-lowest border border-outline-variant rounded-lg p-3 text-body-sm font-body-sm text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container transition" id="alamat" placeholder="Cantumkan nomor jalan, RT/RW, kelurahan, dan patokan gedung..." rows="3">Jl. Sukajadi No. 174, RT 03 / RW 07, Kel. Pasteur, Kec. Sukajadi (Depan gerbang emergensi Puskesmas)</textarea>
+</div>
+</div>
+</div>
+</div>
+<!-- SECTION 3: Lampiran Bukti Foto & Dokumen Pendukung -->
+<div class="pt-4 border-t border-outline-variant/40">
+<div class="flex items-center gap-2.5 pb-4 mb-4">
+<span class="material-symbols-outlined text-primary-container">attachment</span>
+<div>
+<h2 class="text-headline-md font-headline-md text-on-surface">Lampiran Bukti Lapangan</h2>
+<p class="text-body-sm font-body-sm text-on-surface-variant">Unggah foto kerusakan aktual atau dokumen pendukung (Maksimal 5 berkas, maks. 10MB per file).</p>
+</div>
+</div>
+<!-- Drag and Drop Area -->
+<div class="border-2 border-dashed border-outline-variant hover:border-primary-container rounded-xl p-6 text-center bg-surface-container-low/40 hover:bg-surface-container-low transition cursor-pointer mb-6">
+<div class="flex flex-col items-center">
+<div class="w-12 h-12 rounded-full bg-primary-fixed text-primary flex items-center justify-center mb-3">
+<span class="material-symbols-outlined text-2xl">cloud_upload</span>
+</div>
+<p class="text-label-md font-label-md text-on-surface">Tarik &amp; lepas foto atau berkas di sini, atau <span class="text-primary-container underline font-bold">Pilih Berkas</span></p>
+<p class="text-label-sm font-label-sm text-on-surface-variant mt-1">Format didukung: JPG, PNG, WEBP, atau PDF (maks. 5 berkas)</p>
+</div>
+</div>
+<!-- Attached Files List Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<!-- File Item 1: Foto Kerusakan Utama -->
+<div class="flex items-center gap-3 p-3 rounded-xl border border-outline-variant bg-surface-container-lowest shadow-sm hover:border-outline transition">
+<img alt="Foto bukti lubang jalan Sukajadi" class="w-14 h-14 rounded-lg object-cover flex-shrink-0 border border-outline-variant/60" data-alt="Close up sharp documentary photo of deep asphalt sinkhole and collapsed road pavement in middle of urban Indonesian street during daytime, textured damaged gravel with high clarity civic evidence aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBTLl9DRpybSj6NW4hOQ_xs20GOuC0t_HoGg64gVs-Y44E4I1JYG2WCXl5i2-LUOxIMV8rSOVtaB_48f8m4DprPgIuiW_X3r1GPqiz8Hn3qLDNncuFgmM2m644woQmBzT0XPWX8ExPqNQ8FXiqY15g9bFXTH1UUkppRv1oul5iFxOXuoEYNvfPlQLqq1YPc23ku1ndB_u4yT3Op8WygbsWpPvLWFcgYL9G8FDMGcjY"/>
+<div class="flex-grow min-w-0">
+<p class="text-label-md font-label-md text-on-surface truncate">bukti_jalan_ambles_puskesmas.jpg</p>
+<div class="flex items-center gap-2 text-label-sm font-label-sm text-on-surface-variant mt-0.5">
+<span>3.4 MB</span>
+<span>•</span>
+<span class="text-emerald-700 font-semibold flex items-center gap-0.5">
+<span class="material-symbols-outlined text-xs">check_circle</span> Terverifikasi EXIF
+                  </span>
+</div>
+</div>
+<button aria-label="Hapus Berkas 1" class="p-2 text-on-surface-variant hover:text-error hover:bg-error-container/40 rounded-lg transition" type="button">
+<span class="material-symbols-outlined text-lg">delete</span>
+</button>
+</div>
+<!-- File Item 2: Foto Posisi dari Jarak Jauh -->
+<div class="flex items-center gap-3 p-3 rounded-xl border border-outline-variant bg-surface-container-lowest shadow-sm hover:border-outline transition">
+<img alt="Foto sudut pandang jauh arus lalu lintas terhambat" class="w-14 h-14 rounded-lg object-cover flex-shrink-0 border border-outline-variant/60" data-alt="Wide perspective documentary street photo showing traffic congestion caused by road hazard barrier near a public medical clinic in Indonesia under natural overcast daytime light." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAaYScqDOiwzhSBYG4AlRgu0pIWVHF_jcFRCiFs3M0cDs0kFdSbYPQScjMOOTIOUFiU-WILQOTc55HaxeTANXgzmQB2FGAIUbM4TPleaxPgwEKvHTJj1qixqUUsaJ2siZrBn_BDHkkWo2GaMJcW9Fd8z74BKV7wjiFTyipQx2_OLXch5wKbQjA1EWSKRsLUDlO37Qn0PIzPZWMqY2l19xPvZHR-QHztaHYIFjs7J4c"/>
+<div class="flex-grow min-w-0">
+<p class="text-label-md font-label-md text-on-surface truncate">posisi_gerbang_puskesmas_macet.jpg</p>
+<div class="flex items-center gap-2 text-label-sm font-label-sm text-on-surface-variant mt-0.5">
+<span>2.8 MB</span>
+<span>•</span>
+<span class="text-emerald-700 font-semibold flex items-center gap-0.5">
+<span class="material-symbols-outlined text-xs">check_circle</span> Terverifikasi EXIF
+                  </span>
+</div>
+</div>
+<button aria-label="Hapus Berkas 2" class="p-2 text-on-surface-variant hover:text-error hover:bg-error-container/40 rounded-lg transition" type="button">
+<span class="material-symbols-outlined text-lg">delete</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Wizard Navigation Footer Actions -->
+<div class="pt-6 border-t border-outline-variant/40 flex flex-col sm:flex-row justify-between items-center gap-4">
+<button class="w-full sm:w-auto px-6 py-2.5 rounded-lg border border-outline-variant text-on-surface font-label-md hover:bg-surface-container-low transition flex items-center justify-center gap-2" type="button">
+<span class="material-symbols-outlined text-lg">arrow_back</span>
+<span>Kembali</span>
+</button>
+<div class="flex items-center gap-3 w-full sm:w-auto">
+<button class="w-full sm:w-auto px-5 py-2.5 rounded-lg border border-outline-variant bg-surface-container-lowest text-on-surface font-label-md hover:bg-surface-container-low transition" type="button">
+              Simpan Draf
+            </button>
+<button class="w-full sm:w-auto px-8 py-2.5 rounded-lg bg-primary-container text-on-primary font-label-md hover:bg-primary transition shadow-md flex items-center justify-center gap-2" type="submit">
+<span>Lanjut ke Pratinjau</span>
+<span class="material-symbols-outlined text-lg">arrow_forward</span>
+</button>
+</div>
+</div>
+</form>
+</div>
+</main>
+<!-- FITUR KHUSUS: MODAL DETEKSI LAPORAN SERUPA OTOMATIS (TERBUKA SECARA DEFAULT) -->
+<div class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-inverse-surface/60 backdrop-blur-sm transition-opacity" id="duplicate-modal">
+<div class="bg-surface-container-lowest rounded-2xl max-w-2xl w-full border border-outline-variant shadow-2xl overflow-hidden transform transition-all animate-scale">
+<!-- Modal Header with Smart Detection Banner -->
+<div class="bg-primary text-on-primary p-5 flex items-start justify-between">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-xl bg-on-primary/10 flex items-center justify-center text-on-primary">
+<span class="material-symbols-outlined text-2xl" style="font-variation-settings: 'FILL' 1;">nearby</span>
+</div>
+<div>
+<h3 class="text-headline-md font-headline-md font-bold tracking-tight">Laporan Serupa Ditemukan di Radius 150m!</h3>
+<p class="text-body-sm font-body-sm text-on-primary-container mt-0.5">Sistem Triase Cerdas Pencegahan Duplikasi Aduan</p>
+</div>
+</div>
+<button class="text-on-primary/80 hover:text-on-primary p-1 rounded-lg hover:bg-on-primary/10 transition" onclick="document.getElementById('duplicate-modal').style.display='none'" type="button">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<!-- Modal Body -->
+<div class="p-6 space-y-5">
+<!-- Smart Info Box -->
+<div class="p-4 rounded-xl bg-primary-fixed/50 border border-outline-variant/60 flex items-start gap-3">
+<span class="material-symbols-outlined text-primary-container mt-0.5" style="font-variation-settings: 'FILL' 1;">info</span>
+<p class="text-body-sm font-body-sm text-on-surface">
+            Kami mendeteksi <strong>2 laporan serupa</strong> di sekitar lokasi Anda dalam 30 hari terakhir. Dukung laporan yang sudah ada agar prioritas penanganan dinas lebih cepat tanpa membuat antrean ganda.
+          </p>
+</div>
+<!-- Matched Complaint Ticket Card -->
+<div class="rounded-xl border-2 border-primary-container/40 p-5 bg-surface shadow-sm">
+<div class="flex flex-col sm:flex-row gap-4">
+<!-- Thumbnail Evidence -->
+<img alt="Foto laporan serupa aspal ambles" class="w-full sm:w-28 h-28 rounded-lg object-cover flex-shrink-0 border border-outline-variant" data-alt="Realistic close documentary photo of damaged fractured roadway asphalt cavity with yellow temporary warning cones placed by local residents on Bandung municipal street." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDXFtctiQnd0l14H2wCi6K9MmziM4DTy1eGwBr2eOOO8Kf_8WSnqilI8xcQxzFEKrSCxDqPMn0QurjtCvA6E80nodixlstwvq_5Dn0Gml8r9-qyYbMfXc5bxYaRAcLl3XEjIjlwW7FRai1AJ1aZjmBHNGuLoo6-8n7iI-BS2fqeEfqFzSSFm94WwK9R-etaGrIDvbvPBuoYFggoVt0M3BOrr_Mc04p88EETPEmphj8"/>
+<div class="flex-grow space-y-2">
+<div class="flex items-center justify-between flex-wrap gap-2">
+<span class="text-label-sm font-label-sm font-mono text-on-surface-variant font-bold">#LAPOR-2024-8842</span>
+<!-- Civic Status Badge: Diverifikasi (Amber Terang) -->
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-label-sm font-label-sm bg-tertiary-fixed text-on-tertiary-fixed font-bold">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span>
+                  DIVERIFIKASI DINAS PU
+                </span>
+</div>
+<h4 class="text-headline-sm font-headline-sm text-on-surface font-bold">
+                Aspal Ambles Diameter 1 Meter di Sukajadi
+              </h4>
+<div class="grid grid-cols-2 gap-2 text-label-sm font-label-sm text-on-surface-variant pt-1">
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-sm text-primary">distance</span>
+<span>45 meter dari lokasi Anda</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">schedule</span>
+<span>Dibuat 2 hari lalu</span>
+</div>
+</div>
+<!-- Support Button & Counter -->
+<div class="pt-2">
+<button class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-primary-container text-on-primary font-label-md hover:bg-primary transition shadow-sm" type="button">
+<span class="material-symbols-outlined text-base" style="font-variation-settings: 'FILL' 1;">thumb_up</span>
+<span>Saya Mengalami Hal yang Sama (+58 Dukungan)</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Add Note to Existing Ticket Accordion -->
+<div class="mt-4 pt-4 border-t border-outline-variant/50">
+<label class="block text-label-sm font-label-sm text-on-surface font-semibold mb-1">
+              Tambahkan Keterangan atau Foto Tambahan Anda ke Tiket Ini:
+            </label>
+<div class="flex gap-2">
+<input class="flex-grow bg-surface-container-lowest border border-outline-variant rounded-lg px-3 py-1.5 text-body-sm font-body-sm text-on-surface focus:border-primary-container focus:ring-1 focus:ring-primary-container" placeholder="Contoh: Lubang kian membesar setelah hujan tadi malam..." type="text"/>
+<button class="px-3 py-1.5 rounded-lg border border-outline-variant bg-surface-container-lowest text-on-surface hover:bg-surface-container-low transition text-label-sm font-label-sm flex items-center gap-1" type="button">
+<span class="material-symbols-outlined text-base">add_photo_alternate</span>
+<span>Lampirkan</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Modal Actions Footer -->
+<div class="p-5 bg-surface-container-low border-t border-outline-variant/60 flex flex-col sm:flex-row justify-between items-center gap-3">
+<button class="w-full sm:w-auto px-5 py-2.5 rounded-lg border border-outline-variant bg-surface-container-lowest text-on-surface font-label-md hover:bg-surface-container-high transition" onclick="document.getElementById('duplicate-modal').style.display='none'" type="button">
+          Lanjutkan Buat Laporan Baru
+        </button>
+<div class="flex items-center gap-2 w-full sm:w-auto">
+<button class="w-full sm:w-auto px-6 py-2.5 rounded-lg bg-surface-container-highest text-on-surface font-label-md hover:bg-outline-variant/60 transition" onclick="document.getElementById('duplicate-modal').style.display='none'" type="button">
+            Batal / Gabung Aduan
+          </button>
+</div>
+</div>
+</div>
+</div>
+<!-- Footer (Shared Component from JSON) -->
+<footer class="w-full mt-auto bg-surface-container-low border-t border-outline-variant/40">
+<div class="max-w-7xl mx-auto px-4 md:px-8 py-10 flex flex-col md:flex-row justify-between items-center gap-6">
+<!-- Left Copyright & Brand -->
+<div class="flex flex-col items-center md:items-start text-center md:text-left gap-1">
+<span class="text-headline-md font-headline-md text-primary font-bold">SIPANTAU</span>
+<p class="text-body-sm font-body-sm text-on-surface-variant">
+          © 2024 Pemerintah Daerah Republik Indonesia. Seluruh hak cipta dilindungi undang-undang.
+        </p>
+</div>
+<!-- Links from JSON -->
+<div class="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-label-sm font-label-sm">
+<a class="text-on-surface-variant hover:text-primary transition-colors" href="#">Kebijakan Privasi</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors" href="#">Ketentuan Layanan</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors" href="#">Pedoman Pengaduan SIPANTAU</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors" href="#">Keterbukaan Informasi Publik</a>
+</div>
+</div>
+</footer>
+<script src="/sipantau-engine.js"></script>
+</body></html>

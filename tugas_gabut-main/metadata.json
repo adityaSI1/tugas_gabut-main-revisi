@@ -1,0 +1,6 @@
+{
+  "name": "SIPANTAU - Sistem Pengaduan Masyarakat",
+  "description": "Sistem Informasi Pelayanan & Pemantauan Pengaduan Masyarakat Kota Bandung Terpadu dengan Geotagging GIS Leaflet, Triase OPD, dan Pelacakan Real-time.",
+  "requestFramePermissions": ["geolocation"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
