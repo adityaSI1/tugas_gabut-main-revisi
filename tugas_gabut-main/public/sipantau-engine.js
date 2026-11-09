@@ -1164,13 +1164,6 @@
 
   // Helper untuk menentukan URL antar-halaman secara robust
   function resolvePageUrl(folderName) {
-    const path = window.location.pathname;
-    if (path.includes('/stitch_sistem_pengaduan_masyarakat/')) {
-      return `/stitch_sistem_pengaduan_masyarakat/${folderName}/code.html`;
-    }
-    if (path.includes('/stitch/stitch_sistem_pengaduan_masyarakat/')) {
-      return `/stitch/stitch_sistem_pengaduan_masyarakat/${folderName}/code.html`;
-    }
     return `../${folderName}/code.html`;
   }
 
