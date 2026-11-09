@@ -58,13 +58,20 @@ interface PageItem {
   role: 'warga' | 'petugas' | 'umum';
 }
 
+const resolveSubPath = (p: string) => {
+  const base = import.meta.env.BASE_URL || './';
+  const cleanBase = base.endsWith('/') ? base : base + '/';
+  const cleanP = p.startsWith('/') ? p.slice(1) : p;
+  return `${cleanBase}${cleanP}`;
+};
+
 const CITIZEN_PAGES: PageItem[] = [
   {
     id: 'beranda',
     title: 'Beranda Portal Warga SIPANTAU',
     shortLabel: 'Beranda',
     icon: Home,
-    path: '/stitch_sistem_pengaduan_masyarakat/beranda_sistem_pengaduan_masyarakat/code.html',
+    path: resolveSubPath('stitch_sistem_pengaduan_masyarakat/beranda_sistem_pengaduan_masyarakat/code.html'),
     description: 'Portal publik warga: ringkasan aduan, transparansi penanganan, dan alur pelaporan',
     role: 'warga'
   },
@@ -73,7 +80,7 @@ const CITIZEN_PAGES: PageItem[] = [
     title: 'Formulir Pengaduan Multi-Step Warga',
     shortLabel: 'Buat Aduan',
     icon: FileEdit,
-    path: '/stitch_sistem_pengaduan_masyarakat/formulir_pengaduan_multi_step_warga/code.html',
+    path: resolveSubPath('stitch_sistem_pengaduan_masyarakat/formulir_pengaduan_multi_step_warga/code.html'),
     description: 'Pelaporan warga dengan geotagging GPS OpenStreetMap & verifikasi bukti EXIF',
     role: 'warga'
   },
@@ -82,7 +89,7 @@ const CITIZEN_PAGES: PageItem[] = [
     title: 'Peta Sebaran Laporan Warga',
     shortLabel: 'Peta Aduan Warga',
     icon: MapPin,
-    path: '/stitch_sistem_pengaduan_masyarakat/peta_pengaduan_kolektif_warga/code.html',
+    path: resolveSubPath('stitch_sistem_pengaduan_masyarakat/peta_pengaduan_kolektif_warga/code.html'),
     description: 'Peta interaktif Leaflet GIS sebaran aduan publik, filter kategori, satelit & dukungan warga',
     role: 'warga'
   },
@@ -91,7 +98,7 @@ const CITIZEN_PAGES: PageItem[] = [
     title: 'Pusat Bantuan & Kebijakan Warga',
     shortLabel: 'Pusat Bantuan',
     icon: HelpCircle,
-    path: '/stitch_sistem_pengaduan_masyarakat/pusat_bantuan_kebijakan_privasi_sipantau/code.html',
+    path: resolveSubPath('stitch_sistem_pengaduan_masyarakat/pusat_bantuan_kebijakan_privasi_sipantau/code.html'),
     description: 'FAQ interaktif akordion, pedoman pelaporan warga, dan kebijakan privasi',
     role: 'warga'
   }
@@ -102,7 +109,7 @@ const OFFICER_PAGE: PageItem = {
   title: 'SIPANTAU BACKOFFICE — Verifikasi & Triase Petugas OPD',
   shortLabel: 'Panel Petugas OPD',
   icon: ShieldCheck,
-  path: '/stitch_sistem_pengaduan_masyarakat/dashboard_petugas_verifikasi_disposisi/code.html',
+  path: resolveSubPath('stitch_sistem_pengaduan_masyarakat/dashboard_petugas_verifikasi_disposisi/code.html'),
   description: 'Panel kerja khusus verifikator Pemda, triase antrean, disposisi teknis dinas, dan ekspor CSV',
   role: 'petugas'
 };
