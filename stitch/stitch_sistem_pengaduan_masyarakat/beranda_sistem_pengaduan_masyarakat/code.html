@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+
+<html lang="id"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Sistem Pengaduan Masyarakat - SIPANTAU Pemerintah Daerah</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Plus+Jakarta+Sans:wght@500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "primary-container": "#c8102e",
+            "surface-bright": "#fbf8fe",
+            "on-error": "#ffffff",
+            "on-secondary": "#ffffff",
+            "on-primary": "#ffffff",
+            "tertiary": "#773e00",
+            "on-primary-container": "#ffdad8",
+            "on-primary-fixed-variant": "#92001c",
+            "secondary-container": "#316bf3",
+            "secondary-fixed-dim": "#b4c5ff",
+            "primary-fixed": "#ffdad8",
+            "inverse-on-surface": "#f3f0f5",
+            "outline": "#906f6e",
+            "surface-tint": "#bf0229",
+            "surface-container-highest": "#e4e1e7",
+            "on-primary-fixed": "#410007",
+            "on-tertiary": "#ffffff",
+            "tertiary-fixed-dim": "#ffb77d",
+            "inverse-surface": "#303034",
+            "primary-fixed-dim": "#ffb3b1",
+            "on-tertiary-fixed-variant": "#6e3900",
+            "secondary": "#0051d5",
+            "on-error-container": "#93000a",
+            "surface-variant": "#e4e1e7",
+            "on-secondary-fixed-variant": "#003ea8",
+            "on-secondary-container": "#fefcff",
+            "on-secondary-fixed": "#00174b",
+            "tertiary-container": "#9a5200",
+            "error": "#ba1a1a",
+            "surface-container-low": "#f5f2f8",
+            "background": "#fbf8fe",
+            "tertiary-fixed": "#ffdcc3",
+            "surface-dim": "#dcd9de",
+            "inverse-primary": "#ffb3b1",
+            "on-tertiary-container": "#ffdcc3",
+            "surface-container-high": "#eae7ed",
+            "surface": "#fbf8fe",
+            "surface-container-lowest": "#ffffff",
+            "on-surface": "#1b1b1f",
+            "error-container": "#ffdad6",
+            "on-tertiary-fixed": "#2f1500",
+            "on-surface-variant": "#5c403f",
+            "on-background": "#1b1b1f",
+            "primary": "#9e001f",
+            "surface-container": "#f0edf2",
+            "outline-variant": "#e5bdbb",
+            "secondary-fixed": "#dbe1ff"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "space-lg": "1.5rem",
+            "gutter": "1.5rem",
+            "space-sm": "0.5rem",
+            "gutter-mobile": "1rem",
+            "margin": "2rem",
+            "space-xs": "0.25rem",
+            "space-md": "1rem",
+            "margin-mobile": "1rem",
+            "space-xl": "2.5rem"
+          },
+          "fontFamily": {
+            "label-lg": ["Plus Jakarta Sans"],
+            "headline-sm": ["Plus Jakarta Sans"],
+            "headline-md": ["Plus Jakarta Sans"],
+            "display-lg": ["Plus Jakarta Sans"],
+            "display-lg-mobile": ["Plus Jakarta Sans"],
+            "headline-xl": ["Plus Jakarta Sans"],
+            "headline-lg": ["Plus Jakarta Sans"],
+            "label-sm": ["Plus Jakarta Sans"],
+            "body-md": ["Inter"],
+            "headline-xl-mobile": ["Plus Jakarta Sans"],
+            "body-sm": ["Inter"],
+            "headline-lg-mobile": ["Plus Jakarta Sans"],
+            "label-md": ["Plus Jakarta Sans"],
+            "body-lg": ["Inter"]
+          },
+          "fontSize": {
+            "label-lg": ["15px", {"lineHeight": "20px", "fontWeight": "600"}],
+            "headline-sm": ["16px", {"lineHeight": "24px", "fontWeight": "600"}],
+            "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+            "display-lg": ["48px", {"lineHeight": "56px", "fontWeight": "800"}],
+            "display-lg-mobile": ["32px", {"lineHeight": "40px", "fontWeight": "800"}],
+            "headline-xl": ["36px", {"lineHeight": "44px", "fontWeight": "700"}],
+            "headline-lg": ["28px", {"lineHeight": "36px", "fontWeight": "700"}],
+            "label-sm": ["11px", {"lineHeight": "16px", "fontWeight": "700"}],
+            "body-md": ["15px", {"lineHeight": "24px", "fontWeight": "400"}],
+            "headline-xl-mobile": ["26px", {"lineHeight": "34px", "fontWeight": "700"}],
+            "body-sm": ["13px", {"lineHeight": "20px", "fontWeight": "400"}],
+            "headline-lg-mobile": ["22px", {"lineHeight": "30px", "fontWeight": "700"}],
+            "label-md": ["13px", {"lineHeight": "18px", "fontWeight": "600"}],
+            "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}]
+          }
+        },
+      },
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      line-height: 1;
+      display: inline-block;
+      vertical-align: middle;
+    }
+    .civic-pattern {
+      background-image: radial-gradient(rgba(255, 255, 255, 0.12) 1.5px, transparent 1.5px);
+      background-size: 24px 24px;
+    }
+  </style>
+</head>
+<body class="bg-background text-on-surface antialiased font-body-md selection:bg-primary selection:text-on-primary">
+<!-- TOP APP BAR (from Shared Component JSON) -->
+<header class="sticky top-0 w-full z-50 bg-surface-container-lowest dark:bg-inverse-surface border-b border-outline-variant dark:border-outline shadow-sm dark:shadow-none">
+<div class="max-w-7xl mx-auto px-4 md:px-8 flex justify-between items-center h-16">
+<!-- Brand & Municipal Seal -->
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-primary-container flex items-center justify-center text-on-primary shadow-sm">
+<span class="material-symbols-outlined text-2xl" data-icon="account_balance">account_balance</span>
+</div>
+<div class="flex flex-col">
+<div class="flex items-center gap-2">
+<span class="text-headline-md font-headline-md text-primary dark:text-inverse-primary font-bold tracking-tight">SIPANTAU</span>
+<span class="text-xs font-semibold px-2 py-0.5 rounded bg-primary-fixed text-on-primary-fixed tracking-wide">RESMI</span>
+</div>
+<span class="text-body-sm font-body-sm text-on-surface-variant font-medium">Sistem Pengaduan Masyarakat</span>
+</div>
+</div>
+<!-- Navigation Links (Beranda Active) -->
+<nav class="hidden md:flex items-center gap-8 h-full pt-1">
+<a class="border-b-2 border-primary text-primary dark:text-inverse-primary font-semibold pb-1 text-label-md font-label-md flex items-center gap-1.5 transition-colors" href="#beranda">
+          Beranda
+        </a>
+<a class="text-on-surface-variant dark:text-surface-variant hover:text-on-surface transition-colors pb-1 text-label-md font-label-md" href="#peta">
+          Peta Pengaduan
+        </a>
+<a class="text-on-surface-variant dark:text-surface-variant hover:text-on-surface transition-colors pb-1 text-label-md font-label-md" href="#alur">
+          Bantuan
+        </a>
+<a class="text-on-surface-variant dark:text-surface-variant hover:text-on-surface transition-colors pb-1 text-label-md font-label-md" href="#kewenangan">
+          Kebijakan Privasi
+        </a>
+</nav>
+<!-- Action Cluster -->
+<div class="flex items-center gap-3">
+<button class="px-4 py-2 rounded-lg border border-primary text-primary font-label-md text-label-md hover:bg-surface-container-low transition duration-150 ease-in-out active:scale-95">
+          Masuk
+        </button>
+<button class="px-4 py-2 rounded-lg bg-primary-container text-on-primary font-label-md text-label-md hover:bg-primary transition duration-150 ease-in-out active:scale-95 shadow-sm">
+          Daftar
+        </button>
+</div>
+</div>
+</header>
+<main>
+<!-- HERO SECTION WITH CRIMSON GRADIENT & CIVIC PATTERN -->
+<section class="relative overflow-hidden bg-gradient-to-br from-primary-container via-primary to-[#780017] text-on-primary pt-16 pb-32" id="beranda">
+<!-- Ambient Geometric civic pattern -->
+<div class="civic-pattern absolute inset-0 opacity-20 pointer-events-none"></div>
+<!-- Subtle Decorative Glow Rings -->
+<div class="absolute -top-32 -right-32 w-96 h-96 bg-white/10 rounded-full blur-3xl pointer-events-none"></div>
+<div class="absolute bottom-0 left-1/4 w-80 h-80 bg-black/15 rounded-full blur-2xl pointer-events-none"></div>
+<div class="max-w-7xl mx-auto px-4 md:px-8 relative z-10">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+<!-- Left Column: Copy & Primary Actions -->
+<div class="lg:col-span-7 flex flex-col items-start gap-6">
+<div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/15 backdrop-blur-md border border-white/20 text-on-primary text-label-sm font-label-sm tracking-wider uppercase">
+<span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+              Kanal Pelayanan Publik Resmi Terpadu
+            </div>
+<h1 class="text-display-lg font-display-lg text-on-primary tracking-tight leading-tight">
+              Suarakan Keluhan Anda, <br class="hidden sm:inline"/>Kami Siap Menindaklanjuti.
+            </h1>
+<p class="text-body-lg font-body-lg text-white/90 max-w-2xl leading-relaxed">
+              Layanan terpadu penerimaan aspirasi, kerusakan fasilitas jalan, dan pengawasan pelayanan aparatur daerah. Cepat tanggap, transparan, terintegrasi ke seluruh Organisasi Perangkat Daerah (OPD).
+            </p>
+<div class="flex flex-wrap items-center gap-4 pt-2">
+<a class="inline-flex items-center gap-2 px-6 py-3.5 rounded-lg bg-surface-container-lowest text-primary font-label-lg text-label-lg shadow-lg hover:bg-white/95 transition duration-150 ease-in-out active:scale-95" href="#ajukan">
+<span class="material-symbols-outlined text-xl" data-icon="edit_note">edit_note</span>
+                Buat Pengaduan
+              </a>
+<a class="inline-flex items-center gap-2 px-6 py-3.5 rounded-lg border-2 border-white/80 text-on-primary font-label-lg text-label-lg hover:bg-white/10 backdrop-blur-sm transition duration-150 ease-in-out active:scale-95" href="#lacak">
+<span class="material-symbols-outlined text-xl" data-icon="search">search</span>
+                Lacak Pengaduan
+              </a>
+</div>
+<!-- Quick Trust Guarantee -->
+<div class="flex items-center gap-6 pt-4 text-white/80 text-body-sm font-body-sm">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-emerald-300 text-lg" data-icon="verified_user">verified_user</span>
+<span>Data Warga Terlindungi</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-emerald-300 text-lg" data-icon="schedule">schedule</span>
+<span>Respon Awal &lt; 24 Jam</span>
+</div>
+</div>
+</div>
+<!-- Right Column: Mockup Floating Card -->
+<div class="lg:col-span-5 relative">
+<!-- Floating Background Glow Badge -->
+<div class="absolute -top-6 -right-6 w-32 h-32 bg-white/20 rounded-full blur-xl pointer-events-none"></div>
+<div class="bg-surface-container-lowest/95 backdrop-blur-md rounded-2xl p-6 text-on-surface shadow-2xl border border-white/40 transform transition hover:-translate-y-1 duration-300">
+<div class="flex items-center justify-between pb-4 border-b border-surface-container-high">
+<div class="flex items-center gap-2">
+<span class="px-2.5 py-1 rounded bg-surface-container text-on-surface font-mono font-semibold text-xs">#LAPOR-2024-8841</span>
+<span class="text-xs text-on-surface-variant font-medium">10 Menit lalu</span>
+</div>
+<!-- Status Badge -->
+<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 text-blue-700 text-label-sm font-label-sm border border-blue-200">
+<span class="w-2 h-2 rounded-full bg-blue-600 animate-pulse"></span>
+                  PENANGANAN
+                </span>
+</div>
+<div class="pt-4 space-y-3">
+<div class="flex items-start justify-between gap-3">
+<div>
+<h3 class="text-headline-sm font-headline-sm text-on-surface">Amblasnya Gorong-gorong Jl. Merdeka Barat</h3>
+<p class="text-body-sm font-body-sm text-on-surface-variant mt-1">Kecamatan Sumur Bandung • Dinas Bina Marga &amp; Penataan Ruang</p>
+</div>
+<span class="material-symbols-outlined text-primary text-2xl" data-icon="warning">warning</span>
+</div>
+<p class="text-body-sm font-body-sm text-on-surface-variant line-clamp-2 bg-surface-container-low p-3 rounded-lg border border-surface-container">
+                  "Saluran drainase ambruk selebar 1 meter mengganggu arus kendaraan roda dua dan berpotensi memicu banjir lokal saat hujan deras."
+                </p>
+<!-- Process Stepper Mini Preview -->
+<div class="pt-2">
+<div class="flex items-center justify-between text-xs text-on-surface-variant font-medium mb-1">
+<span class="text-emerald-700 font-semibold flex items-center gap-1">
+<span class="material-symbols-outlined text-sm" data-icon="check_circle">check_circle</span>
+                      Disposisi Tim Reaksi Cepat
+                    </span>
+<span>Progres: 65%</span>
+</div>
+<div class="w-full h-2 rounded-full bg-surface-container-highest overflow-hidden">
+<div class="h-full bg-primary-container rounded-full" style="width: 65%;"></div>
+</div>
+</div>
+<!-- Footer OPD Assigned -->
+<div class="pt-2 flex items-center justify-between text-xs text-on-surface-variant border-t border-surface-container-high">
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-sm" data-icon="engineering">engineering</span>
+                    Regu 3 UPT Cikapundung
+                  </span>
+<span class="text-primary font-semibold hover:underline cursor-pointer">Lihat Riwayat →</span>
+</div>
+</div>
+</div>
+<!-- Floating Sub-card for transparency reassurance -->
+<div class="hidden sm:flex items-center gap-3 absolute -bottom-6 -left-8 bg-surface-container-lowest py-3 px-4 rounded-xl shadow-xl border border-surface-container-high text-on-surface">
+<div class="w-9 h-9 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center">
+<span class="material-symbols-outlined text-xl" data-icon="task_alt">task_alt</span>
+</div>
+<div>
+<p class="text-xs font-bold text-on-surface">Validasi Otomatis Geotag</p>
+<p class="text-[11px] text-on-surface-variant">Titik GPS Koordinat -6.9175, 107.6191</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- LIVE STATISTICS STRIP (ELEVATED CARD FLOATING OVER HERO) -->
+<div class="max-w-7xl mx-auto px-4 md:px-8 -mt-16 relative z-20">
+<div class="bg-surface-container-lowest rounded-2xl border border-outline-variant shadow-lg p-6 md:p-8 grid grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8 divide-y lg:divide-y-0 lg:divide-x divide-surface-container">
+<!-- Metric 1 -->
+<div class="flex items-center gap-4 pt-3 lg:pt-0">
+<div class="w-12 h-12 rounded-xl bg-primary-fixed text-primary flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-2xl" data-icon="inventory_2">inventory_2</span>
+</div>
+<div>
+<div class="text-headline-lg font-headline-lg text-on-surface font-extrabold tracking-tight">48.920</div>
+<div class="text-body-sm font-body-sm text-on-surface-variant font-medium">Total Laporan Warga</div>
+</div>
+</div>
+<!-- Metric 2 -->
+<div class="flex items-center gap-4 pt-3 lg:pt-0 lg:pl-6">
+<div class="w-12 h-12 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-2xl" data-icon="check_circle">check_circle</span>
+</div>
+<div>
+<div class="text-headline-lg font-headline-lg text-emerald-800 font-extrabold tracking-tight">94,2%</div>
+<div class="text-body-sm font-body-sm text-on-surface-variant font-medium">Tuntas Diselesaikan</div>
+</div>
+</div>
+<!-- Metric 3 -->
+<div class="flex items-center gap-4 pt-3 lg:pt-0 lg:pl-6">
+<div class="w-12 h-12 rounded-xl bg-blue-100 text-blue-800 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-2xl" data-icon="timer">timer</span>
+</div>
+<div>
+<div class="text-headline-lg font-headline-lg text-on-surface font-extrabold tracking-tight">2,4 Hari</div>
+<div class="text-body-sm font-body-sm text-on-surface-variant font-medium">Rata-rata Penanganan</div>
+</div>
+</div>
+<!-- Metric 4 -->
+<div class="flex items-center gap-4 pt-3 lg:pt-0 lg:pl-6">
+<div class="w-12 h-12 rounded-xl bg-amber-100 text-amber-900 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-2xl" data-icon="star">star</span>
+</div>
+<div>
+<div class="text-headline-lg font-headline-lg text-on-surface font-extrabold tracking-tight">4.8 <span class="text-body-sm font-normal text-on-surface-variant">/ 5.0</span></div>
+<div class="text-body-sm font-body-sm text-on-surface-variant font-medium">Indeks Kepuasan Masyarakat</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- KOMPONEN RINGKASAN STATISTIK HARIAN DARI LOCALSTORAGE -->
+<div id="sipantau-daily-summary-root" class="max-w-7xl mx-auto px-4 md:px-8 mt-10 mb-2 relative z-20"></div>
+
+<!-- CARA KERJA (WORKFLOW 4 LANGKAH) -->
+<section class="py-24 max-w-7xl mx-auto px-4 md:px-8" id="alur">
+<div class="text-center max-w-2xl mx-auto mb-16">
+<span class="text-primary font-label-md text-label-md uppercase tracking-wider font-semibold">Alur Transparansi SIPANTAU</span>
+<h2 class="text-headline-xl font-headline-xl text-on-surface mt-2 tracking-tight">4 Tahap Cepat Penanganan Laporan</h2>
+<p class="text-body-md font-body-md text-on-surface-variant mt-3">Setiap pengaduan dipantau secara real-time dari verifikasi awal hingga hasil verifikasi visual di lapangan.</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 relative">
+<!-- Step 1 -->
+<div class="bg-surface-container-lowest rounded-2xl p-6 border border-outline-variant shadow-sm hover:shadow-md transition duration-200 flex flex-col justify-between relative group">
+<div class="space-y-4">
+<div class="flex items-center justify-between">
+<span class="w-10 h-10 rounded-full bg-primary-container text-on-primary font-bold flex items-center justify-center text-label-lg font-label-lg shadow-sm">1</span>
+<span class="material-symbols-outlined text-primary-container text-3xl" data-icon="add_a_photo">add_a_photo</span>
+</div>
+<h3 class="text-headline-sm font-headline-sm text-on-surface pt-2">1. Ajukan Laporan</h3>
+<p class="text-body-sm font-body-sm text-on-surface-variant leading-relaxed">
+              Tulis keluhan dengan jelas, sertakan foto kondisi fisik, dan aktifkan geotagging lokasi otomatis untuk akurasi peta.
+            </p>
+</div>
+<div class="mt-6 pt-4 border-t border-surface-container flex items-center text-xs text-primary font-semibold">
+<span>Formulir Terenkripsi Warga</span>
+</div>
+</div>
+<!-- Step 2 -->
+<div class="bg-surface-container-lowest rounded-2xl p-6 border border-outline-variant shadow-sm hover:shadow-md transition duration-200 flex flex-col justify-between relative group">
+<div class="space-y-4">
+<div class="flex items-center justify-between">
+<span class="w-10 h-10 rounded-full bg-primary-container text-on-primary font-bold flex items-center justify-center text-label-lg font-label-lg shadow-sm">2</span>
+<span class="material-symbols-outlined text-primary-container text-3xl" data-icon="fact_check">fact_check</span>
+</div>
+<h3 class="text-headline-sm font-headline-sm text-on-surface pt-2">2. Verifikasi 1x24 Jam</h3>
+<p class="text-body-sm font-body-sm text-on-surface-variant leading-relaxed">
+              Tim Triase admin memeriksa keabsahan aduan, kelengkapan data administratif, dan memastikan tidak ada duplikasi laporan.
+            </p>
+</div>
+<div class="mt-6 pt-4 border-t border-surface-container flex items-center text-xs text-primary font-semibold">
+<span>Pemeriksaan Tim Triase</span>
+</div>
+</div>
+<!-- Step 3 -->
+<div class="bg-surface-container-lowest rounded-2xl p-6 border border-outline-variant shadow-sm hover:shadow-md transition duration-200 flex flex-col justify-between relative group">
+<div class="space-y-4">
+<div class="flex items-center justify-between">
+<span class="w-10 h-10 rounded-full bg-primary-container text-on-primary font-bold flex items-center justify-center text-label-lg font-label-lg shadow-sm">3</span>
+<span class="material-symbols-outlined text-primary-container text-3xl" data-icon="handyman">handyman</span>
+</div>
+<h3 class="text-headline-sm font-headline-sm text-on-surface pt-2">3. Penanganan Dinas</h3>
+<p class="text-body-sm font-body-sm text-on-surface-variant leading-relaxed">
+              Disposisi instan langsung diteruskan kepada OPD teknis terkait. Tim regu teknis lapangan diterjunkan untuk perbaikan.
+            </p>
+</div>
+<div class="mt-6 pt-4 border-t border-surface-container flex items-center text-xs text-primary font-semibold">
+<span>Aksi Regu Teknis OPD</span>
+</div>
+</div>
+<!-- Step 4 -->
+<div class="bg-surface-container-lowest rounded-2xl p-6 border border-outline-variant shadow-sm hover:shadow-md transition duration-200 flex flex-col justify-between relative group">
+<div class="space-y-4">
+<div class="flex items-center justify-between">
+<span class="w-10 h-10 rounded-full bg-emerald-600 text-white font-bold flex items-center justify-center text-label-lg font-label-lg shadow-sm">4</span>
+<span class="material-symbols-outlined text-emerald-600 text-3xl" data-icon="task_alt">task_alt</span>
+</div>
+<h3 class="text-headline-sm font-headline-sm text-on-surface pt-2">4. Selesai &amp; Survei</h3>
+<p class="text-body-sm font-body-sm text-on-surface-variant leading-relaxed">
+              Bukti foto tuntas diunggah ke publik. Pelapor menerima notifikasi dan memberikan ulasan kepuasan kinerja aparat.
+            </p>
+</div>
+<div class="mt-6 pt-4 border-t border-surface-container flex items-center text-xs text-emerald-700 font-semibold">
+<span>Umpan Balik Publik</span>
+</div>
+</div>
+</div>
+</section>
+<!-- SECTION TENTANG LAYANAN & BATAS KEWENANGAN (COMPARISON CARD) -->
+<section class="py-20 bg-surface-container-low border-y border-outline-variant" id="kewenangan">
+<div class="max-w-7xl mx-auto px-4 md:px-8">
+<div class="flex flex-col md:flex-row md:items-end justify-between mb-12">
+<div class="max-w-2xl">
+<span class="text-primary font-label-md text-label-md uppercase tracking-wider font-semibold">Regulasi &amp; Integritas</span>
+<h2 class="text-headline-xl font-headline-xl text-on-surface mt-2 tracking-tight">Lingkup Layanan &amp; Batas Kewenangan</h2>
+<p class="text-body-md font-body-md text-on-surface-variant mt-2">
+              Untuk efektivitas birokrasi, kenali klasifikasi laporan yang dapat diproses langsung oleh Pemerintah Daerah vs yang berada di luar mandat kami.
+            </p>
+</div>
+<div class="mt-4 md:mt-0 flex items-center gap-2 text-body-sm font-body-sm text-on-surface-variant">
+<span class="material-symbols-outlined text-primary text-xl" data-icon="policy">policy</span>
+<span>Peraturan Daerah No. 4 Tahun 2021</span>
+</div>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+<!-- Box DITERIMA (Hijau/Civic Positive) -->
+<div class="bg-surface-container-lowest rounded-2xl border-2 border-emerald-200 p-8 shadow-sm relative overflow-hidden">
+<div class="absolute top-0 right-0 w-32 h-32 bg-emerald-50 rounded-bl-full -z-0"></div>
+<div class="relative z-10">
+<div class="flex items-center gap-3 mb-6">
+<div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center font-bold">
+<span class="material-symbols-outlined text-2xl" data-icon="check_circle">check_circle</span>
+</div>
+<div>
+<h3 class="text-headline-md font-headline-md text-on-surface">Kategori Pengaduan Diterima</h3>
+<p class="text-body-sm font-body-sm text-emerald-800 font-medium">Kewenangan penuh Dinas/OPD Pemerintah Kota/Kabupaten</p>
+</div>
+</div>
+<ul class="space-y-4">
+<li class="flex items-start gap-3 p-3 rounded-xl bg-emerald-50/50 border border-emerald-100">
+<span class="material-symbols-outlined text-emerald-700 mt-0.5" data-icon="alt_route">alt_route</span>
+<div>
+<strong class="text-on-surface font-headline-sm text-headline-sm block">Kerusakan Jalan &amp; Jembatan Lokal</strong>
+<span class="text-body-sm text-on-surface-variant">Jalan berlubang, trotoar amblas, serta pembatas jalan kota/kabupaten.</span>
+</div>
+</li>
+<li class="flex items-start gap-3 p-3 rounded-xl bg-emerald-50/50 border border-emerald-100">
+<span class="material-symbols-outlined text-emerald-700 mt-0.5" data-icon="delete">delete</span>
+<div>
+<strong class="text-on-surface font-headline-sm text-headline-sm block">Pengelolaan Sampah &amp; Kebersihan</strong>
+<span class="text-body-sm text-on-surface-variant">Timbunan sampah liar, jadwal angkut terlambat, dan TPS yang melebihi kapasitas.</span>
+</div>
+</li>
+<li class="flex items-start gap-3 p-3 rounded-xl bg-emerald-50/50 border border-emerald-100">
+<span class="material-symbols-outlined text-emerald-700 mt-0.5" data-icon="lightbulb">lightbulb</span>
+<div>
+<strong class="text-on-surface font-headline-sm text-headline-sm block">Penerangan Jalan Umum (PJU) &amp; Traffic Light</strong>
+<span class="text-body-sm text-on-surface-variant">Lampu jalan padam di pemukiman warga dan rambu lampu merah yang tidak berfungsi.</span>
+</div>
+</li>
+<li class="flex items-start gap-3 p-3 rounded-xl bg-emerald-50/50 border border-emerald-100">
+<span class="material-symbols-outlined text-emerald-700 mt-0.5" data-icon="water_damage">water_damage</span>
+<div>
+<strong class="text-on-surface font-headline-sm text-headline-sm block">Saluran Drainase, Selokan &amp; Genangan Air</strong>
+<span class="text-body-sm text-on-surface-variant">Gorong-gorong mampet, sedimentasi parit pemukiman, dan luapan air limbah komunal.</span>
+</div>
+</li>
+<li class="flex items-start gap-3 p-3 rounded-xl bg-emerald-50/50 border border-emerald-100">
+<span class="material-symbols-outlined text-emerald-700 mt-0.5" data-icon="support_agent">support_agent</span>
+<div>
+<strong class="text-on-surface font-headline-sm text-headline-sm block">Kualitas Layanan Kantor Kecamatan &amp; Kelurahan</strong>
+<span class="text-body-sm text-on-surface-variant">Keluhan pungutan liar, ketidakdisiplinan jam kerja loket, dan kendala administrasi kependudukan.</span>
+</div>
+</li>
+</ul>
+</div>
+</div>
+<!-- Box DITOLAK (Merah / Batas Mandat) -->
+<div class="bg-surface-container-lowest rounded-2xl border-2 border-red-200 p-8 shadow-sm relative overflow-hidden">
+<div class="absolute top-0 right-0 w-32 h-32 bg-red-50 rounded-bl-full -z-0"></div>
+<div class="relative z-10">
+<div class="flex items-center gap-3 mb-6">
+<div class="w-10 h-10 rounded-xl bg-red-100 text-red-800 flex items-center justify-center font-bold">
+<span class="material-symbols-outlined text-2xl" data-icon="cancel">cancel</span>
+</div>
+<div>
+<h3 class="text-headline-md font-headline-md text-on-surface">Laporan di Luar Kewenangan (Ditolak)</h3>
+<p class="text-body-sm font-body-sm text-red-700 font-medium">Akan ditolak otomatis saat tahap triase dan dialihkan ke instansi berwenang</p>
+</div>
+</div>
+<ul class="space-y-4">
+<li class="flex items-start gap-3 p-3 rounded-xl bg-red-50/40 border border-red-100">
+<span class="material-symbols-outlined text-red-700 mt-0.5" data-icon="gavel">gavel</span>
+<div>
+<strong class="text-on-surface font-headline-sm text-headline-sm block">Perkara Sengketa Pidana &amp; Perdata Murni</strong>
+<span class="text-body-sm text-on-surface-variant">Sengketa waris tanah privat, tindak pidana pencurian, atau penipuan perorangan (Harap lapor ke Polsek/Polres).</span>
+</div>
+</li>
+<li class="flex items-start gap-3 p-3 rounded-xl bg-red-50/40 border border-red-100">
+<span class="material-symbols-outlined text-red-700 mt-0.5" data-icon="campaign">campaign</span>
+<div>
+<strong class="text-on-surface font-headline-sm text-headline-sm block">Ujaran Kebencian, SARA &amp; Konflik Pribadi</strong>
+<span class="text-body-sm text-on-surface-variant">Laporan bersifat fitnah tanpa bukti objektif, pertikaian antar-tetangga tanpa dampak ketertiban umum.</span>
+</div>
+</li>
+<li class="flex items-start gap-3 p-3 rounded-xl bg-red-50/40 border border-red-100">
+<span class="material-symbols-outlined text-red-700 mt-0.5" data-icon="toll">toll</span>
+<div>
+<strong class="text-on-surface font-headline-sm text-headline-sm block">Jalan Tol Nasional &amp; Jalan Lintas Provinsi</strong>
+<span class="text-body-sm text-on-surface-variant">Infrastruktur di bawah wewenang Kementerian PUPR atau BUMN Pengelola Tol (misal: Jasa Marga).</span>
+</div>
+</li>
+<li class="flex items-start gap-3 p-3 rounded-xl bg-red-50/40 border border-red-100">
+<span class="material-symbols-outlined text-red-700 mt-0.5" data-icon="account_balance">account_balance</span>
+<div>
+<strong class="text-on-surface font-headline-sm text-headline-sm block">Pelayanan Instansi Vertikal Kementerian Pusat</strong>
+<span class="text-body-sm text-on-surface-variant">Pelayanan Paspor (Imigrasi), Sertifikasi BPN, atau Pajak Nasional (KPP Pratama).</span>
+</div>
+</li>
+<li class="flex items-start gap-3 p-3 rounded-xl bg-red-50/40 border border-red-100">
+<span class="material-symbols-outlined text-red-700 mt-0.5" data-icon="help_center">help_center</span>
+<div>
+<strong class="text-on-surface font-headline-sm text-headline-sm block">Laporan Anonim Tanpa Lokasi Jelas</strong>
+<span class="text-body-sm text-on-surface-variant">Laporan tanpa lampiran foto bukti aktual dan tanpa titik koordinat yang dapat diverifikasi surveyor.</span>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- FEED LAPORAN TERKINI WARGA YANG TELAH DISELESAIKAN -->
+<section class="py-24 max-w-7xl mx-auto px-4 md:px-8">
+<div class="flex flex-col md:flex-row md:items-end justify-between mb-12">
+<div>
+<span class="text-primary font-label-md text-label-md uppercase tracking-wider font-semibold">Bukti Transparansi Lapangan</span>
+<h2 class="text-headline-xl font-headline-xl text-on-surface mt-2 tracking-tight">Laporan Warga yang Berhasil Dituntaskan</h2>
+<p class="text-body-md font-body-md text-on-surface-variant mt-2">Dokumentasi sebelum dan sesudah perbaikan langsung oleh dinas teknis pemerintah daerah.</p>
+</div>
+<div class="mt-4 md:mt-0">
+<a class="inline-flex items-center gap-2 text-primary font-label-md text-label-md hover:underline font-semibold" href="#semua-laporan">
+            Lihat Arsip Transparansi Lengkap
+            <span class="material-symbols-outlined text-lg" data-icon="arrow_forward">arrow_forward</span>
+</a>
+</div>
+</div>
+<!-- Bento-style grid card -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+<!-- Ticket Card 1 -->
+<div class="bg-surface-container-lowest rounded-2xl border border-outline-variant p-5 shadow-sm hover:shadow-md transition duration-200 flex flex-col justify-between">
+<div class="space-y-4">
+<!-- Before-After Image Showcase -->
+<div class="grid grid-cols-2 gap-2 relative rounded-xl overflow-hidden">
+<div class="relative group">
+<img class="w-full h-36 object-cover rounded-lg" data-alt="Close-up documentary photograph of a severe urban pothole in asphalt road filled with muddy rainwater and cracked street pavement during daylight. The shot shows realistic municipal road damage with high texture detail in an Indonesian city suburban road." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC6T-WUgAKxq9637CuiGiiGnvSw03V7nLj84xlZeAoGZx7Ln4IGTqM8uCtEaHv7MG7q5-UJLJiCjXlzQjePNqksgDR7Tr2435XoxUESCIwufa-ysKB7GJk6wmncq5uJrOcYLAfCwco80skBpE2NV-PZibqiTy8IJcmLFNzQE1TJkT6XhMcWJEjyGh82kZO6dlFX-_GeezA7qpQB5JGb7iKjo8JPtHEkdqyzDMNAXVc"/>
+<span class="absolute bottom-2 left-2 px-2 py-0.5 text-[10px] font-bold bg-black/70 text-white rounded uppercase tracking-wide">Sebelum</span>
+</div>
+<div class="relative group">
+<img class="w-full h-36 object-cover rounded-lg" data-alt="High resolution documentary photograph of fresh black asphalt asphalt patch repairing the damaged road perfectly flat and clean with smooth finish and yellow safety lane markings clearly repainted on the newly repaired street under bright daylight." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCil4z9SpRUrlwHnCA5NfQg7RN5p3J1xxMHFjTRc8YTq6CqHQogFFMGY2GZc5HxeldEvUD86jrhqUjTxBTtViBWur2SpVFMQuoYWfz5LcHjIuFx4tv39S9IILxZ7QPYiRtABW1it3_0Qi1yiNccxLgmLo_wWx2i6Gj_OEI6e5VgLo7ZbG2ev5wljBwyzqi2esjHS0vT4-gNhD8ITvj6kQztHvTaMk6_gtOAMA9cwXA"/>
+<span class="absolute bottom-2 left-2 px-2 py-0.5 text-[10px] font-bold bg-emerald-700 text-white rounded uppercase tracking-wide">Sesudah</span>
+</div>
+</div>
+<!-- Card Header -->
+<div class="flex items-center justify-between">
+<span class="text-xs font-mono text-on-surface-variant font-semibold">#LAPOR-2024-8712</span>
+<!-- Status Badge -->
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-label-sm font-label-sm border border-emerald-200">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
+                SELESAI
+              </span>
+</div>
+<!-- Title & Desc -->
+<div>
+<h3 class="text-headline-sm font-headline-sm text-on-surface">Tambal Lubang Jalan RE Martadinata</h3>
+<p class="text-body-sm font-body-sm text-on-surface-variant mt-1">
+                Aspal amblas sedalam 15 cm telah di-overlay hotmix dan diratakan oleh Unit Reaksi Cepat DBMTR.
+              </p>
+</div>
+</div>
+<!-- Card Metadata Footer -->
+<div class="pt-4 mt-4 border-t border-surface-container flex items-center justify-between text-xs text-on-surface-variant">
+<span class="flex items-center gap-1 font-medium">
+<span class="material-symbols-outlined text-base text-primary" data-icon="location_on">location_on</span>
+              Kec. Bandung Wetan
+            </span>
+<span class="font-medium text-emerald-800">Tuntas dlm 36 Jam</span>
+</div>
+</div>
+<!-- Ticket Card 2 -->
+<div class="bg-surface-container-lowest rounded-2xl border border-outline-variant p-5 shadow-sm hover:shadow-md transition duration-200 flex flex-col justify-between">
+<div class="space-y-4">
+<!-- Before-After Image Showcase -->
+<div class="grid grid-cols-2 gap-2 relative rounded-xl overflow-hidden">
+<div class="relative group">
+<img class="w-full h-36 object-cover rounded-lg" data-alt="Authentic urban street scene showing an illegal pile of uncollected garbage bags and trash spilling onto pedestrian sidewalk near residential neighborhood in morning daylight. Realistic civic issue photography with natural street lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBYcl8qXvsQKNHmSwcA-yOd9qNEygI-ZBuuFQAoww4OiakpRjZz5tOv28LARoBAO7PeU9j1PR5aoz-C8_wQH5CS26f1IWdqqHaedVvA6tR-6wFFRome49AeXfI59_TjJyaqkWIGSe65lf6PZ6TDY0o2DyD0TJ7cjsnLAVf2hQI3dfGp8Y0HXIFLBXpVeHgc6Fzmw40lgOPae_rfoTTpDNgLThWUj5Ue36DgtUwyndk"/>
+<span class="absolute bottom-2 left-2 px-2 py-0.5 text-[10px] font-bold bg-black/70 text-white rounded uppercase tracking-wide">Sebelum</span>
+</div>
+<div class="relative group">
+<img class="w-full h-36 object-cover rounded-lg" data-alt="Clean and pristine pedestrian walkway and concrete curb completely cleared of garbage and pressure-washed clean by municipal hygiene staff, with newly installed green civic trash bins under sunny clear daylight." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB5439lsa9zeccdyfPLDpDhtcGcyqf51Gc2_CbYKBmuGazrGCVKNsxsSUz6nDrbGsPcatGBy8N7gjoYDatfgZucU976t234AWw3kw4VYm7ZQOH-ozDhWrrjOfqb_dNxqTkxcTN-6Rc6A4jWQphtSJbarj3iragQW7pRaf5drtWSlZkPKmo-vzsKebKh3LpioRx6iYsv82B_lVuG4drGqs3CO49nThPDX6PfZhatKKU"/>
+<span class="absolute bottom-2 left-2 px-2 py-0.5 text-[10px] font-bold bg-emerald-700 text-white rounded uppercase tracking-wide">Sesudah</span>
+</div>
+</div>
+<!-- Card Header -->
+<div class="flex items-center justify-between">
+<span class="text-xs font-mono text-on-surface-variant font-semibold">#LAPOR-2024-8690</span>
+<!-- Status Badge -->
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-label-sm font-label-sm border border-emerald-200">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
+                SELESAI
+              </span>
+</div>
+<!-- Title & Desc -->
+<div>
+<h3 class="text-headline-sm font-headline-sm text-on-surface">Pembersihan Timbunan Sampah Liar TPS Kiaracondong</h3>
+<p class="text-body-sm font-body-sm text-on-surface-variant mt-1">
+                Pengangkutan 4 ton sampah menggunakan armada truk Dinas Lingkungan Hidup dan disinfeksi area.
+              </p>
+</div>
+</div>
+<!-- Card Metadata Footer -->
+<div class="pt-4 mt-4 border-t border-surface-container flex items-center justify-between text-xs text-on-surface-variant">
+<span class="flex items-center gap-1 font-medium">
+<span class="material-symbols-outlined text-base text-primary" data-icon="location_on">location_on</span>
+              Kec. Kiaracondong
+            </span>
+<span class="font-medium text-emerald-800">Tuntas dlm 18 Jam</span>
+</div>
+</div>
+<!-- Ticket Card 3 -->
+<div class="bg-surface-container-lowest rounded-2xl border border-outline-variant p-5 shadow-sm hover:shadow-md transition duration-200 flex flex-col justify-between">
+<div class="space-y-4">
+<!-- Before-After Image Showcase -->
+<div class="grid grid-cols-2 gap-2 relative rounded-xl overflow-hidden">
+<div class="relative group">
+<img class="w-full h-36 object-cover rounded-lg" data-alt="Evening dusk photograph of a dark suburban residential street corner with completely broken and unlit street light pole, creating dark hazardous corner for motor vehicles and pedestrians." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDIXjEZj079G_YJOL8tGEFoKfP2jeHXvknJi6Tb_ReagnYUucEcO91ow95UQvb4v4eDZSa7FLA8rjbn0BEHC49kPGWTaMimdCdCK9MlCWkSoRktv0tQa7UjJ-6nQFNSXb_AN5uE9jXUche8zcj04iSe9kWYxScBvBYYA_pJc9nIxW4O9XOuEmTK88QXMXSYRUVzdx-YKKmN3sIPISmegkdgaL-LYOmpUxfZ5LQGrwY"/>
+<span class="absolute bottom-2 left-2 px-2 py-0.5 text-[10px] font-bold bg-black/70 text-white rounded uppercase tracking-wide">Sebelum</span>
+</div>
+<div class="relative group">
+<img class="w-full h-36 object-cover rounded-lg" data-alt="Night cityscape photo of bright modern LED street lighting illuminating the entire neighborhood road with crisp clear illumination, shining on asphalt and residential sidewalks safely and brightly." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDzB7PKg2WQgwkNqkOLOZutOKcl1UpVjQcWbiK9NMDfr2cE-WzBHkL2uDPqHLYFo1AoY6qhkcILmmc9asP3as7TtQT01c-ueexblaGr-EpUjNrZiW9VOlj0NCOVJ0TCqlML-82wgADkuwMmimHGRiPL4l87ChmMyKvECpTBtmzn_TaLvGqzYV0dC51jCxZ2IK0PCwIIDS6ZiQfBtzz8tYTktU3syHHJ_0W0PefTPpA"/>
+<span class="absolute bottom-2 left-2 px-2 py-0.5 text-[10px] font-bold bg-emerald-700 text-white rounded uppercase tracking-wide">Sesudah</span>
+</div>
+</div>
+<!-- Card Header -->
+<div class="flex items-center justify-between">
+<span class="text-xs font-mono text-on-surface-variant font-semibold">#LAPOR-2024-8654</span>
+<!-- Status Badge -->
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-label-sm font-label-sm border border-emerald-200">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
+                SELESAI
+              </span>
+</div>
+<!-- Title & Desc -->
+<div>
+<h3 class="text-headline-sm font-headline-sm text-on-surface">Penggantian 6 Titik Lampu PJU Padam</h3>
+<p class="text-body-sm font-body-sm text-on-surface-variant mt-1">
+                Dinas Perhubungan mengganti modul bohlam LED 120W dan memperbaiki kabel jaringan bawah tanah.
+              </p>
+</div>
+</div>
+<!-- Card Metadata Footer -->
+<div class="pt-4 mt-4 border-t border-surface-container flex items-center justify-between text-xs text-on-surface-variant">
+<span class="flex items-center gap-1 font-medium">
+<span class="material-symbols-outlined text-base text-primary" data-icon="location_on">location_on</span>
+              Kec. Coblong
+            </span>
+<span class="font-medium text-emerald-800">Tuntas dlm 24 Jam</span>
+</div>
+</div>
+</div>
+<!-- Quick Interactive Complaint CTA Banner -->
+<div class="mt-16 rounded-2xl bg-surface-container-high p-8 md:p-12 border border-outline-variant flex flex-col md:flex-row items-center justify-between gap-8" id="ajukan">
+<div class="space-y-2 max-w-2xl">
+<h3 class="text-headline-lg font-headline-lg text-on-surface">Menemukan Masalah Fasilitas Umum Hari Ini?</h3>
+<p class="text-body-md font-body-md text-on-surface-variant">
+            Jangan biarkan fasilitas rusak membahayakan warga lain. Ambil foto menggunakan ponsel cerdas Anda dan laporkan dalam kurun waktu kurang dari 2 menit.
+          </p>
+</div>
+<div class="flex flex-wrap items-center gap-4 shrink-0">
+<button class="px-6 py-3.5 rounded-lg bg-primary-container text-on-primary font-label-lg text-label-lg shadow-sm hover:bg-primary transition duration-150 ease-in-out active:scale-95 flex items-center gap-2">
+<span class="material-symbols-outlined text-xl" data-icon="add_circle">add_circle</span>
+            Mulai Buat Pengaduan
+          </button>
+</div>
+</div>
+</section>
+</main>
+<!-- FOOTER RESMI PEMERINTAH DAERAH (from Shared Component JSON) -->
+<footer class="w-full mt-auto bg-surface-container-low dark:bg-inverse-surface border-t border-outline-variant dark:border-outline">
+<div class="max-w-7xl mx-auto px-4 md:px-8 py-12">
+<!-- Top Section: Hotline & Call Center Info -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-8 pb-10 border-b border-surface-container-high">
+<!-- Brand & Govt Seal -->
+<div class="md:col-span-5 space-y-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-primary-container flex items-center justify-center text-on-primary">
+<span class="material-symbols-outlined text-2xl" data-icon="account_balance">account_balance</span>
+</div>
+<span class="text-headline-md font-headline-md text-primary dark:text-inverse-primary font-bold">
+              SIPANTAU Pengaduan Warga
+            </span>
+</div>
+<p class="text-body-sm font-body-sm text-on-surface-variant leading-relaxed max-w-md">
+            Portal resmi satu pintu pemantauan tindak lanjut pengaduan dan aspirasi masyarakat yang diselenggarakan oleh Pemerintah Daerah demi mewujudkan tata kelola kota yang responsif, transparan, dan terpercaya.
+          </p>
+<div class="flex items-center gap-3 pt-2 text-on-surface-variant">
+<span class="text-xs font-semibold uppercase tracking-wider text-on-surface">Terhubung dengan:</span>
+<span class="text-xs font-medium bg-surface-container px-2.5 py-1 rounded">SP4N-LAPOR! RI</span>
+<span class="text-xs font-medium bg-surface-container px-2.5 py-1 rounded">KemenPAN-RB</span>
+</div>
+</div>
+<!-- Hotline 112 Civic Emergency Badge -->
+<div class="md:col-span-4 bg-surface-container-lowest p-5 rounded-xl border border-outline-variant shadow-sm flex items-start gap-4">
+<div class="w-12 h-12 rounded-xl bg-red-100 text-red-700 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-3xl" data-icon="phone_in_talk">phone_in_talk</span>
+</div>
+<div class="space-y-1">
+<div class="text-headline-sm font-headline-sm text-red-700 font-bold flex items-center gap-2">
+<span>Hotline Darurat 112</span>
+<span class="text-[10px] px-2 py-0.5 bg-red-600 text-white rounded-full uppercase tracking-wider">Bebas Pulsa</span>
+</div>
+<p class="text-body-sm font-body-sm text-on-surface-variant">
+              Untuk kondisi darurat kebakaran, ambulans medis gawat darurat, dan bencana alam 24 jam non-stop.
+            </p>
+</div>
+</div>
+<!-- Contact Hours & Support -->
+<div class="md:col-span-3 space-y-2">
+<h4 class="text-label-lg font-label-lg text-on-surface">Pusat Layanan Warga</h4>
+<p class="text-body-sm font-body-sm text-on-surface-variant flex items-center gap-2">
+<span class="material-symbols-outlined text-sm text-primary" data-icon="location_on">location_on</span>
+            Gedung Bale Kota Lt. 2, Jl. Pemuda No. 1
+          </p>
+<p class="text-body-sm font-body-sm text-on-surface-variant flex items-center gap-2">
+<span class="material-symbols-outlined text-sm text-primary" data-icon="mail">mail</span>
+            pengaduan@pemda.go.id
+          </p>
+<p class="text-body-sm font-body-sm text-on-surface-variant flex items-center gap-2">
+<span class="material-symbols-outlined text-sm text-primary" data-icon="call">call</span>
+            (022) 420-3344 (Jam Kerja 08.00 - 16.00)
+          </p>
+</div>
+</div>
+<!-- Links Cluster & Copyright -->
+<div class="pt-8 flex flex-col md:flex-row justify-between items-center gap-6">
+<!-- Footer Nav Links from JSON -->
+<div class="flex flex-wrap items-center gap-y-2 gap-x-6 text-label-sm font-label-sm">
+<a class="text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-inverse-primary transition-colors" href="#kewenangan">
+            Kebijakan Privasi
+          </a>
+<a class="text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-inverse-primary transition-colors" href="#kewenangan">
+            Ketentuan Layanan
+          </a>
+<a class="text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-inverse-primary transition-colors" href="#alur">
+            Pedoman Pengaduan SIPANTAU
+          </a>
+<a class="text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-inverse-primary transition-colors" href="#kewenangan">
+            Keterbukaan Informasi Publik
+          </a>
+<a class="text-primary dark:text-inverse-primary font-semibold underline" href="#hotline">
+            Kontak Darurat 112
+          </a>
+</div>
+<!-- Copyright text from JSON -->
+<p class="text-body-sm font-body-sm text-on-surface-variant text-center md:text-right">
+          © 2024 Pemerintah Daerah Republik Indonesia. Seluruh hak cipta dilindungi undang-undang.
+        </p>
+</div>
+</div>
+</footer>
+<script src="/sipantau-engine.js"></script>
+</body></html>

@@ -1,0 +1,1351 @@
+/**
+ * SIPANTAU - CORE INTERACTIVE & GIS API ENGINE
+ * Sesuai Spesifikasi DESIGN.md Stitch (Primary Crimson #C8102E / #9E001F, Plus Jakarta Sans & Inter)
+ */
+(function () {
+  const DB_KEY = 'SIPANTAU_CIVIC_DB_V2';
+
+  // 1. PANGKALAN DATA TIKET TERPADU (Diselaraskan dengan semua halaman Stitch)
+  const initialTickets = [
+    {
+      id: '#LAPOR-2410-092',
+      code: 'LAPOR-2410-092',
+      judul: 'Jalan Rusak & Berlubang Dalam',
+      kategori: 'Jalan Rusak',
+      kategoriLabel: 'Infrastruktur Jalan & Jembatan',
+      dinas: 'Dinas Bina Marga & Tata Ruang',
+      alamat: 'Jl. Ir. H. Juanda No. 84, Dago, Kec. Coblong',
+      kecamatan: 'Kec. Coblong',
+      waktu: '24 Okt 2024, 09:15 WIB',
+      sla: 'SLA 4j 10m',
+      urgensi: 'Tinggi',
+      triaseLevel: 'Triase Level 1',
+      status: 'Diverifikasi',
+      upvotes: 34,
+      lat: -6.890451,
+      lng: 107.612824,
+      pelapor: 'Warga Terverifikasi (Anonim)',
+      nik: '3273**********0019',
+      telepon: '+62 813-****-8821',
+      deskripsi: 'Aspal jalan utama berlubang sedalam 20 cm dengan diameter hampir 1 meter di lajur kiri arah Dago Atas. Sangat membahayakan pengendara roda dua terutama saat malam hari dan ketika hujan.',
+      foto: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDF8T8kAUNM-_2HbGnXu8uBKMJ2muGoOIIVwsW-LJXlvjeUyggI0kmrcFyCrJjw5DGqCVi2YjGD6kjq4_gY3-wkkU7CUJuk3ewvRC13mHt8lJyLnqVDv-klbEXOR1R1qkaKxAKpJP1LKp9Pib0NfqapWtlBZyChM_CTjE5aay9TegQ8LnoxrCAjItLPcfcuLGBXQVWqAm4o_HFnPV0BLEExLo7eqWfAbvwqq5KEy88',
+      petugas: 'Siti M. (Verifikator)',
+      timeline: [
+        { tahap: 'Laporan Diajukan Warga', waktu: '24 Okt 2024, 09:15 WIB', keterangan: 'Tiket diterima dengan lampiran foto terverifikasi EXIF & koordinat GPS.', done: true },
+        { tahap: 'Verifikasi Administrasi & Geotag', waktu: '24 Okt 2024, 10:02 WIB', keterangan: 'Diverifikasi oleh Tim Triase Diskominfo. Diteruskan ke Dinas Bina Marga & Tata Ruang.', done: true },
+        { tahap: 'Penanganan Regu Teknis OPD', waktu: 'Dalam Antrean URC', keterangan: 'Unit Reaksi Cepat (URC) sedang dijadwalkan menuju titik lokasi.', active: true },
+        { tahap: 'Selesai & Evaluasi Publik', waktu: '-', keterangan: 'Menunggu unggahan bukti perbaikan fisik di lapangan.', done: false }
+      ]
+    },
+    {
+      id: '#TKT-2024-8841',
+      code: 'TKT-2024-8841',
+      judul: 'Pipa PDAM Bocor Menyebabkan Genangan Jalan Protokol',
+      kategori: 'Drainase / Banjir',
+      kategoriLabel: 'Infrastruktur Air',
+      dinas: 'Perumda Tirtawening (PDAM)',
+      alamat: 'Jl. Asia Afrika No. 120, Sumur Bandung',
+      kecamatan: 'Kec. Sumur Bandung',
+      waktu: 'Hari ini, 08:14 WIB',
+      sla: 'SLA 2j 46m',
+      urgensi: 'Tinggi',
+      triaseLevel: 'Triase Level 1',
+      status: 'Diajukan',
+      upvotes: 49,
+      lat: -6.9215,
+      lng: 107.6102,
+      pelapor: 'Hendra Wijaya (Samaran)',
+      nik: '3273**********0002',
+      telepon: '+62 812-****-4912',
+      deskripsi: 'Pipa distribusi utama di tepi trotoar Jl. Asia Afrika mengalami kebocoran bertekanan tinggi sejak pukul 06.30 WIB sehingga menimbulkan genangan sepanjang 40 meter dan menghambat laju kendaraan.',
+      foto: 'https://lh3.googleusercontent.com/aida-public/AB6AXuC6T-WUgAKxq9637CuiGiiGnvSw03V7nLj84xlZeAoGZx7Ln4IGTqM8uCtEaHv7MG7q5-UJLJiCjXlzQjePNqksgDR7Tr2435XoxUESCIwufa-ysKB7GJk6wmncq5uJrOcYLAfCwco80skBpE2NV-PZibqiTy8IJcmLFNzQE1TJkT6XhMcWJEjyGh82kZO6dlFX-_GeezA7qpQB5JGb7iKjo8JPtHEkdqyzDMNAXVc',
+      petugas: 'Budi S. (Review)',
+      timeline: [
+        { tahap: 'Laporan Diajukan Warga', waktu: 'Hari ini, 08:14 WIB', keterangan: 'Laporan masuk melalui portal warga dengan tingkat urgensi tinggi.', done: true },
+        { tahap: 'Verifikasi & Disposisi Petugas', waktu: 'Sedang Ditinjau', keterangan: 'Menunggu persetujuan disposisi dari Tim Verifikator Diskominfo.', active: true },
+        { tahap: 'Penanganan Regu Teknis OPD', waktu: '-', keterangan: 'Menunggu disposisi ke Perumda Tirtawening (PDAM).', done: false },
+        { tahap: 'Selesai & Evaluasi Publik', waktu: '-', keterangan: 'Menunggu penyelesaian perbaikan.', done: false }
+      ]
+    },
+    {
+      id: '#TKT-2024-8840',
+      code: 'TKT-2024-8840',
+      judul: 'Lampu APILL Simpang Lima Padam Mengakibatkan Kemacetan Parah',
+      kategori: 'Lampu Jalan PJU',
+      kategoriLabel: 'Lampu Lalu Lintas',
+      dinas: 'Dinas Perhubungan',
+      alamat: 'Simpang Lima Gatot Subroto, Batununggal',
+      kecamatan: 'Kec. Batununggal',
+      waktu: 'Hari ini, 07:45 WIB',
+      sla: 'SLA 3j 15m',
+      urgensi: 'Tinggi',
+      triaseLevel: 'Triase Level 2',
+      status: 'Penanganan',
+      upvotes: 62,
+      lat: -6.9228,
+      lng: 107.6265,
+      pelapor: 'Rina Kartika (Samaran)',
+      nik: '3273**********0108',
+      telepon: '+62 857-****-3310',
+      deskripsi: 'Lampu merah (APILL) di persimpangan utama Simpang Lima mati total dari keempat arah sejak pagi hari, menyebabkan penumpukan kendaraan pada jam berangkat kerja.',
+      foto: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDIXjEZj079G_YJOL8tGEFoKfP2jeHXvknJi6Tb_ReagnYUucEcO91ow95UQvb4v4eDZSa7FLA8rjbn0BEHC49kPGWTaMimdCdCK9MlCWkSoRktv0tQa7UjJ-6nQFNSXb_AN5uE9jXUche8zcj04iSe9kWYxScBvBYYA_pJc9nIxW4O9XOuEmTK88QXMXSYRUVzdx-YKKmN3sIPISmegkdgaL-LYOmpUxfZ5LQGrwY',
+      petugas: 'Siti M. (Disposisi)',
+      timeline: [
+        { tahap: 'Laporan Diajukan Warga', waktu: 'Hari ini, 07:45 WIB', keterangan: 'Laporan diterima beserta titik koordinat persimpangan.', done: true },
+        { tahap: 'Verifikasi & Disposisi', waktu: 'Hari ini, 08:05 WIB', keterangan: 'Disposisi prioritas diteruskan ke Dinas Perhubungan.', done: true },
+        { tahap: 'Penanganan Regu Teknis Dishub', waktu: 'Hari ini, 08:40 WIB', keterangan: 'Tim teknisi ATCS Dishub sedang memperbaiki panel kontrol di lokasi.', active: true },
+        { tahap: 'Selesai & Evaluasi Publik', waktu: '-', keterangan: 'Menunggu pengetesan akhir.', done: false }
+      ]
+    },
+    {
+      id: '#TKT-2024-8839',
+      code: 'TKT-2024-8839',
+      judul: 'Tumpukan Sampah Liar Menutupi Trotoar Pejalan Kaki',
+      kategori: 'Sampah & Kebersihan',
+      kategoriLabel: 'Kebersihan Kota',
+      dinas: 'Dinas Lingkungan Hidup',
+      alamat: 'Jl. Cihampelas No. 45, Coblong',
+      kecamatan: 'Kec. Coblong',
+      waktu: 'Hari ini, 06:30 WIB',
+      sla: 'SLA 4j 30m',
+      urgensi: 'Sedang',
+      triaseLevel: 'Triase Level 3',
+      status: 'Diajukan',
+      upvotes: 27,
+      lat: -6.8962,
+      lng: 107.6042,
+      pelapor: 'Ahmad Fauzi (Samaran)',
+      nik: '3273**********0074',
+      telepon: '+62 811-****-2094',
+      deskripsi: 'Kantong sampah rumah tangga dan limbah pasar tumpah ruah hingga menutup akses jalan kaki di trotoar Cihampelas serta menimbulkan bau menyengat.',
+      foto: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBYcl8qXvsQKNHmSwcA-yOd9qNEygI-ZBuuFQAoww4OiakpRjZz5tOv28LARoBAO7PeU9j1PR5aoz-C8_wQH5CS26f1IWdqqHaedVvA6tR-6wFFRome49AeXfI59_TjJyaqkWIGSe65lf6PZ6TDY0o2DyD0TJ7cjsnLAVf2hQI3dfGp8Y0HXIFLBXpVeHgc6Fzmw40lgOPae_rfoTTpDNgLThWUj5Ue36DgtUwyndk',
+      petugas: 'Belum Ditugaskan',
+      timeline: [
+        { tahap: 'Laporan Diajukan Warga', waktu: 'Hari ini, 06:30 WIB', keterangan: 'Bukti foto terunggah dengan validasi geotagging.', done: true },
+        { tahap: 'Verifikasi & Disposisi', waktu: 'Menunggu', keterangan: 'Dalam antrean verifikasi petugas.', active: true },
+        { tahap: 'Penanganan Armada DLH', waktu: '-', keterangan: 'Menunggu pengiriman truk angkut DLH.', done: false },
+        { tahap: 'Selesai & Evaluasi Publik', waktu: '-', keterangan: '-', done: false }
+      ]
+    },
+    {
+      id: '#TKT-2024-8837',
+      code: 'TKT-2024-8837',
+      judul: 'Lubang Jalan Sedalam 15cm Membahayakan Pengendara Roda Dua',
+      kategori: 'Jalan Rusak',
+      kategoriLabel: 'Jalan Rusak',
+      dinas: 'Dinas Bina Marga',
+      alamat: 'Jl. Soekarno Hatta KM 9, Rancasari',
+      kecamatan: 'Kec. Rancasari',
+      waktu: 'Kemarin, 21:10 WIB',
+      sla: 'SLA Terpenuhi',
+      urgensi: 'Sedang',
+      triaseLevel: 'Triase Level 2',
+      status: 'Diverifikasi',
+      upvotes: 41,
+      lat: -6.9435,
+      lng: 107.6641,
+      pelapor: 'Dedi Kurniawan (Samaran)',
+      nik: '3273**********0055',
+      telepon: '+62 821-****-9981',
+      deskripsi: 'Terdapat tiga titik lubang berurutan di lajur cepat Jl. Soekarno Hatta KM 9 yang kerap memicu ban pecah pada malam hari.',
+      foto: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDXFtctiQnd0l14H2wCi6K9MmziM4DTy1eGwBr2eOOO8Kf_8WSnqilI8xcQxzFEKrSCxDqPMn0QurjtCvA6E80nodixlstwvq_5Dn0Gml8r9-qyYbMfXc5bxYaRAcLl3XEjIjlwW7FRai1AJ1aZjmBHNGuLoo6-8n7iI-BS2fqeEfqFzSSFm94WwK9R-etaGrIDvbvPBuoYFggoVt0M3BOrr_Mc04p88EETPEmphj8',
+      petugas: 'Agus P. (Inspeksi)',
+      timeline: [
+        { tahap: 'Laporan Diajukan Warga', waktu: 'Kemarin, 21:10 WIB', keterangan: 'Laporan diterima sistem.', done: true },
+        { tahap: 'Verifikasi & Disposisi', waktu: 'Kemarin, 22:00 WIB', keterangan: 'Diverifikasi dan diteruskan ke Dinas Bina Marga.', done: true },
+        { tahap: 'Survei Lapangan & Penambalan', waktu: 'Hari ini, 09:00 WIB', keterangan: 'Tim inspeksi sedang melakukan pengukuran titik tambal hotmix.', active: true },
+        { tahap: 'Selesai & Evaluasi Publik', waktu: '-', keterangan: '-', done: false }
+      ]
+    },
+    {
+      id: '#TKT-2024-8835',
+      code: 'TKT-2024-8835',
+      judul: 'Dahan Pohon Peneduh Patah Menimpa Kabel Listrik PLN',
+      kategori: 'Fasilitas Umum',
+      kategoriLabel: 'Pohon Tumbang',
+      dinas: 'DPKP3 & Damkar',
+      alamat: 'Jl. Dago Atas No. 88, Coblong',
+      kecamatan: 'Kec. Coblong',
+      waktu: 'Kemarin, 19:40 WIB',
+      sla: 'SLA Terpenuhi',
+      urgensi: 'Tinggi',
+      triaseLevel: 'Triase Level 1',
+      status: 'Selesai',
+      upvotes: 76,
+      lat: -6.8789,
+      lng: 107.6189,
+      pelapor: 'Warga Terverifikasi',
+      nik: '3273**********0091',
+      telepon: '+62 819-****-7712',
+      deskripsi: 'Cabang pohon angsana besar patah pasca angin kencang dan menggantung di atas kabel jaringan listrik serta menutup separuh badan jalan.',
+      foto: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCil4z9SpRUrlwHnCA5NfQg7RN5p3J1xxMHFjTRc8YTq6CqHQogFFMGY2GZc5HxeldEvUD86jrhqUjTxBTtViBWur2SpVFMQuoYWfz5LcHjIuFx4tv39S9IILxZ7QPYiRtABW1it3_0Qi1yiNccxLgmLo_wWx2i6Gj_OEI6e5VgLo7ZbG2ev5wljBwyzqi2esjHS0vT4-gNhD8ITvj6kQztHvTaMk6_gtOAMA9cwXA',
+      petugas: 'Reza T. (Evakuasi)',
+      timeline: [
+        { tahap: 'Laporan Diajukan Warga', waktu: 'Kemarin, 19:40 WIB', keterangan: 'Laporan darurat diterima.', done: true },
+        { tahap: 'Verifikasi Cepat', waktu: 'Kemarin, 19:48 WIB', keterangan: 'Disposisi darurat ke DPKP3 & Damkar.', done: true },
+        { tahap: 'Pemangkasan & Evakuasi', waktu: 'Kemarin, 20:30 WIB', keterangan: 'Pohon berhasil dievakuasi bersama petugas PLN.', done: true },
+        { tahap: 'Selesai Ditangani', waktu: 'Kemarin, 22:15 WIB', keterangan: 'Jalan kembali normal dan aman dilalui.', done: true }
+      ]
+    }
+  ];
+
+  function getTickets() {
+    try {
+      const raw = localStorage.getItem(DB_KEY);
+      if (!raw) {
+        localStorage.setItem(DB_KEY, JSON.stringify(initialTickets));
+        return initialTickets;
+      }
+      const parsed = JSON.parse(raw);
+      return Array.isArray(parsed) && parsed.length > 0 ? parsed : initialTickets;
+    } catch (e) {
+      return initialTickets;
+    }
+  }
+
+  function saveTickets(list) {
+    try {
+      localStorage.setItem(DB_KEY, JSON.stringify(list));
+    } catch (e) {}
+  }
+
+  // 2. TOAST NOTIFICATION SESUAI TEMA STITCH (#9E001F / #C8102E)
+  function showToast(message, type = 'primary') {
+    let wrap = document.getElementById('sipantau-toast-wrap');
+    if (!wrap) {
+      wrap = document.createElement('div');
+      wrap.id = 'sipantau-toast-wrap';
+      wrap.className = 'fixed bottom-16 right-5 z-[9999] flex flex-col gap-2.5 max-w-md pointer-events-none';
+      document.body.appendChild(wrap);
+    }
+    const styles = {
+      primary: 'bg-[#9e001f] text-white border-[#ffdad8]/30',
+      success: 'bg-[#16A34A] text-white border-emerald-300/30',
+      warning: 'bg-[#9a5200] text-white border-amber-300/30',
+      info: 'bg-[#1b1b1f] text-white border-white/20'
+    };
+    const icons = { primary: 'campaign', success: 'check_circle', warning: 'warning', info: 'info' };
+
+    const el = document.createElement('div');
+    el.className = `pointer-events-auto flex items-center gap-3 px-4 py-3 rounded-xl shadow-2xl border ${styles[type] || styles.primary} transition-all duration-300 opacity-0 translate-y-2`;
+    el.innerHTML = `
+      <span class="material-symbols-outlined text-[20px]">${icons[type] || 'info'}</span>
+      <div class="text-xs font-medium leading-relaxed flex-1" style="font-family:'Inter',sans-serif;">${message}</div>
+    `;
+    wrap.appendChild(el);
+    requestAnimationFrame(() => el.classList.remove('opacity-0', 'translate-y-2'));
+    setTimeout(() => {
+      el.classList.add('opacity-0', 'translate-y-2');
+      setTimeout(() => el.remove(), 300);
+    }, 3600);
+  }
+  window.showCivicToast = showToast;
+
+  // 3. PEMUAT LEAFLET MAPS API & NOMINATIM GEOCODING API
+  function ensureLeaflet(cb) {
+    if (window.L) return cb();
+    const css = document.createElement('link');
+    css.rel = 'stylesheet';
+    css.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
+    document.head.appendChild(css);
+
+    const js = document.createElement('script');
+    js.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
+    js.onload = cb;
+    document.head.appendChild(js);
+  }
+
+  async function reverseGeocode(lat, lng) {
+    try {
+      const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`, {
+        headers: { 'Accept-Language': 'id' }
+      });
+      const data = await res.json();
+      return data.display_name || `Koordinat (${lat.toFixed(6)}, ${lng.toFixed(6)})`;
+    } catch (e) {
+      return `Jl. Lokasi Terpilih (${lat.toFixed(6)}, ${lng.toFixed(6)})`;
+    }
+  }
+
+  async function forwardGeocode(query) {
+    try {
+      const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query + ', Indonesia')}&limit=1`);
+      const data = await res.json();
+      if (data && data.length > 0) {
+        return { lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon), name: data[0].display_name };
+      }
+    } catch (e) {}
+    return null;
+  }
+
+  function createCivicPin(status, isSelected = false) {
+    const colorMap = {
+      Diajukan: '#BA1A1A',
+      Diverifikasi: '#9A5200',
+      Penanganan: '#316BF3',
+      Selesai: '#16A34A',
+      Ditolak: '#4B5563'
+    };
+    const iconMap = {
+      Diajukan: 'water_damage',
+      Diverifikasi: 'remove_road',
+      Penanganan: 'engineering',
+      Selesai: 'check',
+      Ditolak: 'cancel'
+    };
+    const bg = colorMap[status] || '#C8102E';
+    const ic = iconMap[status] || 'location_on';
+    const size = isSelected ? 40 : 34;
+
+    return window.L.divIcon({
+      className: 'sipantau-leaflet-pin',
+      html: `
+        <div style="position:relative;display:flex;flex-direction:column;align-items:center;">
+          ${isSelected ? `<span style="position:absolute;top:-4px;left:-4px;width:${size + 8}px;height:${size + 8}px;border-radius:9999px;background:${bg}44;animation:ping 1.5s cubic-bezier(0,0,0.2,1) infinite;"></span>` : ''}
+          <div style="width:${size}px;height:${size}px;border-radius:9999px;background:${bg};border:2.5px solid #fff;box-shadow:0 6px 16px rgba(0,0,0,0.28);display:flex;align-items:center;justify-content:center;color:#fff;z-index:2;">
+            <span class="material-symbols-outlined" style="font-size:${isSelected ? 20 : 16}px;">${ic}</span>
+          </div>
+          <div style="width:10px;height:10px;background:${bg};transform:rotate(45deg);margin-top:-6px;z-index:1;"></div>
+        </div>
+      `,
+      iconSize: [size, size + 8],
+      iconAnchor: [size / 2, size + 6]
+    });
+  }
+
+  // 4. MODAL PELACAK TIKET LANGSUNG (#lacak)
+  window.openTicketTrackerModal = function (prefillId) {
+    let modal = document.getElementById('sipantau-tracker-modal');
+    if (!modal) {
+      modal = document.createElement('div');
+      modal.id = 'sipantau-tracker-modal';
+      modal.className = 'fixed inset-0 z-[9995] flex items-center justify-center p-4 bg-[#1b1b1f]/60 backdrop-blur-sm';
+      modal.innerHTML = `
+        <div class="bg-white rounded-2xl max-w-2xl w-full border border-[#e5bdbb] shadow-2xl overflow-hidden">
+          <div class="bg-[#9e001f] text-white p-5 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-xl bg-white/15 flex items-center justify-center">
+                <span class="material-symbols-outlined text-2xl">track_changes</span>
+              </div>
+              <div>
+                <h3 class="font-bold text-lg tracking-tight" style="font-family:'Plus Jakarta Sans',sans-serif;">Pelacak Status Tiket SIPANTAU</h3>
+                <p class="text-xs text-[#ffdad8]">Pantau progres triase & disposisi OPD secara real-time</p>
+              </div>
+            </div>
+            <button type="button" id="close-tracker-modal" class="p-1.5 rounded-lg hover:bg-white/15 transition">
+              <span class="material-symbols-outlined">close</span>
+            </button>
+          </div>
+          <div class="p-6 space-y-5 max-h-[80vh] overflow-y-auto">
+            <div class="flex gap-2">
+              <div class="relative flex-1">
+                <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-[#5c403f] text-lg">search</span>
+                <input id="tracker-search-input" type="text" placeholder="Masukkan Nomor Tiket (contoh: #TKT-2024-8841 atau #LAPOR-2410-092)..."
+                  class="w-full pl-10 pr-4 py-2.5 rounded-lg border border-[#e5bdbb] text-sm focus:border-[#c8102e] focus:ring-1 focus:ring-[#c8102e]" />
+              </div>
+              <button type="button" id="tracker-search-btn" class="px-5 py-2.5 rounded-lg bg-[#c8102e] hover:bg-[#9e001f] text-white font-semibold text-sm transition">
+                Lacak Tiket
+              </button>
+            </div>
+            <div class="flex flex-wrap items-center gap-1.5 text-xs text-[#5c403f]">
+              <span>Tiket aktif:</span>
+              <div id="tracker-quick-chips" class="flex flex-wrap gap-1.5"></div>
+            </div>
+            <div id="tracker-result-box" class="rounded-xl border border-[#e5bdbb] bg-[#fbf8fe] p-5"></div>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(modal);
+
+      modal.querySelector('#close-tracker-modal').addEventListener('click', () => modal.classList.add('hidden'));
+      modal.addEventListener('click', (e) => { if (e.target === modal) modal.classList.add('hidden'); });
+      modal.querySelector('#tracker-search-btn').addEventListener('click', () => renderTracked(modal.querySelector('#tracker-search-input').value));
+      modal.querySelector('#tracker-search-input').addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') renderTracked(e.target.value);
+      });
+    }
+
+    const tickets = getTickets();
+    const chipsContainer = modal.querySelector('#tracker-quick-chips');
+    chipsContainer.innerHTML = tickets.slice(0, 4).map((t) =>
+      `<button type="button" class="px-2.5 py-0.5 rounded-full bg-[#ffdad8]/60 text-[#9e001f] font-mono font-bold hover:bg-[#ffdad8] transition" data-ticket="${t.id}">${t.id}</button>`
+    ).join('');
+    chipsContainer.querySelectorAll('button').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const tid = btn.getAttribute('data-ticket');
+        modal.querySelector('#tracker-search-input').value = tid;
+        renderTracked(tid);
+      });
+    });
+
+    function renderTracked(query) {
+      const q = (query || '').trim().toUpperCase();
+      const all = getTickets();
+      const item = all.find((t) => t.id.toUpperCase() === q || t.code.toUpperCase() === q.replace('#', '') || t.judul.toUpperCase().includes(q)) || all[0];
+      const badgeStyles = {
+        Diajukan: 'bg-[#FDECEF] text-[#C8102E] border-[#F9CBD2]',
+        Diverifikasi: 'bg-[#FEF3C7] text-[#D97706] border-amber-300',
+        Penanganan: 'bg-[#EFF6FF] text-[#2563EB] border-blue-200',
+        Selesai: 'bg-[#DCFCE7] text-[#16A34A] border-emerald-200',
+        Ditolak: 'bg-gray-100 text-gray-700 border-gray-300'
+      };
+      modal.querySelector('#tracker-result-box').innerHTML = `
+        <div class="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-[#e5bdbb]/60">
+          <div class="flex items-center gap-2">
+            <span class="px-2.5 py-1 rounded bg-white border border-[#e5bdbb] font-mono font-bold text-xs text-[#9e001f]">${item.id}</span>
+            <span class="text-xs text-[#5c403f]">${item.waktu}</span>
+          </div>
+          <span class="px-3 py-1 rounded-full text-xs font-bold border ${badgeStyles[item.status] || badgeStyles.Diajukan}">
+            ${item.status.toUpperCase()}
+          </span>
+        </div>
+        <div class="py-3">
+          <h4 class="font-bold text-base text-[#1b1b1f]" style="font-family:'Plus Jakarta Sans',sans-serif;">${item.judul}</h4>
+          <p class="text-xs text-[#5c403f] mt-1">${item.alamat} • <strong>${item.dinas}</strong></p>
+          <p class="text-xs text-[#1b1b1f] mt-2.5 p-3 rounded-lg bg-white border border-[#e5bdbb]/60 leading-relaxed">"${item.deskripsi}"</p>
+        </div>
+        <div class="pt-3 border-t border-[#e5bdbb]/60">
+          <h5 class="text-xs font-bold uppercase tracking-wider text-[#5c403f] mb-3">Linimasa Progres Triase</h5>
+          <div class="space-y-3 relative before:absolute before:top-2 before:bottom-2 before:left-3 before:w-0.5 before:bg-[#e5bdbb]">
+            ${(item.timeline || []).map((step, idx) => `
+              <div class="relative flex items-start gap-3 pl-1">
+                <div class="w-5 h-5 rounded-full flex items-center justify-center text-[11px] font-bold z-10 shrink-0 ${
+                  step.done ? 'bg-[#16A34A] text-white' : step.active ? 'bg-[#c8102e] text-white ring-4 ring-[#ffdad8]' : 'bg-[#e4e1e7] text-[#5c403f]'
+                }">${step.done ? '✓' : idx + 1}</div>
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-center justify-between gap-2">
+                    <span class="text-xs font-bold text-[#1b1b1f]">${step.tahap}</span>
+                    <span class="text-[11px] text-[#5c403f] font-mono">${step.waktu}</span>
+                  </div>
+                  <p class="text-xs text-[#5c403f] mt-0.5">${step.keterangan}</p>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `;
+    }
+
+    modal.classList.remove('hidden');
+    const initId = prefillId || getTickets()[0].id;
+    modal.querySelector('#tracker-search-input').value = initId;
+    renderTracked(initId);
+  };
+
+  // 5. MODAL SSO WARGA & PETUGAS OPD
+  window.openCivicAuthModal = function () {
+    let modal = document.getElementById('sipantau-auth-modal');
+    if (!modal) {
+      modal = document.createElement('div');
+      modal.id = 'sipantau-auth-modal';
+      modal.className = 'fixed inset-0 z-[9995] flex items-center justify-center p-4 bg-[#1b1b1f]/60 backdrop-blur-sm';
+      modal.innerHTML = `
+        <div class="bg-white rounded-2xl max-w-md w-full border border-[#e5bdbb] shadow-2xl overflow-hidden">
+          <div class="bg-[#9e001f] text-white p-5 flex items-center justify-between">
+            <div class="flex items-center gap-2.5">
+              <span class="material-symbols-outlined text-2xl">verified_user</span>
+              <div>
+                <h3 class="font-bold text-base" style="font-family:'Plus Jakarta Sans',sans-serif;">Akses Portal SIPANTAU</h3>
+                <p class="text-[11px] text-[#ffdad8]">Pilih akses simulasi pengguna</p>
+              </div>
+            </div>
+            <button type="button" id="close-auth-modal" class="p-1 rounded-lg hover:bg-white/15">
+              <span class="material-symbols-outlined">close</span>
+            </button>
+          </div>
+          <div class="p-6 space-y-3.5">
+            <a href="../formulir_pengaduan_multi_step_warga/code.html" class="flex items-center justify-between p-4 rounded-xl border border-[#e5bdbb] hover:border-[#c8102e] hover:bg-[#ffdad8]/20 transition group">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-[#ffdad8] text-[#9e001f] flex items-center justify-center font-bold">
+                  <span class="material-symbols-outlined">person</span>
+                </div>
+                <div>
+                  <div class="font-bold text-sm text-[#1b1b1f]">Warga Pelapor (Budi Pratama)</div>
+                  <div class="text-xs text-[#5c403f]">Buat laporan baru & geotagging presisi</div>
+                </div>
+              </div>
+              <span class="material-symbols-outlined text-[#9e001f]">arrow_forward</span>
+            </a>
+            <a href="../dashboard_petugas_verifikasi_disposisi/code.html" class="flex items-center justify-between p-4 rounded-xl border border-[#e5bdbb] hover:border-[#0051d5] hover:bg-blue-50/50 transition group">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-[#dbe1ff] text-[#0051d5] flex items-center justify-center font-bold">
+                  <span class="material-symbols-outlined">admin_panel_settings</span>
+                </div>
+                <div>
+                  <div class="font-bold text-sm text-[#1b1b1f]">Petugas Admin OPD (Budi Santoso)</div>
+                  <div class="text-xs text-[#5c403f]">Verifikasi tiket & disposisi ke dinas</div>
+                </div>
+              </div>
+              <span class="material-symbols-outlined text-[#0051d5]">arrow_forward</span>
+            </a>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(modal);
+      modal.querySelector('#close-auth-modal').addEventListener('click', () => modal.classList.add('hidden'));
+      modal.addEventListener('click', (e) => { if (e.target === modal) modal.classList.add('hidden'); });
+    }
+    modal.classList.remove('hidden');
+  };
+
+  // 6. MODUL KHUSUS HALAMAN PETA PENGADUAN KOLEKTIF WARGA
+  function initCollectiveMapPage() {
+    if (!window.location.pathname.includes('peta_pengaduan')) return;
+
+    const mapSection = document.querySelector('main section.lg\\:col-span-8');
+    if (!mapSection) return;
+    const bgCanvas = mapSection.querySelector('div[data-location]');
+    if (!bgCanvas) return;
+
+    // Sembunyikan pin statik & SVG dekoratif asal supaya digantikan oleh pin Leaflet sebenar
+    bgCanvas.querySelectorAll('svg, div.absolute.top-28, div.absolute.top-40, div.absolute.bottom-40, div.absolute.bottom-28, div.absolute.top-64, div.absolute.top-\\[48\\%\\]').forEach((el) => {
+      el.style.display = 'none';
+    });
+
+    // Buat lapisan kontena Leaflet di dalam kanvas Stitch
+    const leafletDiv = document.createElement('div');
+    leafletDiv.id = 'sipantau-live-leaflet';
+    leafletDiv.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;z-index:5;';
+    bgCanvas.prepend(leafletDiv);
+
+    const popupCard = bgCanvas.querySelector('div.z-30.w-\\[380px\\]');
+    if (popupCard) popupCard.style.zIndex = '500';
+
+    ensureLeaflet(() => {
+      const map = window.L.map('sipantau-live-leaflet', { zoomControl: false }).setView([-6.905, 107.618], 13);
+
+      const vectorLayer = window.L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+        attribution: '&copy; OpenStreetMap & CartoDB | SIPANTAU',
+        maxZoom: 19
+      }).addTo(map);
+
+      const satelliteLayer = window.L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+        attribution: '&copy; Esri World Imagery | SIPANTAU',
+        maxZoom: 19
+      });
+
+      const markerGroup = window.L.layerGroup().addTo(map);
+      let activeCategory = 'Semua';
+      let searchQuery = '';
+      let selectedTicketId = '#LAPOR-2410-092';
+
+      function updatePopupCard(ticket) {
+        if (!popupCard || !ticket) return;
+        popupCard.style.display = 'block';
+        const badges = popupCard.querySelectorAll('span.rounded-full');
+        if (badges[0]) badges[0].textContent = ticket.id;
+        if (badges[1]) {
+          badges[1].innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-[#9A5200] animate-pulse"></span> ${ticket.status.toUpperCase()}`;
+        }
+        const img = popupCard.querySelector('img');
+        if (img && ticket.foto) img.src = ticket.foto;
+        const h3 = popupCard.querySelector('h3');
+        if (h3) h3.textContent = ticket.judul;
+        const opd = popupCard.querySelector('p.text-tertiary-container');
+        if (opd) opd.textContent = ticket.dinas;
+        const locSpans = popupCard.querySelectorAll('div.text-on-surface-variant span.truncate, div.text-on-surface-variant span:not(.material-symbols-outlined)');
+        if (locSpans[0]) locSpans[0].textContent = ticket.alamat;
+        if (locSpans[1]) locSpans[1].textContent = ticket.waktu;
+
+        const upvoteBtn = popupCard.querySelector('button.bg-primary-container');
+        if (upvoteBtn) {
+          upvoteBtn.innerHTML = `<span class="material-symbols-outlined text-[16px]">thumb_up</span> Dukung Aduan Ini (${ticket.upvotes} Warga)`;
+          upvoteBtn.onclick = () => {
+            const list = getTickets();
+            const found = list.find((x) => x.id === ticket.id);
+            if (found) {
+              found.upvotes += 1;
+              saveTickets(list);
+              upvoteBtn.innerHTML = `<span class="material-symbols-outlined text-[16px]">thumb_up</span> Dukung Aduan Ini (${found.upvotes} Warga)`;
+              showToast(`Dukungan berhasil ditambahkan pada tiket ${found.id}!`, 'success');
+            }
+          };
+        }
+      }
+
+      function renderMapMarkers() {
+        markerGroup.clearLayers();
+        const statusCheckboxes = Array.from(document.querySelectorAll('aside input[type="checkbox"]'));
+        const allowedStatuses = [];
+        if (statusCheckboxes[0]?.checked) allowedStatuses.push('Diajukan');
+        if (statusCheckboxes[1]?.checked) allowedStatuses.push('Diverifikasi');
+        if (statusCheckboxes[2]?.checked) allowedStatuses.push('Penanganan');
+        if (statusCheckboxes[3]?.checked) allowedStatuses.push('Selesai');
+
+        const tickets = getTickets().filter((t) => {
+          const matchCat = activeCategory === 'Semua' || t.kategori.toLowerCase().includes(activeCategory.toLowerCase()) || t.kategoriLabel.toLowerCase().includes(activeCategory.toLowerCase());
+          const matchStatus = allowedStatuses.length === 0 || allowedStatuses.includes(t.status);
+          const matchSearch = !searchQuery || t.judul.toLowerCase().includes(searchQuery) || t.alamat.toLowerCase().includes(searchQuery) || t.id.toLowerCase().includes(searchQuery);
+          return matchCat && matchStatus && matchSearch;
+        });
+
+        tickets.forEach((t) => {
+          const m = window.L.marker([t.lat, t.lng], {
+            icon: createCivicPin(t.status, t.id === selectedTicketId)
+          }).addTo(markerGroup);
+
+          m.on('click', () => {
+            selectedTicketId = t.id;
+            updatePopupCard(t);
+            renderMapMarkers();
+            map.panTo([t.lat, t.lng]);
+          });
+        });
+
+        const countText = document.querySelector('aside p.text-xs');
+        if (countText) countText.textContent = `Menampilkan ${tickets.length} laporan aktif pada peta`;
+      }
+
+      renderMapMarkers();
+      updatePopupCard(getTickets()[0]);
+
+      // Tutup popup card
+      const closeBtn = popupCard?.querySelector('button');
+      if (closeBtn) closeBtn.addEventListener('click', () => { popupCard.style.display = 'none'; });
+
+      // Kontrol Peta (+, -, Lokasi Saya, Fullscreen)
+      const ctrlBtns = bgCanvas.querySelectorAll('div.absolute.top-4.right-4 button');
+      if (ctrlBtns[0]) ctrlBtns[0].onclick = () => map.zoomIn();
+      if (ctrlBtns[1]) ctrlBtns[1].onclick = () => map.zoomOut();
+      if (ctrlBtns[2]) {
+        ctrlBtns[2].onclick = () => {
+          if (!navigator.geolocation) return showToast('Geolocation tidak didukung browser ini.', 'warning');
+          showToast('Mendeteksi titik GPS Anda...', 'info');
+          navigator.geolocation.getCurrentPosition(
+            (pos) => {
+              map.setView([pos.coords.latitude, pos.coords.longitude], 16);
+              showToast('Peta dipusatkan ke lokasi GPS Anda.', 'success');
+            },
+            () => showToast('Gagal mengakses GPS, menampilkan pusat kota.', 'warning')
+          );
+        };
+      }
+      if (ctrlBtns[3]) {
+        ctrlBtns[3].onclick = () => {
+          if (!document.fullscreenElement) mapSection.requestFullscreen?.();
+          else document.exitFullscreen?.();
+        };
+      }
+
+      // Toggle Peta Vektor vs Satelit & Segarkan Data & Lapor di Lokasi Ini
+      document.querySelectorAll('section button').forEach((btn) => {
+        const txt = (btn.textContent || '').trim();
+        if (txt.includes('Peta Vektor')) {
+          btn.onclick = () => {
+            map.removeLayer(satelliteLayer);
+            vectorLayer.addTo(map);
+            showToast('Mode Peta Vektor diaktifkan.', 'info');
+          };
+        } else if (txt.includes('Satelit')) {
+          btn.onclick = () => {
+            map.removeLayer(vectorLayer);
+            satelliteLayer.addTo(map);
+            showToast('Mode Citra Satelit diaktifkan.', 'info');
+          };
+        } else if (txt.includes('Segarkan Data')) {
+          btn.onclick = () => {
+            renderMapMarkers();
+            showToast('Data sebaran aduan berhasil disegarkan.', 'success');
+          };
+        } else if (txt.includes('Lapor di Lokasi Ini')) {
+          btn.onclick = () => {
+            const center = map.getCenter();
+            localStorage.setItem('SIPANTAU_DRAFT_COORDS', JSON.stringify({ lat: center.lat, lng: center.lng }));
+            window.location.href = '../formulir_pengaduan_multi_step_warga/code.html';
+          };
+        }
+      });
+
+      // Filter Kategori Chips di Sidebar Kiri
+      const catBtns = document.querySelectorAll('aside div.flex.flex-wrap.gap-2 button');
+      catBtns.forEach((btn) => {
+        btn.addEventListener('click', () => {
+          catBtns.forEach((b) => {
+            b.className = 'px-3 py-1.5 rounded-full text-label-sm font-label-sm bg-surface-container-low hover:bg-surface-container text-on-surface border border-surface-container-highest transition-all flex items-center gap-1';
+          });
+          btn.className = 'px-3 py-1.5 rounded-full text-label-sm font-label-sm bg-primary text-on-primary border border-primary font-bold transition-all flex items-center gap-1';
+          const rawTxt = btn.textContent.replace(/\(.*\)/, '').replace(/remove_road|delete|water_damage|lightbulb/g, '').trim();
+          activeCategory = rawTxt.includes('Semua') ? 'Semua' : rawTxt;
+          renderMapMarkers();
+        });
+      });
+
+      // Filter Status Checkboxes
+      document.querySelectorAll('aside input[type="checkbox"]').forEach((cb) => {
+        cb.addEventListener('change', renderMapMarkers);
+      });
+
+      // Pencarian Wilayah / Kasus + Forward Geocoding
+      const sideSearch = document.querySelector('aside input[type="text"]');
+      if (sideSearch) {
+        sideSearch.value = '';
+        sideSearch.addEventListener('input', (e) => {
+          searchQuery = e.target.value.trim().toLowerCase();
+          renderMapMarkers();
+        });
+        sideSearch.addEventListener('keydown', async (e) => {
+          if (e.key === 'Enter' && sideSearch.value.trim()) {
+            const geo = await forwardGeocode(sideSearch.value.trim());
+            if (geo) {
+              map.setView([geo.lat, geo.lng], 15);
+              showToast(`Peta diarahkan ke: ${geo.name.slice(0, 50)}...`, 'info');
+            }
+          }
+        });
+      }
+    });
+  }
+
+  // 7. MODUL KHUSUS HALAMAN FORMULIR PENGADUAN MULTI-STEP WARGA
+  function initCitizenFormPage() {
+    if (!window.location.pathname.includes('formulir_pengaduan')) return;
+
+    // A. Karakter Counter pada Kronologi (#deskripsi)
+    const descEl = document.getElementById('deskripsi');
+    if (descEl) {
+      const counterSpan = descEl.previousElementSibling?.querySelector('span:last-child');
+      const updateCounter = () => {
+        if (counterSpan) counterSpan.textContent = `${descEl.value.length} / 1.000 Karakter`;
+      };
+      descEl.addEventListener('input', updateCounter);
+      updateCounter();
+    }
+
+    // B. Auto-Triase Rekomendasi Dinas berdasarkan Kategori
+    const katSelect = document.getElementById('kategori');
+    const insSelect = document.getElementById('instansi');
+    if (katSelect && insSelect) {
+      katSelect.addEventListener('change', () => {
+        const val = katSelect.value.toLowerCase();
+        if (val.includes('jalan')) insSelect.selectedIndex = 0;
+        else if (val.includes('pju') || val.includes('penerangan')) insSelect.selectedIndex = 1;
+        else if (val.includes('drainase') || val.includes('banjir') || val.includes('sampah')) insSelect.selectedIndex = 2;
+        else insSelect.selectedIndex = 3;
+        showToast(`Triase AI mengarahkan ke: ${insSelect.value}`, 'info');
+      });
+    }
+
+    // C. Peta Interaktif Geotagging Presisi + Nominatim Reverse Geocoding API
+    const mapBox = document.querySelector('div[data-location="Bandung"]')?.parentElement;
+    const latInputs = document.querySelectorAll('input[readonly]');
+    const latInput = latInputs[0];
+    const lngInput = latInputs[1];
+    const alamatInput = document.getElementById('alamat');
+
+    if (mapBox) {
+      const bgMock = mapBox.querySelector('div[data-location]');
+      if (bgMock) bgMock.style.display = 'none';
+      const centerPinOverlay = mapBox.querySelector('div.pointer-events-none');
+      if (centerPinOverlay) centerPinOverlay.style.display = 'none';
+
+      const formMapDiv = document.createElement('div');
+      formMapDiv.id = 'sipantau-form-map';
+      formMapDiv.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;z-index:5;';
+      mapBox.prepend(formMapDiv);
+
+      ensureLeaflet(() => {
+        let startLat = -6.890451;
+        let startLng = 107.597824;
+        try {
+          const saved = JSON.parse(localStorage.getItem('SIPANTAU_DRAFT_COORDS') || 'null');
+          if (saved && saved.lat) {
+            startLat = saved.lat;
+            startLng = saved.lng;
+            localStorage.removeItem('SIPANTAU_DRAFT_COORDS');
+          }
+        } catch (e) {}
+
+        const map = window.L.map('sipantau-form-map', { zoomControl: false }).setView([startLat, startLng], 16);
+        window.L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+          attribution: '&copy; OpenStreetMap',
+          maxZoom: 19
+        }).addTo(map);
+
+        const pin = window.L.marker([startLat, startLng], {
+          draggable: true,
+          icon: createCivicPin('Diajukan', true)
+        }).addTo(map);
+
+        async function syncCoordinates(lat, lng) {
+          if (latInput) latInput.value = lat.toFixed(6);
+          if (lngInput) lngInput.value = lng.toFixed(6);
+          showToast('Mengambil alamat jalan otomatis dari koordinat...', 'info');
+          const addr = await reverseGeocode(lat, lng);
+          if (alamatInput) alamatInput.value = addr;
+          showToast('Titik koordinat & alamat geotagging diperbarui!', 'success');
+        }
+
+        pin.on('dragend', () => {
+          const pos = pin.getLatLng();
+          syncCoordinates(pos.lat, pos.lng);
+        });
+
+        map.on('click', (e) => {
+          pin.setLatLng(e.latlng);
+          syncCoordinates(e.latlng.lat, e.latlng.lng);
+        });
+
+        // Tombol Zoom +/- di dalam kotak peta
+        const zoomBtns = mapBox.querySelectorAll('button');
+        if (zoomBtns[0]) zoomBtns[0].onclick = () => map.zoomIn();
+        if (zoomBtns[1]) zoomBtns[1].onclick = () => map.zoomOut();
+
+        // Tombol "Gunakan GPS Saat Ini"
+        document.querySelectorAll('button').forEach((btn) => {
+          if ((btn.textContent || '').includes('Gunakan GPS Saat Ini')) {
+            btn.onclick = () => {
+              if (!navigator.geolocation) return showToast('Browser tidak mendukung GPS.', 'warning');
+              showToast('Mengunci titik GPS presisi perangkat Anda...', 'info');
+              navigator.geolocation.getCurrentPosition(
+                (pos) => {
+                  const { latitude, longitude } = pos.coords;
+                  map.setView([latitude, longitude], 17);
+                  pin.setLatLng([latitude, longitude]);
+                  syncCoordinates(latitude, longitude);
+                },
+                () => showToast('Akses lokasi ditolak. Geser pin secara manual pada peta.', 'warning')
+              );
+            };
+          }
+        });
+      });
+    }
+
+    // D. Upload Lampiran Bukti Lapangan (Drag & Drop + Pilih Berkas + Hapus)
+    const dropzone = document.querySelector('div.border-dashed');
+    const filesGrid = dropzone?.nextElementSibling;
+    if (dropzone && filesGrid) {
+      const hiddenFileInput = document.createElement('input');
+      hiddenFileInput.type = 'file';
+      hiddenFileInput.multiple = true;
+      hiddenFileInput.accept = 'image/*,.pdf';
+      hiddenFileInput.className = 'hidden';
+      document.body.appendChild(hiddenFileInput);
+
+      dropzone.addEventListener('click', () => hiddenFileInput.click());
+      hiddenFileInput.addEventListener('change', (e) => {
+        Array.from(e.target.files || []).forEach((file) => {
+          const reader = new FileReader();
+          reader.onload = (ev) => {
+            const card = document.createElement('div');
+            card.className = 'flex items-center gap-3 p-3 rounded-xl border border-outline-variant bg-surface-container-lowest shadow-sm hover:border-outline transition';
+            card.innerHTML = `
+              <img src="${ev.target.result}" alt="${file.name}" class="w-14 h-14 rounded-lg object-cover flex-shrink-0 border border-outline-variant/60" />
+              <div class="flex-grow min-w-0">
+                <p class="text-label-md font-label-md text-on-surface truncate">${file.name}</p>
+                <div class="flex items-center gap-2 text-label-sm font-label-sm text-on-surface-variant mt-0.5">
+                  <span>${(file.size / (1024 * 1024)).toFixed(2)} MB</span>
+                  <span>•</span>
+                  <span class="text-emerald-700 font-semibold flex items-center gap-0.5">
+                    <span class="material-symbols-outlined text-xs">check_circle</span> Terverifikasi EXIF
+                  </span>
+                </div>
+              </div>
+              <button type="button" class="p-2 text-on-surface-variant hover:text-error hover:bg-error-container/40 rounded-lg transition">
+                <span class="material-symbols-outlined text-lg">delete</span>
+              </button>
+            `;
+            card.querySelector('button').onclick = () => {
+              card.remove();
+              showToast('Lampiran berkas dihapus.', 'info');
+            };
+            filesGrid.appendChild(card);
+            showToast(`Berkas "${file.name}" berhasil dilampirkan!`, 'success');
+          };
+          reader.readAsDataURL(file);
+        });
+      });
+
+      // Aktifkan tombol hapus pada file contoh bawaan
+      filesGrid.querySelectorAll('button').forEach((btn) => {
+        btn.onclick = () => {
+          btn.closest('div.flex.items-center')?.remove();
+          showToast('Berkas lampiran dihapus.', 'info');
+        };
+      });
+    }
+
+    // E. Interaktivitas Modal Deteksi Laporan Serupa (#duplicate-modal)
+    const dupModal = document.getElementById('duplicate-modal');
+    if (dupModal) {
+      const supportBtn = dupModal.querySelector('button.bg-primary-container');
+      if (supportBtn) {
+        let count = 58;
+        supportBtn.onclick = () => {
+          count += 1;
+          supportBtn.innerHTML = `<span class="material-symbols-outlined text-base" style="font-variation-settings:'FILL' 1;">thumb_up</span><span>Tercatat! Anda Mendukung Laporan Ini (+${count} Dukungan)</span>`;
+          showToast('Dukungan kolektif Anda ditambahkan ke tiket #LAPOR-2024-8842!', 'success');
+        };
+      }
+    }
+
+    // F. Submit Form / Lanjut ke Pratinjau & Kirim Laporan Baru
+    const formEl = document.querySelector('form');
+    if (formEl) {
+      formEl.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const judul = document.getElementById('judul')?.value.trim() || 'Laporan Kerusakan Fasilitas Umum';
+        const kategoriLabel = document.getElementById('kategori')?.value || 'Infrastruktur Jalan & Jembatan';
+        const dinas = document.getElementById('instansi')?.value || 'Dinas Bina Marga & Penataan Ruang';
+        const deskripsi = document.getElementById('deskripsi')?.value.trim() || '-';
+        const alamat = document.getElementById('alamat')?.value.trim() || 'Kota Bandung';
+        const lat = parseFloat(latInput?.value || '-6.890451');
+        const lng = parseFloat(lngInput?.value || '107.597824');
+        const firstImg = document.querySelector('div.grid.grid-cols-1.md\\:grid-cols-2 img')?.src || '';
+
+        const randomNum = Math.floor(1000 + Math.random() * 9000);
+        const newId = `#TKT-2026-${randomNum}`;
+        const newTicket = {
+          id: newId,
+          code: `TKT-2026-${randomNum}`,
+          judul,
+          kategori: kategoriLabel.includes('Jalan') ? 'Jalan Rusak' : kategoriLabel.includes('Sampah') ? 'Sampah & Kebersihan' : kategoriLabel.includes('PJU') ? 'Lampu Jalan PJU' : 'Drainase / Banjir',
+          kategoriLabel,
+          dinas,
+          alamat,
+          kecamatan: 'Kec. Sukajadi',
+          waktu: 'Baru saja',
+          sla: 'SLA 4j 00m',
+          urgensi: 'Tinggi',
+          triaseLevel: 'Triase Level 1',
+          status: 'Diajukan',
+          upvotes: 1,
+          lat,
+          lng,
+          pelapor: 'Budi Pratama (Warga Terverifikasi)',
+          nik: '327320******0004',
+          telepon: '+62 812-****-8800',
+          deskripsi,
+          foto: firstImg,
+          petugas: 'Menunggu Verifikator',
+          timeline: [
+            { tahap: 'Laporan Diajukan Warga', waktu: 'Baru saja', keterangan: 'Laporan berhasil dikirim beserta koordinat geotagging presisi.', done: true },
+            { tahap: 'Verifikasi & Disposisi Petugas', waktu: 'Menunggu', keterangan: `Menunggu verifikasi diteruskan ke ${dinas}.`, active: true },
+            { tahap: 'Penanganan Regu Teknis OPD', waktu: '-', keterangan: '-', done: false },
+            { tahap: 'Selesai & Evaluasi Publik', waktu: '-', keterangan: '-', done: false }
+          ]
+        };
+
+        const list = getTickets();
+        list.unshift(newTicket);
+        saveTickets(list);
+
+        showToast(`Laporan Berhasil Dikirim! Nomor Tiket Anda: ${newId}`, 'success');
+        setTimeout(() => {
+          window.location.href = '../peta_pengaduan_kolektif_warga/code.html';
+        }, 1600);
+      });
+    }
+  }
+
+  // 8. MODUL KHUSUS DASHBOARD PETUGAS (MELENGKAPI DRAWER KANAN YANG TERPOTONG & TABEL DINAMIS)
+  function initOfficerDashboardPage() {
+    if (!window.location.pathname.includes('dashboard_petugas')) return;
+
+    // A. Perbaiki gambar placeholder Stitch yang rusak (stitch-placeholder-300x300.svg)
+    document.querySelectorAll('img[src*="stitch-placeholder"]').forEach((img, idx) => {
+      if (idx === 0) {
+        img.src = 'data:image/svg+xml;utf8,' + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="#9e001f"/><path d="M32 12L14 22v6h36v-6L32 12zm-12 12v18h6V24h-6zm9 0v18h6V24h-6zm9 0v18h6V24h-6zM14 46v6h36v-6H14z" fill="#ffffff"/></svg>`);
+      } else {
+        img.src = 'https://lh3.googleusercontent.com/aida-public/AB6AXuCjtOv8z9Fz-RBIIQvANS9l5iZuciVQUr6Iv2XdfoCd5GLwGehOXAIUO8bhgSSeQRpVnimB5Hrm5jA1_dShD_6lQfpal4O0m76okjB-5eIRAqBAqXi3ZhmS8NcQTmEyHXPhjkvHsfbTdmf03kBvYOMgrMAt-JrZr--JkcCmplHfWPDMsIdbhfeGF5oOd4SRoitEOayitXBvmACLNKKC15rfGe-u842YKsdbuO2f4R8';
+      }
+    });
+
+    const drawerAside = document.querySelector('aside.w-\\[450px\\]');
+    const tbody = document.querySelector('table tbody');
+    if (!drawerAside || !tbody) return;
+
+    let selectedTicket = getTickets()[1] || getTickets()[0];
+    let activeTabFilter = 'Semua';
+    let tableSearchQuery = '';
+    let miniMapInstance = null;
+    let miniMapMarker = null;
+
+    // B. Lengkapi Struktur HTML Drawer Kanan yang Terpotong pada Eksport Stitch
+    function renderDrawer(ticket) {
+      if (!ticket) return;
+      selectedTicket = ticket;
+
+      drawerAside.innerHTML = `
+        <!-- Drawer Header -->
+        <div class="p-5 border-b border-outline-variant bg-surface-container-lowest flex items-start justify-between shrink-0">
+          <div>
+            <div class="flex items-center gap-2 mb-1">
+              <span class="px-2 py-0.5 text-label-sm font-label-sm rounded bg-primary-fixed text-primary font-mono font-bold">${ticket.id}</span>
+              <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-error-container text-on-error-container text-label-sm font-label-sm font-bold">
+                <span class="w-1.5 h-1.5 rounded-full bg-error animate-ping"></span> URGENSI ${(ticket.urgensi || 'TINGGI').toUpperCase()}
+              </span>
+              <span class="px-2 py-0.5 rounded-full text-[11px] font-bold bg-surface-container text-on-surface">${ticket.status}</span>
+            </div>
+            <h2 class="text-headline-sm font-headline-sm font-bold text-on-surface leading-tight mt-1">${ticket.judul}</h2>
+          </div>
+        </div>
+
+        <!-- Drawer Scrollable Content -->
+        <div class="flex-1 overflow-y-auto p-5 space-y-5">
+          <!-- Section 1: Pelapor Info (Lengkap) -->
+          <div class="bg-surface-container-low p-4 rounded-xl border border-outline-variant">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-label-md font-label-md text-on-surface font-semibold flex items-center gap-1.5">
+                <span class="material-symbols-outlined text-primary text-base">verified_user</span>
+                Pelapor: Warga Terverifikasi
+              </span>
+              <span class="text-[10px] px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold uppercase tracking-wider">Akun Terpadu</span>
+            </div>
+            <div class="grid grid-cols-2 gap-2.5 text-xs pt-1">
+              <div>
+                <span class="text-outline block">Nama Lengkap:</span>
+                <span class="font-semibold text-on-surface">${ticket.pelapor}</span>
+              </div>
+              <div>
+                <span class="text-outline block">NIK Terdaftar:</span>
+                <span class="font-mono text-on-surface">${ticket.nik}</span>
+              </div>
+              <div>
+                <span class="text-outline block">Nomor Telepon:</span>
+                <span class="font-mono text-on-surface">${ticket.telepon}</span>
+              </div>
+              <div>
+                <span class="text-outline block">Dukungan Warga:</span>
+                <span class="font-bold text-primary">${ticket.upvotes || 1} Warga Mendukung</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Section 2: Kronologi & Bukti Foto + Peta Mini API -->
+          <div class="space-y-3">
+            <h3 class="text-label-md font-label-md text-on-surface font-bold uppercase tracking-wider text-xs flex items-center gap-1.5">
+              <span class="material-symbols-outlined text-primary text-base">description</span>
+              Substansi Laporan & Geotagging Lapangan
+            </h3>
+            <p class="text-xs text-on-surface bg-surface-container-low p-3.5 rounded-xl border border-outline-variant leading-relaxed">
+              "${ticket.deskripsi}"
+            </p>
+            <div class="grid grid-cols-2 gap-3">
+              <div class="rounded-xl overflow-hidden border border-outline-variant relative h-32 bg-surface-container">
+                <img src="${ticket.foto}" alt="Bukti Lapangan" class="w-full h-full object-cover" />
+                <span class="absolute bottom-1.5 left-1.5 px-2 py-0.5 rounded bg-black/75 text-white text-[10px] font-semibold">Bukti Foto EXIF</span>
+              </div>
+              <div class="rounded-xl overflow-hidden border border-outline-variant relative h-32 bg-surface-container">
+                <div id="drawer-mini-map" class="w-full h-full"></div>
+              </div>
+            </div>
+            <div class="flex items-center justify-between text-[11px] text-on-surface-variant bg-surface-container-low px-3 py-2 rounded-lg border border-outline-variant/60">
+              <span class="truncate"><strong class="text-on-surface">Lokasi:</strong> ${ticket.alamat}</span>
+              <span class="font-mono shrink-0 ml-2">${ticket.lat.toFixed(4)}, ${ticket.lng.toFixed(4)}</span>
+            </div>
+          </div>
+
+          <!-- Section 3: Linimasa Progres Triase -->
+          <div class="space-y-2.5">
+            <h3 class="text-label-md font-label-md text-on-surface font-bold uppercase tracking-wider text-xs flex items-center gap-1.5">
+              <span class="material-symbols-outlined text-primary text-base">timeline</span>
+              Linimasa Triase & Riwayat Tindakan
+            </h3>
+            <div class="space-y-2.5 pl-2 border-l-2 border-outline-variant">
+              ${(ticket.timeline || []).map((st) => `
+                <div class="pl-3 relative">
+                  <span class="w-2.5 h-2.5 rounded-full absolute -left-[19px] top-1 ${st.done ? 'bg-emerald-600' : st.active ? 'bg-primary' : 'bg-gray-300'}"></span>
+                  <div class="flex justify-between text-xs font-semibold text-on-surface">
+                    <span>${st.tahap}</span>
+                    <span class="text-[10px] font-mono text-outline">${st.waktu}</span>
+                  </div>
+                  <p class="text-[11px] text-on-surface-variant">${st.keterangan}</p>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+
+          <!-- Section 4: Form Keputusan Verifikasi & Disposisi OPD -->
+          <div class="bg-surface-container-low p-4 rounded-xl border border-outline-variant space-y-3">
+            <h3 class="text-label-md font-label-md text-primary font-bold flex items-center gap-1.5">
+              <span class="material-symbols-outlined text-base">send</span>
+              Formulir Instruksi Disposisi OPD
+            </h3>
+            <div>
+              <label class="block text-xs font-semibold text-on-surface mb-1">Dinas / OPD Teknis Tujuan</label>
+              <select id="drawer-opd-select" class="w-full rounded-lg border border-outline-variant bg-white px-3 py-2 text-xs text-on-surface focus:border-primary">
+                <option value="Perumda Tirtawening (PDAM)" ${ticket.dinas.includes('PDAM') ? 'selected' : ''}>Perumda Tirtawening (PDAM)</option>
+                <option value="Dinas Bina Marga & Tata Ruang" ${ticket.dinas.includes('Bina Marga') ? 'selected' : ''}>Dinas Bina Marga & Tata Ruang</option>
+                <option value="Dinas Perhubungan" ${ticket.dinas.includes('Perhubungan') ? 'selected' : ''}>Dinas Perhubungan</option>
+                <option value="Dinas Lingkungan Hidup" ${ticket.dinas.includes('Lingkungan') ? 'selected' : ''}>Dinas Lingkungan Hidup</option>
+                <option value="DPKP3 & Damkar" ${ticket.dinas.includes('Damkar') ? 'selected' : ''}>DPKP3 & Damkar</option>
+                <option value="Satuan Polisi Pamong Praja" ${ticket.dinas.includes('Polisi') ? 'selected' : ''}>Satuan Polisi Pamong Praja</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-on-surface mb-1">Catatan Instruksi Verifikator</label>
+              <textarea id="drawer-note-input" rows="2" placeholder="Tuliskan instruksi tindak lanjut untuk regu teknis OPD..." class="w-full rounded-lg border border-outline-variant bg-white p-2.5 text-xs text-on-surface focus:border-primary"></textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sticky Footer Action Buttons -->
+        <div class="p-4 border-t border-outline-variant bg-surface-container-lowest flex items-center gap-2.5 shrink-0">
+          <button type="button" id="btn-drawer-reject" class="px-3.5 py-2.5 rounded-lg bg-[#FDECEF] text-[#C8102E] hover:bg-[#C8102E] hover:text-white font-semibold text-xs transition flex items-center gap-1">
+            <span class="material-symbols-outlined text-sm">cancel</span> Tolak
+          </button>
+          <button type="button" id="btn-drawer-complete" class="px-3.5 py-2.5 rounded-lg border border-emerald-600 text-emerald-700 hover:bg-emerald-50 font-semibold text-xs transition flex items-center gap-1">
+            <span class="material-symbols-outlined text-sm">task_alt</span> Tandai Selesai
+          </button>
+          <button type="button" id="btn-drawer-verify" class="flex-1 py-2.5 px-4 rounded-lg bg-[#C8102E] hover:bg-[#9B0B22] text-white font-semibold text-xs shadow-sm transition flex items-center justify-center gap-1.5">
+            <span class="material-symbols-outlined text-sm">check_circle</span> Verifikasi & Disposisi
+          </button>
+        </div>
+      `;
+
+      // Inisialisasi Mini-Map Leaflet di dalam Drawer
+      ensureLeaflet(() => {
+        const mapEl = document.getElementById('drawer-mini-map');
+        if (!mapEl) return;
+        const mMap = window.L.map(mapEl, { zoomControl: false, attributionControl: false }).setView([ticket.lat, ticket.lng], 15);
+        window.L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png').addTo(mMap);
+        window.L.marker([ticket.lat, ticket.lng], { icon: createCivicPin(ticket.status, true) }).addTo(mMap);
+      });
+
+      // Aksi Verifikasi & Disposisi
+      drawerAside.querySelector('#btn-drawer-verify')?.addEventListener('click', () => {
+        const opd = drawerAside.querySelector('#drawer-opd-select').value;
+        const note = drawerAside.querySelector('#drawer-note-input').value.trim();
+        const updated = window.SiPantauDB.updateStatus(ticket.id, 'Diverifikasi', opd, note || `Diverifikasi dan didisposisikan ke ${opd}.`, 'Budi S. (Disposisi)');
+        renderTable();
+        renderDrawer(updated);
+        showToast(`Tiket ${ticket.id} berhasil diverifikasi & didisposisikan ke ${opd}!`, 'success');
+      });
+
+      // Aksi Tandai Selesai
+      drawerAside.querySelector('#btn-drawer-complete')?.addEventListener('click', () => {
+        const opd = drawerAside.querySelector('#drawer-opd-select').value;
+        const note = drawerAside.querySelector('#drawer-note-input').value.trim();
+        const updated = window.SiPantauDB.updateStatus(ticket.id, 'Selesai', opd, note || 'Perbaikan lapangan telah tuntas diverifikasi.', 'Budi S. (Tuntas)');
+        renderTable();
+        renderDrawer(updated);
+        showToast(`Tiket ${ticket.id} ditandai SELESAI!`, 'success');
+      });
+
+      // Aksi Tolak Laporan
+      drawerAside.querySelector('#btn-drawer-reject')?.addEventListener('click', () => {
+        const note = drawerAside.querySelector('#drawer-note-input').value.trim() || 'Laporan tidak memenuhi syarat bukti/kewenangan.';
+        const updated = window.SiPantauDB.updateStatus(ticket.id, 'Ditolak', ticket.dinas, note, 'Budi S. (Ditolak)');
+        renderTable();
+        renderDrawer(updated);
+        showToast(`Tiket ${ticket.id} telah ditolak.`, 'warning');
+      });
+    }
+
+    // C. Render Baris Tabel Dinamis dari Database
+    function renderTable() {
+      const all = getTickets().filter((t) => {
+        const matchTab =
+          activeTabFilter === 'Semua' ||
+          (activeTabFilter === 'Menunggu Verifikasi' && t.status === 'Diajukan') ||
+          (activeTabFilter === 'Didisposisikan' && (t.status === 'Diverifikasi' || t.status === 'Penanganan' || t.status === 'Selesai')) ||
+          (activeTabFilter === 'Ditolak' && t.status === 'Ditolak');
+        const matchSearch =
+          !tableSearchQuery ||
+          t.id.toLowerCase().includes(tableSearchQuery) ||
+          t.judul.toLowerCase().includes(tableSearchQuery) ||
+          t.alamat.toLowerCase().includes(tableSearchQuery) ||
+          t.dinas.toLowerCase().includes(tableSearchQuery);
+        return matchTab && matchSearch;
+      });
+
+      const statusPill = (st) => {
+        if (st === 'Diajukan')
+          return `<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-50 border border-amber-200 text-amber-900 text-label-sm font-label-sm font-semibold"><span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span> Diajukan</span>`;
+        if (st === 'Diverifikasi' || st === 'Penanganan')
+          return `<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-blue-50 border border-blue-200 text-blue-900 text-label-sm font-label-sm font-semibold"><span class="w-1.5 h-1.5 rounded-full bg-blue-600"></span> ${st}</span>`;
+        if (st === 'Selesai')
+          return `<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 text-label-sm font-label-sm font-semibold"><span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span> Selesai</span>`;
+        return `<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-gray-100 border border-gray-300 text-gray-700 text-label-sm font-label-sm font-semibold">Ditolak</span>`;
+      };
+
+      tbody.innerHTML = all
+        .map((t) => {
+          const isSelected = selectedTicket && selectedTicket.id === t.id;
+          return `
+            <tr data-id="${t.id}" class="${isSelected ? 'bg-primary-fixed/20 border-l-4 border-l-primary' : 'hover:bg-surface-container-low'} cursor-pointer transition">
+              <td class="py-3.5 px-3 text-center">
+                <input type="checkbox" class="row-check rounded border-outline-variant text-primary focus:ring-primary h-4 w-4" ${isSelected ? 'checked' : ''}/>
+              </td>
+              <td class="py-3.5 px-3 whitespace-nowrap">
+                <span class="font-mono font-bold ${isSelected ? 'text-primary' : 'text-on-surface'}">${t.id}</span>
+                <div class="text-[10px] text-outline font-semibold">${t.triaseLevel || 'Triase Level 1'}</div>
+              </td>
+              <td class="py-3.5 px-3 whitespace-nowrap text-on-surface-variant text-xs">
+                <div>${t.waktu}</div>
+                <div class="text-[11px] text-error font-medium">${t.sla || 'SLA Aktif'}</div>
+              </td>
+              <td class="py-3.5 px-3 whitespace-nowrap">
+                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-blue-100 text-blue-800 text-[11px] font-semibold">${t.kategoriLabel || t.kategori}</span>
+              </td>
+              <td class="py-3.5 px-4">
+                <div class="font-semibold text-on-surface text-sm leading-snug">${t.judul}</div>
+                <div class="text-outline text-xs flex items-center gap-1 mt-0.5 truncate">
+                  <span class="material-symbols-outlined text-[14px]">location_on</span> ${t.alamat}
+                </div>
+              </td>
+              <td class="py-3.5 px-3 whitespace-nowrap">
+                <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-error-container text-on-error-container text-label-sm font-label-sm font-bold uppercase">
+                  <span class="w-1.5 h-1.5 rounded-full bg-error"></span> ${t.urgensi || 'Tinggi'}
+                </span>
+              </td>
+              <td class="py-3.5 px-3 whitespace-nowrap">${statusPill(t.status)}</td>
+              <td class="py-3.5 px-3 whitespace-nowrap text-xs">
+                <div class="font-medium text-on-surface truncate max-w-[130px]">${t.dinas}</div>
+                <div class="text-[11px] text-outline">${t.petugas || 'Tim Verifikator'}</div>
+              </td>
+              <td class="py-3.5 px-3 whitespace-nowrap text-right">
+                <button type="button" class="p-1 rounded hover:bg-surface-container text-primary font-semibold" title="Buka Detail">
+                  <span class="material-symbols-outlined">visibility</span>
+                </button>
+              </td>
+            </tr>
+          `;
+        })
+        .join('');
+
+      tbody.querySelectorAll('tr').forEach((row) => {
+        row.addEventListener('click', (e) => {
+          if (e.target.tagName === 'INPUT') return;
+          const id = row.getAttribute('data-id');
+          const found = getTickets().find((x) => x.id === id);
+          if (found) {
+            selectedTicket = found;
+            renderTable();
+            renderDrawer(found);
+          }
+        });
+      });
+    }
+
+    renderTable();
+    renderDrawer(selectedTicket);
+
+    // Filter Tab di atas Tabel (Semua, Menunggu Verifikasi, Didisposisikan, Ditolak)
+    const tabBtns = document.querySelectorAll('main div.flex.items-center.gap-2.overflow-x-auto button');
+    tabBtns.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        tabBtns.forEach((b) => {
+          b.className = 'px-3.5 py-1.5 rounded-lg text-label-md font-label-md text-on-surface-variant hover:bg-surface-container-low transition flex items-center gap-1.5';
+        });
+        btn.className = 'px-3.5 py-1.5 rounded-lg text-label-md font-label-md bg-primary-fixed text-primary font-bold shadow-xs flex items-center gap-1.5';
+        const txt = btn.textContent.trim();
+        if (txt.includes('Menunggu')) activeTabFilter = 'Menunggu Verifikasi';
+        else if (txt.includes('Didisposisikan')) activeTabFilter = 'Didisposisikan';
+        else if (txt.includes('Ditolak')) activeTabFilter = 'Ditolak';
+        else activeTabFilter = 'Semua';
+        renderTable();
+      });
+    });
+
+    // Kotak Pencarian Tabel & Global
+    document.querySelectorAll('input[type="text"]').forEach((inp) => {
+      inp.addEventListener('input', (e) => {
+        tableSearchQuery = e.target.value.trim().toLowerCase();
+        renderTable();
+      });
+    });
+
+    // Tombol Ekspor Rekap CSV
+    document.querySelectorAll('button').forEach((btn) => {
+      if ((btn.textContent || '').includes('Ekspor Rekap CSV')) {
+        btn.onclick = () => {
+          const rows = [['ID Tiket', 'Judul', 'Kategori', 'Alamat', 'Dinas Tujuan', 'Status', 'Dukungan']];
+          getTickets().forEach((t) => rows.push([t.id, `"${t.judul}"`, t.kategori, `"${t.alamat}"`, `"${t.dinas}"`, t.status, t.upvotes]));
+          const csvContent = 'data:text/csv;charset=utf-8,' + rows.map((r) => r.join(',')).join('\n');
+          const link = document.createElement('a');
+          link.href = encodeURI(csvContent);
+          link.download = 'rekap_verifikasi_sipantau.csv';
+          link.click();
+          showToast('Berkas rekap_verifikasi_sipantau.csv berhasil diunduh!', 'success');
+        };
+      } else if ((btn.textContent || '').includes('Muat Ulang')) {
+        btn.onclick = () => {
+          renderTable();
+          showToast('Data antrean triase berhasil dimuat ulang.', 'info');
+        };
+      }
+    });
+  }
+
+  // 9. NAVIGASI GLOBAL & QUICK-SWITCHER DOCK ANTAR 5 HALAMAN STITCH
+  function initNavigationAndDock() {
+    const pages = {
+      beranda: '../beranda_sistem_pengaduan_masyarakat/code.html',
+      peta: '../peta_pengaduan_kolektif_warga/code.html',
+      formulir: '../formulir_pengaduan_multi_step_warga/code.html',
+      dashboard: '../dashboard_petugas_verifikasi_disposisi/code.html',
+      bantuan: '../pusat_bantuan_kebijakan_privasi_sipantau/code.html'
+    };
+
+    document.querySelectorAll('a, button').forEach((el) => {
+      const txt = (el.textContent || '').trim().toLowerCase();
+      const href = el.getAttribute('href') || '';
+
+      if (el.tagName === 'A') {
+        if (txt === 'beranda' || href === '#beranda') el.href = pages.beranda;
+        else if (txt.includes('peta pengaduan') || txt.includes('peta sebaran') || href === '#peta') el.href = pages.peta;
+        else if (txt === 'bantuan' || txt.includes('pusat bantuan') || txt.includes('pedoman pengaduan')) el.href = pages.bantuan;
+        else if (txt.includes('kebijakan privasi') || txt.includes('ketentuan layanan') || txt.includes('keterbukaan informasi')) {
+          if (!window.location.pathname.includes('pusat_bantuan')) el.href = pages.bantuan + '#kebijakan-privasi';
+        } else if (txt.includes('buat pengaduan') || href === '#ajukan') el.href = pages.formulir;
+        else if (txt.includes('lacak pengaduan') || txt.includes('buka pelacak') || href === '#lacak') {
+          el.addEventListener('click', (e) => {
+            e.preventDefault();
+            window.openTicketTrackerModal();
+          });
+        } else if (txt.includes('lihat arsip transparansi')) el.href = pages.peta;
+      }
+
+      if (txt === 'masuk' || txt === 'daftar') {
+        el.addEventListener('click', (e) => {
+          e.preventDefault();
+          window.openCivicAuthModal();
+        });
+      } else if (txt.includes('mulai buat pengaduan') || txt.includes('buat aduan baru')) {
+        el.addEventListener('click', (e) => {
+          e.preventDefault();
+          window.location.href = pages.formulir;
+        });
+      } else if (txt.includes('lihat riwayat')) {
+        el.addEventListener('click', (e) => {
+          e.preventDefault();
+          window.openTicketTrackerModal('#TKT-2024-8841');
+        });
+      }
+    });
+
+    // Floating Quick-Switcher Pill di bagian bawah layar
+    const path = window.location.pathname;
+    const dock = document.createElement('div');
+    dock.className = 'fixed bottom-3 left-1/2 -translate-x-1/2 z-[9990] bg-white/95 backdrop-blur-md border border-[#e5bdbb] rounded-full shadow-2xl px-2 py-1.5 flex items-center gap-1 text-xs';
+    dock.style.fontFamily = "'Plus Jakarta Sans', sans-serif";
+    const navItems = [
+      { label: 'Beranda', icon: 'home', url: pages.beranda, match: 'beranda' },
+      { label: 'Buat Aduan', icon: 'edit_note', url: pages.formulir, match: 'formulir' },
+      { label: 'Peta Publik', icon: 'map', url: pages.peta, match: 'peta_pengaduan' },
+      { label: 'Admin OPD', icon: 'admin_panel_settings', url: pages.dashboard, match: 'dashboard_petugas' },
+      { label: 'Bantuan & Privasi', icon: 'help', url: pages.bantuan, match: 'pusat_bantuan' }
+    ];
+    dock.innerHTML = navItems.map((item) => {
+      const active = path.includes(item.match) || (item.match === 'beranda' && path.includes('sistem_pengaduan_masyarakat_sipantau'));
+      return `
+        <a href="${item.url}" class="flex items-center gap-1.5 px-3 py-1.5 rounded-full font-semibold transition-all ${
+          active ? 'bg-[#c8102e] text-white shadow-sm' : 'text-[#5c403f] hover:bg-[#ffdad8]/40 hover:text-[#9e001f]'
+        }">
+          <span class="material-symbols-outlined text-[16px]">${item.icon}</span>
+          <span class="hidden sm:inline">${item.label}</span>
+        </a>
+      `;
+    }).join('');
+    document.body.appendChild(dock);
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    initNavigationAndDock();
+    initCollectiveMapPage();
+    initCitizenFormPage();
+    initOfficerDashboardPage();
+  });
+})();
