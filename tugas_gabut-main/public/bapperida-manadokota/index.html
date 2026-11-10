@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BAPPERIDA Kota Manado - Badan Perencanaan Pembangunan, Riset dan Inovasi Daerah</title>
+  <meta name="description" content="Portal Resmi Badan Perencanaan Pembangunan, Riset dan Inovasi Daerah (BAPPERIDA) Pemerintah Kota Manado. Perencanaan Pembangunan, Dokumen RKPD, RPJMD, Riset Inovasi & BIGISS Geospasial." />
+  
+  <!-- Favicon Lambang Kota Manado -->
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M16 2L4 7v9c0 7.5 5.1 14.5 12 16 6.9-1.5 12-8.5 12-16V7z' fill='%230f3460'/%3E%3Cpath d='M16 5l8 3.5v7c0 5.6-3.8 10.8-8 12-4.2-1.2-8-6.4-8-12v-7z' fill='%23e94560'/%3E%3Ccircle cx='16' cy='14' r='4' fill='%23ffbe3b'/%3E%3C/svg%3E" />
+  
+  <!-- Fonts: Plus Jakarta Sans & Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  
+  <!-- Material Symbols & Leaflet CSS -->
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
+            body: ['Inter', 'system-ui', 'sans-serif'],
+          },
+          colors: {
+            manado: {
+              red: '#C8102E',      // Merah Resmi Pemda
+              navy: '#0A2540',     // Biru Maritim Teluk Manado
+              blue: '#1E6091',     // Biru Samudera Pasifik
+              gold: '#D97706',     // Emas Kebangsaan
+              light: '#F8FAFC',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    .glass-nav {
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+    .hero-gradient {
+      background: linear-gradient(135deg, rgba(10, 37, 64, 0.92) 0%, rgba(30, 96, 145, 0.85) 60%, rgba(200, 16, 46, 0.80) 100%);
+    }
+  </style>
+</head>
+<body class="bg-[#F8FAFC] text-slate-800 font-sans antialiased selection:bg-manado-red selection:text-white">
+
+  <!-- ================= TOPBAR PEMERINTAHAN ================= -->
+  <div class="bg-manado-navy text-slate-300 text-xs border-b border-white/10 hidden md:block">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 flex items-center justify-between">
+      <div class="flex items-center gap-4">
+        <span class="flex items-center gap-1.5 text-slate-200">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          Portal Resmi BAPPERIDA Pemerintah Kota Manado
+        </span>
+        <span class="text-white/20">|</span>
+        <span class="text-slate-300">Beranda Sulawesi Utara & Indonesia ke Asia Pasifik</span>
+      </div>
+      <div class="flex items-center gap-4">
+        <span class="flex items-center gap-1"><span class="material-symbols-outlined text-[15px]">call</span> (0431) 847454</span>
+        <span class="flex items-center gap-1"><span class="material-symbols-outlined text-[15px]">mail</span> bapelitbangda.manado@gmail.com</span>
+        <a href="#bigiss" class="bg-white/10 hover:bg-white/20 text-white px-2.5 py-0.5 rounded text-[11px] font-semibold transition">BIGISS Geospasial</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= MAIN HEADER & NAVIGASI ================= -->
+  <header class="sticky top-0 z-50 glass-nav border-b border-slate-200/80 shadow-xs transition-all">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-20">
+        
+        <!-- Brand & Lambang Pemkot Manado -->
+        <a href="#" class="flex items-center gap-3 group">
+          <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-manado-red to-manado-navy flex items-center justify-center p-2 text-white shadow-md group-hover:scale-105 transition-transform">
+            <!-- Lambang Garuda & Perisai Ikonik -->
+            <svg class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <path d="M12 2L3 6v6c0 5.5 3.8 10.7 9 12 5.2-1.3 9-6.5 9-12V6l-9-4z" fill="#C8102E" stroke="white" />
+              <path d="M12 7v10M8 12h8" stroke="#FFBE3B" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div>
+            <div class="flex items-center gap-1.5">
+              <span class="font-extrabold text-xl text-manado-navy tracking-tight">BAPPERIDA</span>
+              <span class="text-[10px] font-bold uppercase tracking-wider bg-manado-red text-white px-2 py-0.5 rounded-md">KOTA MANADO</span>
+            </div>
+            <p class="text-xs text-slate-500 font-medium">Badan Perencanaan Pembangunan, Riset dan Inovasi Daerah</p>
+          </div>
+        </a>
+
+        <!-- Desktop Navigation Links -->
+        <nav class="hidden lg:flex items-center gap-1">
+          <a href="#beranda" class="px-3 py-2 text-sm font-semibold text-manado-navy hover:text-manado-red transition rounded-lg hover:bg-slate-100/80">Beranda</a>
+          <a href="#profil" class="px-3 py-2 text-sm font-semibold text-slate-600 hover:text-manado-red transition rounded-lg hover:bg-slate-100/80">Profil</a>
+          <a href="#dokumen" class="px-3 py-2 text-sm font-semibold text-slate-600 hover:text-manado-red transition rounded-lg hover:bg-slate-100/80">Dokumen Perencanaan</a>
+          <a href="#riset" class="px-3 py-2 text-sm font-semibold text-slate-600 hover:text-manado-red transition rounded-lg hover:bg-slate-100/80">Riset & Inovasi (BRIDA)</a>
+          <a href="#indikator" class="px-3 py-2 text-sm font-semibold text-slate-600 hover:text-manado-red transition rounded-lg hover:bg-slate-100/80">Data Makro</a>
+          <a href="#bigiss" class="px-3 py-2 text-sm font-semibold text-slate-600 hover:text-manado-red transition rounded-lg hover:bg-slate-100/80">BIGISS Spasial</a>
+          <a href="#kontak" class="px-3 py-2 text-sm font-semibold text-slate-600 hover:text-manado-red transition rounded-lg hover:bg-slate-100/80">Kontak</a>
+        </nav>
+
+        <!-- Search & Action Button -->
+        <div class="hidden sm:flex items-center gap-2.5">
+          <button onclick="openSearchModal()" class="p-2 rounded-xl border border-slate-200 text-slate-600 hover:text-manado-red hover:bg-slate-50 transition" title="Cari Dokumen">
+            <span class="material-symbols-outlined text-[20px]">search</span>
+          </button>
+          <a href="#dokumen" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-manado-red text-white text-xs font-bold shadow-md hover:bg-[#a50d25] transition active:scale-95">
+            <span class="material-symbols-outlined text-[18px]">download</span>
+            <span>Unduh RKPD 2025</span>
+          </a>
+        </div>
+
+        <!-- Mobile Menu Toggle Button -->
+        <button id="mobileMenuBtn" class="lg:hidden p-2 rounded-xl bg-slate-100 text-slate-700 hover:bg-slate-200 focus:outline-none">
+          <span class="material-symbols-outlined text-2xl">menu</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Navigation Drawer -->
+    <div id="mobileDrawer" class="hidden lg:hidden bg-white border-b border-slate-200 px-4 pt-2 pb-6 space-y-2 shadow-xl animate-in slide-in-from-top-2 duration-150">
+      <a href="#beranda" class="block px-3 py-2.5 text-sm font-semibold text-manado-navy hover:bg-slate-100 rounded-lg">Beranda</a>
+      <a href="#profil" class="block px-3 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-100 rounded-lg">Profil & Pimpinan</a>
+      <a href="#dokumen" class="block px-3 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-100 rounded-lg">Dokumen Perencanaan (RKPD / RPJMD)</a>
+      <a href="#riset" class="block px-3 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-100 rounded-lg">Riset & Inovasi Daerah (BRIDA)</a>
+      <a href="#indikator" class="block px-3 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-100 rounded-lg">Indikator Makro Pembangunan</a>
+      <a href="#bigiss" class="block px-3 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-100 rounded-lg">Peta Geospasial BIGISS</a>
+      <a href="#kontak" class="block px-3 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-100 rounded-lg">Kontak & PPID</a>
+    </div>
+  </header>
+
+  <!-- ================= HERO SECTION & SAMBUTAN ================= -->
+  <section id="beranda" class="relative overflow-hidden bg-manado-navy text-white py-16 lg:py-24">
+    <!-- Background Image with Overlay -->
+    <div class="absolute inset-0 bg-cover bg-center opacity-25" style="background-image: url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1920&q=80');"></div>
+    <div class="absolute inset-0 hero-gradient"></div>
+
+    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+        
+        <!-- Kolom Kiri: Tagline & CTA -->
+        <div class="lg:col-span-7 space-y-6 text-center lg:text-left">
+          <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs font-semibold tracking-wide text-amber-300">
+            <span class="material-symbols-outlined text-[16px]">verified</span>
+            RPJPD 2025-2045 Menuju Indonesia Emas
+          </div>
+
+          <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight leading-tight">
+            Perencanaan Terukur, <br class="hidden sm:block"/>
+            <span class="text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-rose-300 to-white">Riset & Inovasi Berkelanjutan</span>
+          </h1>
+
+          <p class="text-base sm:text-lg text-slate-200 max-w-2xl font-body leading-relaxed">
+            Mewujudkan <strong>"Manado Maju dan Sejahtera sebagai Beranda Sulawesi Utara dan Indonesia ke Asia Pasifik"</strong> melalui integrasi data perencanaan makro, riset aplikatif daerah, dan tata kelola geospasial presisi.
+          </p>
+
+          <!-- Search Bar Dokumen Cepat -->
+          <div class="bg-white/95 backdrop-blur-md p-2 rounded-2xl shadow-2xl max-w-xl mx-auto lg:mx-0 flex flex-col sm:flex-row gap-2 border border-white/20">
+            <div class="flex-1 flex items-center px-3 gap-2">
+              <span class="material-symbols-outlined text-slate-400">search</span>
+              <input id="heroSearchInput" type="text" placeholder="Cari RKPD, RPJMD, KUA-PPAS, atau Inovasi..." class="w-full bg-transparent py-2.5 text-sm text-slate-800 placeholder-slate-400 focus:outline-none" />
+            </div>
+            <button onclick="handleHeroSearch()" class="px-6 py-2.5 bg-manado-red hover:bg-[#a50d25] text-white font-bold text-sm rounded-xl transition shadow-md flex items-center justify-center gap-1.5">
+              <span>Cari</span>
+              <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+            </button>
+          </div>
+
+          <!-- Quick Tags -->
+          <div class="flex flex-wrap items-center justify-center lg:justify-start gap-2 text-xs text-slate-300">
+            <span class="text-slate-400 font-medium">Sering dicari:</span>
+            <button onclick="quickFilter('RKPD 2025')" class="px-2.5 py-1 rounded-md bg-white/10 hover:bg-white/20 transition">RKPD 2025</button>
+            <button onclick="quickFilter('RPJMD')" class="px-2.5 py-1 rounded-md bg-white/10 hover:bg-white/20 transition">RPJMD Kota Manado</button>
+            <button onclick="quickFilter('Inovasi')" class="px-2.5 py-1 rounded-md bg-white/10 hover:bg-white/20 transition">Indeks Inovasi</button>
+            <button onclick="quickFilter('BIGISS')" class="px-2.5 py-1 rounded-md bg-white/10 hover:bg-white/20 transition">Peta Geospasial</button>
+          </div>
+        </div>
+
+        <!-- Kolom Kanan: Pimpinan Daerah & Kepala Badan -->
+        <div class="lg:col-span-5 flex justify-center">
+          <div class="relative w-full max-w-md bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-6 shadow-2xl text-center space-y-6">
+            
+            <div class="flex items-center justify-center gap-4">
+              <!-- Wali Kota Manado -->
+              <div class="space-y-2">
+                <div class="w-20 h-20 sm:w-24 sm:h-24 mx-auto rounded-2xl bg-slate-200 border-2 border-amber-300 overflow-hidden shadow-lg">
+                  <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=300&q=80" alt="Andrei Angouw - Wali Kota Manado" class="w-full h-full object-cover" />
+                </div>
+                <div class="text-xs font-bold text-white leading-tight">Andrei Angouw</div>
+                <div class="text-[10px] text-amber-300 font-medium">Wali Kota Manado</div>
+              </div>
+
+              <!-- Wakil Wali Kota Manado -->
+              <div class="space-y-2">
+                <div class="w-20 h-20 sm:w-24 sm:h-24 mx-auto rounded-2xl bg-slate-200 border-2 border-amber-300 overflow-hidden shadow-lg">
+                  <img src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=300&q=80" alt="dr. Richard Sualang - Wakil Wali Kota Manado" class="w-full h-full object-cover" />
+                </div>
+                <div class="text-xs font-bold text-white leading-tight">dr. Richard Sualang</div>
+                <div class="text-[10px] text-amber-300 font-medium">Wakil Wali Kota</div>
+              </div>
+
+              <!-- Kepala Bapperida -->
+              <div class="space-y-2">
+                <div class="w-20 h-20 sm:w-24 sm:h-24 mx-auto rounded-2xl bg-slate-200 border-2 border-rose-400 overflow-hidden shadow-lg">
+                  <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=300&q=80" alt="Marcos F. Kairupan, ST - Kepala Bapperida" class="w-full h-full object-cover" />
+                </div>
+                <div class="text-xs font-bold text-white leading-tight">Marcos F. Kairupan, ST</div>
+                <div class="text-[10px] text-rose-300 font-medium">Kepala Bapperida</div>
+              </div>
+            </div>
+
+            <div class="p-4 rounded-2xl bg-black/30 border border-white/10 text-left space-y-1.5">
+              <div class="text-[11px] font-bold text-amber-300 uppercase tracking-wider flex items-center gap-1.5">
+                <span class="material-symbols-outlined text-[16px]">campaign</span>
+                Fokus Pembangunan 2025-2026:
+              </div>
+              <p class="text-xs text-slate-200 font-body leading-relaxed">
+                Akselerasi penataan drainase & pencegahan banjir terpadu, digitalisasi pelayanan publik, pengentasan kemiskinan ekstrem, serta penguatan riset inovasi UMKM pesisir.
+              </p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= INDIKATOR MAKRO PEMBANGUNAN ================= -->
+  <section id="indikator" class="py-12 bg-white border-b border-slate-200/80">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <div class="text-center max-w-2xl mx-auto mb-10 space-y-2">
+        <span class="text-xs font-extrabold uppercase tracking-widest text-manado-red">Capaian Kinerja Daerah</span>
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-manado-navy">Indikator Makro Kota Manado</h2>
+        <p class="text-sm text-slate-500 font-body">Data indikator utama pembangunan daerah yang dipantau dan dianalisis secara berkala oleh BAPPERIDA.</p>
+      </div>
+
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+        
+        <!-- Card 1: IPM -->
+        <div class="p-6 rounded-2xl bg-gradient-to-br from-slate-50 to-blue-50/50 border border-slate-200/80 shadow-xs hover:shadow-md transition group">
+          <div class="flex items-center justify-between mb-3">
+            <span class="p-2.5 rounded-xl bg-blue-100 text-blue-700 font-bold group-hover:scale-110 transition-transform">
+              <span class="material-symbols-outlined text-[24px]">school</span>
+            </span>
+            <span class="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full flex items-center gap-0.5">
+              <span class="material-symbols-outlined text-[14px]">trending_up</span> +0.58
+            </span>
+          </div>
+          <div class="text-3xl font-extrabold text-manado-navy tracking-tight">79.66</div>
+          <div class="text-xs font-bold text-slate-700 mt-1">Indeks Pembangunan Manusia (IPM)</div>
+          <div class="text-[11px] text-slate-500 mt-1">Kategori: Tinggi (Tertinggi di Sulut)</div>
+        </div>
+
+        <!-- Card 2: Pertumbuhan Ekonomi -->
+        <div class="p-6 rounded-2xl bg-gradient-to-br from-slate-50 to-emerald-50/50 border border-slate-200/80 shadow-xs hover:shadow-md transition group">
+          <div class="flex items-center justify-between mb-3">
+            <span class="p-2.5 rounded-xl bg-emerald-100 text-emerald-700 font-bold group-hover:scale-110 transition-transform">
+              <span class="material-symbols-outlined text-[24px]">monitoring</span>
+            </span>
+            <span class="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full flex items-center gap-0.5">
+              <span class="material-symbols-outlined text-[14px]">trending_up</span> Di atas Nasional
+            </span>
+          </div>
+          <div class="text-3xl font-extrabold text-manado-navy tracking-tight">5.42%</div>
+          <div class="text-xs font-bold text-slate-700 mt-1">Laju Pertumbuhan Ekonomi</div>
+          <div class="text-[11px] text-slate-500 mt-1">Sektor Jasa, Perdagangan & Wisata</div>
+        </div>
+
+        <!-- Card 3: Angka Kemiskinan -->
+        <div class="p-6 rounded-2xl bg-gradient-to-br from-slate-50 to-amber-50/50 border border-slate-200/80 shadow-xs hover:shadow-md transition group">
+          <div class="flex items-center justify-between mb-3">
+            <span class="p-2.5 rounded-xl bg-amber-100 text-amber-700 font-bold group-hover:scale-110 transition-transform">
+              <span class="material-symbols-outlined text-[24px]">health_and_safety</span>
+            </span>
+            <span class="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full flex items-center gap-0.5">
+              <span class="material-symbols-outlined text-[14px]">trending_down</span> -0.29%
+            </span>
+          </div>
+          <div class="text-3xl font-extrabold text-manado-navy tracking-tight">5.71%</div>
+          <div class="text-xs font-bold text-slate-700 mt-1">Tingkat Kemiskinan</div>
+          <div class="text-[11px] text-slate-500 mt-1">Tren menurun berkat program bansos terpadu</div>
+        </div>
+
+        <!-- Card 4: Indeks Inovasi Daerah -->
+        <div class="p-6 rounded-2xl bg-gradient-to-br from-slate-50 to-rose-50/50 border border-slate-200/80 shadow-xs hover:shadow-md transition group">
+          <div class="flex items-center justify-between mb-3">
+            <span class="p-2.5 rounded-xl bg-rose-100 text-rose-700 font-bold group-hover:scale-110 transition-transform">
+              <span class="material-symbols-outlined text-[24px]">lightbulb</span>
+            </span>
+            <span class="text-xs font-bold text-rose-700 bg-rose-50 px-2 py-0.5 rounded-full">
+              Sangat Inovatif
+            </span>
+          </div>
+          <div class="text-3xl font-extrabold text-manado-navy tracking-tight">64.12</div>
+          <div class="text-xs font-bold text-slate-700 mt-1">Indeks Inovasi Daerah (IGA)</div>
+          <div class="text-[11px] text-slate-500 mt-1">Penilaian Kemendagri & BRIN</div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= DOKUMEN PERENCANAAN RESMI ================= -->
+  <section id="dokumen" class="py-16 bg-[#F8FAFC]">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <div class="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
+        <div>
+          <span class="text-xs font-extrabold uppercase tracking-widest text-manado-red">Pusat Data Perencanaan Publik</span>
+          <h2 class="text-2xl sm:text-3xl font-extrabold text-manado-navy mt-1">Dokumen Perencanaan Daerah</h2>
+          <p class="text-sm text-slate-500 font-body mt-1">Unduh dokumen resmi produk hukum dan rencana pembangunan Kota Manado.</p>
+        </div>
+
+        <!-- Filter Tab Kategori -->
+        <div class="flex items-center gap-1.5 overflow-x-auto pb-2 sm:pb-0" id="docFilterTabs">
+          <button onclick="filterDocs('all')" class="px-3.5 py-1.5 rounded-lg text-xs font-bold bg-manado-navy text-white transition active-tab">Semua</button>
+          <button onclick="filterDocs('rkpd')" class="px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-white text-slate-600 hover:bg-slate-100 border border-slate-200 transition">RKPD</button>
+          <button onclick="filterDocs('rpjmd')" class="px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-white text-slate-600 hover:bg-slate-100 border border-slate-200 transition">RPJMD/RPJPD</button>
+          <button onclick="filterDocs('riset')" class="px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-white text-slate-600 hover:bg-slate-100 border border-slate-200 transition">Kajian & Riset</button>
+        </div>
+      </div>
+
+      <!-- Grid Daftar Dokumen -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="docListContainer">
+        
+        <!-- Dokumen 1 -->
+        <div class="doc-card rkpd bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs hover:shadow-md transition flex flex-col justify-between">
+          <div class="space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="px-2.5 py-1 rounded-md bg-blue-50 text-blue-700 font-bold text-xs">RKPD 2025</span>
+              <span class="text-xs text-slate-400 font-mono">14.2 MB • PDF</span>
+            </div>
+            <h3 class="font-extrabold text-base text-manado-navy group-hover:text-manado-red transition">Rencana Kerja Pemerintah Daerah (RKPD) Kota Manado Tahun 2025</h3>
+            <p class="text-xs text-slate-500 font-body line-clamp-3">
+              Dokumen rencana tahunan yang memuat rancangan kerangka ekonomi daerah, prioritas pembangunan daerah, serta rencana kerja dan pendanaan.
+            </p>
+          </div>
+          <div class="pt-5 mt-5 border-t border-slate-100 flex items-center justify-between">
+            <span class="text-[11px] text-slate-400">Ditetapkan: Perwali No. 24/2024</span>
+            <button onclick="downloadSimDoc('RKPD Kota Manado Tahun 2025')" class="inline-flex items-center gap-1 text-xs font-bold text-manado-red hover:underline">
+              <span>Unduh File</span>
+              <span class="material-symbols-outlined text-[16px]">file_download</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Dokumen 2 -->
+        <div class="doc-card rpjmd bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs hover:shadow-md transition flex flex-col justify-between">
+          <div class="space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="px-2.5 py-1 rounded-md bg-rose-50 text-rose-700 font-bold text-xs">RPJPD 2025-2045</span>
+              <span class="text-xs text-slate-400 font-mono">22.8 MB • PDF</span>
+            </div>
+            <h3 class="font-extrabold text-base text-manado-navy">Rancangan Akhir RPJPD Kota Manado 2025-2045</h3>
+            <p class="text-xs text-slate-500 font-body line-clamp-3">
+              Arah kebijakan jangka panjang 20 tahun Kota Manado menuju kota metropolitan pesisir yang tangguh bencana, maju, berkeadilan, dan berkelanjutan.
+            </p>
+          </div>
+          <div class="pt-5 mt-5 border-t border-slate-100 flex items-center justify-between">
+            <span class="text-[11px] text-slate-400">Perda Kota Manado 2025</span>
+            <button onclick="downloadSimDoc('RPJPD Kota Manado 2025-2045')" class="inline-flex items-center gap-1 text-xs font-bold text-manado-red hover:underline">
+              <span>Unduh File</span>
+              <span class="material-symbols-outlined text-[16px]">file_download</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Dokumen 3 -->
+        <div class="doc-card rpjmd bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs hover:shadow-md transition flex flex-col justify-between">
+          <div class="space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="px-2.5 py-1 rounded-md bg-amber-50 text-amber-700 font-bold text-xs">RPJMD 2021-2026</span>
+              <span class="text-xs text-slate-400 font-mono">18.5 MB • PDF</span>
+            </div>
+            <h3 class="font-extrabold text-base text-manado-navy">RPJMD Kota Manado 2021-2026 (Perubahan)</h3>
+            <p class="text-xs text-slate-500 font-body line-clamp-3">
+              Rencana pembangunan jangka menengah daerah 5 tahunan periode kepemimpinan Wali Kota Andrei Angouw dan Wakil Wali Kota dr. Richard Sualang.
+            </p>
+          </div>
+          <div class="pt-5 mt-5 border-t border-slate-100 flex items-center justify-between">
+            <span class="text-[11px] text-slate-400">Revisi Perda Terkini</span>
+            <button onclick="downloadSimDoc('RPJMD Kota Manado 2021-2026')" class="inline-flex items-center gap-1 text-xs font-bold text-manado-red hover:underline">
+              <span>Unduh File</span>
+              <span class="material-symbols-outlined text-[16px]">file_download</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Dokumen 4 -->
+        <div class="doc-card riset bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs hover:shadow-md transition flex flex-col justify-between">
+          <div class="space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="px-2.5 py-1 rounded-md bg-purple-50 text-purple-700 font-bold text-xs">Riset Inovasi</span>
+              <span class="text-xs text-slate-400 font-mono">8.1 MB • PDF</span>
+            </div>
+            <h3 class="font-extrabold text-base text-manado-navy">Kajian Pengendalian Genangan & Drainase Perkotaan</h3>
+            <p class="text-xs text-slate-500 font-body line-clamp-3">
+              Hasil riset saintifik tim ahli Bapperida mengenai analisis catchment area DAS Tondano dan Tikala untuk penanggulangan banjir terintegrasi.
+            </p>
+          </div>
+          <div class="pt-5 mt-5 border-t border-slate-100 flex items-center justify-between">
+            <span class="text-[11px] text-slate-400">Bidang Riset & Inovasi (BRIDA)</span>
+            <button onclick="downloadSimDoc('Kajian Pengendalian Banjir Kota Manado')" class="inline-flex items-center gap-1 text-xs font-bold text-manado-red hover:underline">
+              <span>Unduh File</span>
+              <span class="material-symbols-outlined text-[16px]">file_download</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Dokumen 5 -->
+        <div class="doc-card rkpd bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs hover:shadow-md transition flex flex-col justify-between">
+          <div class="space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="px-2.5 py-1 rounded-md bg-blue-50 text-blue-700 font-bold text-xs">KUA-PPAS 2025</span>
+              <span class="text-xs text-slate-400 font-mono">6.4 MB • PDF</span>
+            </div>
+            <h3 class="font-extrabold text-base text-manado-navy">Kebijakan Umum Anggaran & PPAS APBD TA 2025</h3>
+            <p class="text-xs text-slate-500 font-body line-clamp-3">
+              Pedoman penyusunan program prioritas dan plafon anggaran sementara yang disepakati bersama DPRD Kota Manado.
+            </p>
+          </div>
+          <div class="pt-5 mt-5 border-t border-slate-100 flex items-center justify-between">
+            <span class="text-[11px] text-slate-400">Bidang Perencanaan Makro</span>
+            <button onclick="downloadSimDoc('KUA-PPAS APBD TA 2025')" class="inline-flex items-center gap-1 text-xs font-bold text-manado-red hover:underline">
+              <span>Unduh File</span>
+              <span class="material-symbols-outlined text-[16px]">file_download</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Dokumen 6 -->
+        <div class="doc-card riset bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs hover:shadow-md transition flex flex-col justify-between">
+          <div class="space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="px-2.5 py-1 rounded-md bg-purple-50 text-purple-700 font-bold text-xs">Laboratorium Inovasi</span>
+              <span class="text-xs text-slate-400 font-mono">5.2 MB • PDF</span>
+            </div>
+            <h3 class="font-extrabold text-base text-manado-navy">Katalog Inovasi Daerah Kota Manado Tahun 2024</h3>
+            <p class="text-xs text-slate-500 font-body line-clamp-3">
+              Kumpulan 48 inovasi pelayanan publik dan tata kelola digital dari seluruh OPD, Kecamatan, dan Puskesmas di lingkungan Pemkot Manado.
+            </p>
+          </div>
+          <div class="pt-5 mt-5 border-t border-slate-100 flex items-center justify-between">
+            <span class="text-[11px] text-slate-400">BAPPERIDA Award 2024</span>
+            <button onclick="downloadSimDoc('Katalog Inovasi Daerah Manado 2024')" class="inline-flex items-center gap-1 text-xs font-bold text-manado-red hover:underline">
+              <span>Unduh File</span>
+              <span class="material-symbols-outlined text-[16px]">file_download</span>
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= BIGISS & PETA GEOSPASIAL RESMI ================= -->
+  <section id="bigiss" class="py-16 bg-white border-y border-slate-200/80">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+        
+        <!-- Info BIGISS -->
+        <div class="lg:col-span-5 space-y-5">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-manado-navy text-white text-xs font-bold uppercase tracking-wider">
+            <span class="material-symbols-outlined text-[16px]">layers</span>
+            BIGISS GEOPORTAL
+          </div>
+          
+          <h2 class="text-2xl sm:text-3xl font-extrabold text-manado-navy tracking-tight">
+            Basis Data Informasi Geospasial Spasial Kota Manado
+          </h2>
+
+          <p class="text-sm text-slate-600 font-body leading-relaxed">
+            Dikelola oleh <strong>UPTD Pengelolaan Data dan Informasi Geospasial BAPPERIDA Kota Manado</strong> sebagai satu peta rujukan spasial daerah (*One Map Policy*) untuk analisis kesesuaian ruang, perizinan, titik rawan bencana, dan zonasi RTRW/RDTR.
+          </p>
+
+          <div class="space-y-3 pt-2">
+            <div class="flex items-start gap-3">
+              <span class="w-6 h-6 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0 mt-0.5 font-bold text-xs">✓</span>
+              <div>
+                <h4 class="text-xs font-bold text-slate-800">11 Kecamatan & 87 Kelurahan</h4>
+                <p class="text-xs text-slate-500">Peta batas administrasi terverifikasi Badan Informasi Geospasial (BIG).</p>
+              </div>
+            </div>
+
+            <div class="flex items-start gap-3">
+              <span class="w-6 h-6 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0 mt-0.5 font-bold text-xs">✓</span>
+              <div>
+                <h4 class="text-xs font-bold text-slate-800">Zonasi Tata Ruang & Rawan Bencana</h4>
+                <p class="text-xs text-slate-500">Layer tematik mitigasi banjir sungai, abrasi pesisir, dan longsor lereng.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="pt-3">
+            <a href="https://bigiss.manadokota.go.id" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-manado-navy text-white text-xs font-bold hover:bg-manado-blue transition shadow-md">
+              <span>Buka Geoportal BIGISS Lengkap</span>
+              <span class="material-symbols-outlined text-[18px]">open_in_new</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Peta Interaktif Leaflet Mini-Preview -->
+        <div class="lg:col-span-7">
+          <div class="bg-slate-100 rounded-3xl border border-slate-300/80 p-2 shadow-lg overflow-hidden">
+            <div class="h-[400px] w-full rounded-2xl relative" id="manadoMap">
+              <!-- Leaflet Map rendered here -->
+            </div>
+            <div class="p-3 bg-white rounded-b-2xl flex items-center justify-between text-xs text-slate-600">
+              <span class="flex items-center gap-1.5 font-medium">
+                <span class="w-2.5 h-2.5 rounded-full bg-rose-600 animate-ping"></span>
+                Koordinat Balai Kota Manado: 1.4748° N, 124.8421° E
+              </span>
+              <span class="font-mono text-slate-400">Leaflet GIS Engine</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ================= PROFIL & STRUKTUR ORGANISASI ================= -->
+  <section id="profil" class="py-16 bg-[#F8FAFC]">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <div class="text-center max-w-2xl mx-auto mb-12 space-y-2">
+        <span class="text-xs font-extrabold uppercase tracking-widest text-manado-red">Tentang Lembaga</span>
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-manado-navy">Tugas Pokok & Bidang BAPPERIDA</h2>
+        <p class="text-sm text-slate-500 font-body">Melaksanakan fungsi penunjang urusan pemerintahan daerah di bidang perencanaan dan riset inovasi.</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        
+        <!-- Bidang 1 -->
+        <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs space-y-3">
+          <div class="w-12 h-12 rounded-xl bg-blue-100 text-blue-800 flex items-center justify-center font-bold">
+            <span class="material-symbols-outlined text-[26px]">account_balance_wallet</span>
+          </div>
+          <h3 class="font-bold text-base text-manado-navy">Perencanaan Makro & Pendanaan</h3>
+          <p class="text-xs text-slate-500 font-body leading-relaxed">
+            Menyusun rancangan kerangka ekonomi makro, pembiayaan pembangunan daerah, KUA-PPAS, dan koordinasi Musrenbang kota.
+          </p>
+        </div>
+
+        <!-- Bidang 2 -->
+        <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs space-y-3">
+          <div class="w-12 h-12 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center font-bold">
+            <span class="material-symbols-outlined text-[26px]">construction</span>
+          </div>
+          <h3 class="font-bold text-base text-manado-navy">Infrastruktur & Kewilayahan</h3>
+          <p class="text-xs text-slate-500 font-body leading-relaxed">
+            Perencanaan tata ruang, jalan jembatan, perumahan permukiman, drainase pengendali banjir, sanitasi dan lingkungan hidup.
+          </p>
+        </div>
+
+        <!-- Bidang 3 -->
+        <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs space-y-3">
+          <div class="w-12 h-12 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center font-bold">
+            <span class="material-symbols-outlined text-[26px]">storefront</span>
+          </div>
+          <h3 class="font-bold text-base text-manado-navy">Perekonomian & SDA</h3>
+          <p class="text-xs text-slate-500 font-body leading-relaxed">
+            Perencanaan pembangunan sektor perdagangan, pariwisata bahari Bunaken, perikanan kelautan, perindustrian, dan ketahanan pangan.
+          </p>
+        </div>
+
+        <!-- Bidang 4 -->
+        <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-xs space-y-3">
+          <div class="w-12 h-12 rounded-xl bg-purple-100 text-purple-800 flex items-center justify-center font-bold">
+            <span class="material-symbols-outlined text-[26px]">science</span>
+          </div>
+          <h3 class="font-bold text-base text-manado-navy">Riset & Inovasi Daerah (BRIDA)</h3>
+          <p class="text-xs text-slate-500 font-body leading-relaxed">
+            Pengembangan riset kebijakan publik, pembinaan laboratorium inovasi daerah, fasilitasi HAKI, dan kemitraan perguruan tinggi (Unsrat, IAIN, dll).
+          </p>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ================= FOOTER RESMI PEMKOT MANADO ================= -->
+  <footer id="kontak" class="bg-manado-navy text-slate-300 pt-16 pb-12 border-t-4 border-manado-red">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 pb-12 border-b border-white/10">
+        
+        <!-- Kolom 1: Profil Kantor -->
+        <div class="space-y-4">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-manado-red text-white flex items-center justify-center font-bold">
+              <span class="material-symbols-outlined">apartment</span>
+            </div>
+            <div>
+              <div class="font-bold text-base text-white">BAPPERIDA</div>
+              <div class="text-[10px] text-amber-300 font-bold uppercase tracking-wider">KOTA MANADO</div>
+            </div>
+          </div>
+          <p class="text-xs text-slate-300 font-body leading-relaxed">
+            Badan Perencanaan Pembangunan, Riset dan Inovasi Daerah Pemerintah Kota Manado.
+          </p>
+          <div class="text-xs text-slate-300 space-y-1.5 font-body">
+            <div class="flex items-start gap-2">
+              <span class="material-symbols-outlined text-[16px] text-amber-300 shrink-0 mt-0.5">location_on</span>
+              <span>Kompleks Kantor Wali Kota Manado, Jl. Balai Kota No. 1, Tikala Ares, Kec. Tikala, Kota Manado, Sulawesi Utara 95124</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="material-symbols-outlined text-[16px] text-amber-300 shrink-0">call</span>
+              <span>(0431) 847454</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="material-symbols-outlined text-[16px] text-amber-300 shrink-0">mail</span>
+              <span>bapelitbangda.manado@gmail.com</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Kolom 2: Layanan & Tautan Cepat -->
+        <div class="space-y-3">
+          <h4 class="text-sm font-bold text-white uppercase tracking-wider border-b border-white/15 pb-2">Layanan Perencanaan</h4>
+          <ul class="space-y-2 text-xs font-body">
+            <li><a href="#dokumen" class="hover:text-amber-300 transition flex items-center gap-1.5"><span class="text-amber-400">›</span> Rencana Kerja (RKPD)</a></li>
+            <li><a href="#dokumen" class="hover:text-amber-300 transition flex items-center gap-1.5"><span class="text-amber-400">›</span> Rencana Jangka Menengah (RPJMD)</a></li>
+            <li><a href="#dokumen" class="hover:text-amber-300 transition flex items-center gap-1.5"><span class="text-amber-400">›</span> Rencana Jangka Panjang (RPJPD)</a></li>
+            <li><a href="#bigiss" class="hover:text-amber-300 transition flex items-center gap-1.5"><span class="text-amber-400">›</span> Geoportal BIGISS Manado</a></li>
+            <li><a href="#riset" class="hover:text-amber-300 transition flex items-center gap-1.5"><span class="text-amber-400">›</span> Laboratorium Inovasi Daerah</a></li>
+          </ul>
+        </div>
+
+        <!-- Kolom 3: Tautan Terkait Pemerintah -->
+        <div class="space-y-3">
+          <h4 class="text-sm font-bold text-white uppercase tracking-wider border-b border-white/15 pb-2">Portal Terkait</h4>
+          <ul class="space-y-2 text-xs font-body">
+            <li><a href="https://manadokota.go.id" target="_blank" rel="noopener noreferrer" class="hover:text-amber-300 transition flex items-center gap-1.5"><span class="text-amber-400">›</span> Portal Resmi Pemkot Manado</a></li>
+            <li><a href="https://sulutprov.go.id" target="_blank" rel="noopener noreferrer" class="hover:text-amber-300 transition flex items-center gap-1.5"><span class="text-amber-400">›</span> Pemerintah Provinsi Sulawesi Utara</a></li>
+            <li><a href="https://bappenas.go.id" target="_blank" rel="noopener noreferrer" class="hover:text-amber-300 transition flex items-center gap-1.5"><span class="text-amber-400">›</span> Kementerian PPN / Bappenas RI</a></li>
+            <li><a href="https://brin.go.id" target="_blank" rel="noopener noreferrer" class="hover:text-amber-300 transition flex items-center gap-1.5"><span class="text-amber-400">›</span> Badan Riset dan Inovasi Nasional (BRIN)</a></li>
+          </ul>
+        </div>
+
+        <!-- Kolom 4: Maklumat & Transparansi -->
+        <div class="space-y-3">
+          <h4 class="text-sm font-bold text-white uppercase tracking-wider border-b border-white/15 pb-2">Maklumat Pelayanan</h4>
+          <p class="text-xs text-slate-300 font-body leading-relaxed">
+            "Kami berkomitmen menyelenggarakan pelayanan perencanaan pembangunan, riset dan inovasi daerah secara profesional, transparan, akuntabel, dan bebas dari korupsi."
+          </p>
+          <div class="p-3 rounded-xl bg-white/5 border border-white/10 text-xs text-amber-200">
+            <span class="font-bold">Jam Pelayanan Kantor:</span><br/>
+            Senin – Jumat: 08.00 – 16.30 WITA
+          </div>
+        </div>
+
+      </div>
+
+      <div class="pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-400 font-body gap-4">
+        <div>
+          &copy; 2025 BAPPERIDA Kota Manado. Seluruh hak cipta dilindungi.
+        </div>
+        <div class="flex items-center gap-4 text-slate-400">
+          <a href="#" class="hover:text-white transition">Kebijakan Privasi</a>
+          <span>•</span>
+          <a href="#" class="hover:text-white transition">Syarat Penggunaan</a>
+          <span>•</span>
+          <a href="#" class="hover:text-white transition">Peta Situs</a>
+        </div>
+      </div>
+
+    </div>
+  </footer>
+
+  <!-- ================= MODAL NOTIFIKASI UNDUH DOKUMEN ================= -->
+  <div id="downloadModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
+    <div class="bg-white rounded-2xl max-w-md w-full p-6 space-y-4 shadow-2xl animate-in fade-in zoom-in-95 duration-150">
+      <div class="w-12 h-12 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center mx-auto">
+        <span class="material-symbols-outlined text-[28px]">download_done</span>
+      </div>
+      <div class="text-center space-y-1">
+        <h3 class="font-extrabold text-lg text-manado-navy">Pengunduhan Berkas</h3>
+        <p class="text-xs text-slate-500 font-body" id="modalDocTitle">Dokumen Perencanaan</p>
+      </div>
+      <div class="p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-600 space-y-1">
+        <div class="flex justify-between"><span>Format:</span><span class="font-bold">PDF Digital</span></div>
+        <div class="flex justify-between"><span>Verifikasi:</span><span class="font-bold text-emerald-600">Resmi BAPPERIDA Manado</span></div>
+        <div class="flex justify-between"><span>Status:</span><span>Tersedia untuk Publik</span></div>
+      </div>
+      <div class="flex gap-2">
+        <button onclick="closeDownloadModal()" class="w-full py-2.5 rounded-xl border border-slate-200 text-slate-700 font-bold text-xs hover:bg-slate-50 transition">Tutup</button>
+        <button onclick="confirmDownload()" class="w-full py-2.5 rounded-xl bg-manado-red text-white font-bold text-xs hover:bg-[#a50d25] transition shadow-md">Unduh Sekarang</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Leaflet Map Initialization Script -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script>
+    // Inisialisasi Peta Leaflet Wilayah Kota Manado
+    document.addEventListener('DOMContentLoaded', function() {
+      const map = L.map('manadoMap', { zoomControl: true, attributionControl: false }).setView([1.4748, 124.8421], 12);
+      
+      // Tile layer OpenStreetMap
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 18,
+      }).addTo(map);
+
+      // Marker Balai Kota & Kantor BAPPERIDA Manado
+      const bapperidaPin = L.marker([1.4748, 124.8421]).addTo(map);
+      bapperidaPin.bindPopup("<b>BAPPERIDA Kota Manado</b><br>Kompleks Kantor Wali Kota Manado, Jl. Balai Kota No. 1, Tikala Ares.").openPopup();
+
+      // Penanda Landmark Utama Manado
+      L.circleMarker([1.4920, 124.8415], { color: '#0A2540', radius: 6 }).addTo(map).bindPopup("Jembatan Soekarno & Pelabuhan Manado");
+      L.circleMarker([1.4550, 124.8250], { color: '#C8102E', radius: 6 }).addTo(map).bindPopup("Kawasan Bisnis Malalayang & RSUP Prof. Kandou");
+      L.circleMarker([1.5300, 124.9100], { color: '#1E6091', radius: 6 }).addTo(map).bindPopup("Bandara Internasional Sam Ratulangi");
+      L.circleMarker([1.6150, 124.7600], { color: '#059669', radius: 8 }).addTo(map).bindPopup("Taman Nasional Laut Bunaken (Kec. Bunaken Kepulauan)");
+    });
+
+    // Mobile Navigation Drawer Toggle
+    const mobileBtn = document.getElementById('mobileMenuBtn');
+    const mobileDrawer = document.getElementById('mobileDrawer');
+    if (mobileBtn && mobileDrawer) {
+      mobileBtn.addEventListener('click', () => {
+        mobileDrawer.classList.toggle('hidden');
+      });
+      // Tutup saat link diklik
+      mobileDrawer.querySelectorAll('a').forEach(a => {
+        a.addEventListener('click', () => mobileDrawer.classList.add('hidden'));
+      });
+    }
+
+    // Filter Dokumen
+    function filterDocs(cat) {
+      const cards = document.querySelectorAll('.doc-card');
+      const tabs = document.querySelectorAll('#docFilterTabs button');
+      
+      tabs.forEach(t => {
+        t.classList.remove('bg-manado-navy', 'text-white');
+        t.classList.add('bg-white', 'text-slate-600');
+      });
+      event.target.classList.remove('bg-white', 'text-slate-600');
+      event.target.classList.add('bg-manado-navy', 'text-white');
+
+      cards.forEach(card => {
+        if (cat === 'all' || card.classList.contains(cat)) {
+          card.style.display = 'flex';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    }
+
+    // Quick Filter dari Hero Tags
+    function quickFilter(keyword) {
+      const input = document.getElementById('heroSearchInput');
+      if (input) input.value = keyword;
+      handleHeroSearch();
+    }
+
+    // Pencarian Dokumen dari Hero
+    function handleHeroSearch() {
+      const q = (document.getElementById('heroSearchInput')?.value || '').toLowerCase().trim();
+      if (!q) return;
+      document.getElementById('dokumen')?.scrollIntoView({ behavior: 'smooth' });
+      
+      const cards = document.querySelectorAll('.doc-card');
+      cards.forEach(card => {
+        const text = card.textContent.toLowerCase();
+        if (text.includes(q)) {
+          card.style.display = 'flex';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    }
+
+    // Modal Unduh Dokumen
+    let currentDocName = '';
+    function downloadSimDoc(name) {
+      currentDocName = name;
+      const titleEl = document.getElementById('modalDocTitle');
+      if (titleEl) titleEl.textContent = name;
+      document.getElementById('downloadModal')?.classList.remove('hidden');
+    }
+
+    function closeDownloadModal() {
+      document.getElementById('downloadModal')?.classList.add('hidden');
+    }
+
+    function confirmDownload() {
+      alert(`Memulai pengunduhan berkas: "${currentDocName}". File terverifikasi aman.`);
+      closeDownloadModal();
+    }
+  </script>
+</body>
+</html>
+
