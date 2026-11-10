@@ -47,6 +47,7 @@ import {
   DailyStats,
   CivicTicket
 } from './utils/civic-db';
+import { LandingLoginPage } from './components/LandingLoginPage';
 
 interface PageItem {
   id: string;
@@ -151,11 +152,13 @@ function compressImageCanvas(file: File, maxWidth = 1000, quality = 0.72): Promi
 }
 
 export default function App() {
-  const [portalMode, setPortalMode] = useState<'warga' | 'petugas'>(() => {
+  const [portalMode, setPortalMode] = useState<'landing' | 'warga' | 'petugas'>(() => {
     try {
-      return localStorage.getItem('SIPANTAU_PORTAL_MODE') === 'petugas' ? 'petugas' : 'warga';
+      const saved = localStorage.getItem('SIPANTAU_PORTAL_MODE');
+      if (saved === 'petugas' || saved === 'warga' || saved === 'landing') return saved;
+      return 'landing';
     } catch (e) {
-      return 'warga';
+      return 'landing';
     }
   });
   const [activeTab, setActiveTab] = useState<string>('beranda');
@@ -183,6 +186,7 @@ export default function App() {
   const [iframeLoading, setIframeLoading] = useState<boolean>(true);
 
   const isOfficerMode = portalMode === 'petugas';
+  const isLandingMode = portalMode === 'landing';
   const activePage = isOfficerMode ? OFFICER_PAGE : (CITIZEN_PAGES.find((p) => p.id === activeTab) || CITIZEN_PAGES[0]);
 
   const [replyText, setReplyText] = useState<string>('');
@@ -473,7 +477,7 @@ export default function App() {
       )}
 
       {/* DEDICATED HEADER: PORTAL WARGA VS BACKOFFICE PETUGAS OPD */}
-      {!focusMode && !isOfficerMode && (
+      {!focusMode && !isOfficerMode && !isLandingMode && (
         <header className="h-14 md:h-16 bg-[#9e001f] text-white px-3 md:px-6 flex items-center justify-between shadow-md shrink-0 border-b border-[#ffdad8]/20 z-[1000]">
           {/* Brand & Emblem (Portal Warga) */}
           <div className="flex items-center gap-2.5">
@@ -584,6 +588,19 @@ export default function App() {
               <span className="sm:hidden">Petugas</span>
             </button>
 
+            {/* Ganti Peran / Keluar ke Landing */}
+            <button
+              onClick={() => {
+                setPortalMode('landing');
+                localStorage.setItem('SIPANTAU_PORTAL_MODE', 'landing');
+              }}
+              className="flex items-center gap-1.5 px-2.5 md:px-3 py-1.5 rounded-lg bg-black/25 hover:bg-black/40 text-white border border-white/20 text-xs font-semibold transition shadow-xs"
+              title="Keluar ke Halaman Login & Pilih Peran"
+            >
+              <LogOut className="w-3.5 h-3.5 text-[#ffdad8]" />
+              <span className="hidden xl:inline">Ganti Peran</span>
+            </button>
+
             {/* Mobile Navigation Menu Toggle */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -610,7 +627,7 @@ export default function App() {
       )}
 
       {/* DROPDOWN MENU MOBILE PORTAL WARGA */}
-      {!focusMode && !isOfficerMode && mobileMenuOpen && (
+      {!focusMode && !isOfficerMode && !isLandingMode && mobileMenuOpen && (
         <div className="lg:hidden bg-[#85001a] border-b border-[#ffdad8]/30 px-3 py-2.5 space-y-1 shadow-lg z-20 animate-in slide-in-from-top-2 duration-150">
           <div className="text-[10px] uppercase font-bold text-[#ffdad8]/70 px-2 py-1 tracking-wider">Halaman Portal:</div>
           <div className="grid grid-cols-2 gap-1.5">
@@ -640,9 +657,17 @@ export default function App() {
             <span className="flex items-center gap-1 text-[11px]">
               <Clock className="w-3.5 h-3.5" /> SLA Tanggap: 4 Jam
             </span>
-            <span className="text-[11px] text-white/80">
-              Layanan Aspirasi Warga Terpadu
-            </span>
+            <button
+              onClick={() => {
+                setPortalMode('landing');
+                localStorage.setItem('SIPANTAU_PORTAL_MODE', 'landing');
+                setMobileMenuOpen(false);
+              }}
+              className="flex items-center gap-1 px-2.5 py-1 rounded-md bg-black/30 text-white text-[11px] font-bold hover:bg-black/50 transition"
+            >
+              <LogOut className="w-3 h-3 text-[#ffdad8]" />
+              <span>Keluar / Ganti Peran</span>
+            </button>
           </div>
         </div>
       )}
@@ -740,13 +765,11 @@ export default function App() {
             {/* Tombol Utama: KELUAR SESI PETUGAS */}
             <button
               onClick={() => {
-                setPortalMode('warga');
-                setActiveTab('beranda');
-                localStorage.setItem('SIPANTAU_PORTAL_MODE', 'warga');
-                setIframeKey((k) => k + 1);
+                setPortalMode('landing');
+                localStorage.setItem('SIPANTAU_PORTAL_MODE', 'landing');
               }}
               className="flex items-center gap-1.5 px-3 md:px-3.5 py-1.5 rounded-lg bg-[#9e001f] hover:bg-[#c8102e] text-white border border-red-400/40 text-xs font-bold shadow-md transition ml-1"
-              title="Akhiri sesi kerja dan keluar ke Portal Warga"
+              title="Akhiri sesi kerja dan keluar ke Halaman Landing"
             >
               <LogOut className="w-3.5 h-3.5" />
               <span>Keluar Sesi</span>
@@ -756,7 +779,7 @@ export default function App() {
       )}
 
       {/* SECONDARY STATUS STRIP */}
-      {!focusMode && !isOfficerMode && (
+      {!focusMode && !isOfficerMode && !isLandingMode && (
         <div className="hidden sm:flex h-8 bg-[#f5f2f8] dark:bg-[#1e1e22] border-b border-[#e5bdbb]/40 dark:border-white/10 px-4 md:px-6 items-center justify-between text-xs text-[#5c403f] dark:text-gray-300 shrink-0">
           <div className="flex items-center gap-3">
             <span className="font-semibold text-[#1b1b1f] dark:text-white flex items-center gap-1">
@@ -798,27 +821,49 @@ export default function App() {
         </div>
       )}
 
-      {/* MAIN VIEWPORT: IFRAME RENDERING STITCH PAGES + CORE SCRIPT */}
-      <main className="flex-1 w-full h-full relative overflow-hidden bg-white dark:bg-[#1b1b1f]">
-        {iframeLoading && (
-          <div role="status" className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-3 bg-[#fbf8fe] dark:bg-[#121214] text-sm text-[#5c403f] dark:text-gray-300">
-            <span aria-hidden="true" className="w-8 h-8 rounded-full border-4 border-[#ffdad8] dark:border-white/10 border-t-[#9e001f] animate-spin motion-reduce:animate-none" />
-            <span>Memuat {activePage.shortLabel}…</span>
-          </div>
-        )}
-        <iframe
-          key={`${activePage.id}-${iframeKey}`}
-          ref={iframeRef}
-          src={activePage.path}
-          title={activePage.title}
-          className="w-full h-full border-0 select-auto"
-          allow="geolocation; camera"
-          onLoad={() => setIframeLoading(false)}
+      {/* MAIN VIEWPORT: IFRAME RENDERING STITCH PAGES OR DEDICATED LANDING LOGIN */}
+      {isLandingMode ? (
+        <LandingLoginPage
+          onSelectRole={(role, profile) => {
+            setPortalMode(role);
+            localStorage.setItem('SIPANTAU_PORTAL_MODE', role);
+            if (role === 'warga') {
+              setActiveTab('beranda');
+            } else {
+              setActiveTab('dashboard');
+            }
+            setIframeKey((k) => k + 1);
+          }}
+          darkMode={darkMode}
+          onToggleDarkMode={() => setDarkMode(!darkMode)}
+          onOpenTracker={() => {
+            setShowTracker(true);
+            handleSearchTicket(trackerQuery);
+          }}
+          dailyStats={dailyStats}
         />
-      </main>
+      ) : (
+        <main className="flex-1 w-full h-full relative overflow-hidden bg-white dark:bg-[#1b1b1f]">
+          {iframeLoading && (
+            <div role="status" className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-3 bg-[#fbf8fe] dark:bg-[#121214] text-sm text-[#5c403f] dark:text-gray-300">
+              <span aria-hidden="true" className="w-8 h-8 rounded-full border-4 border-[#ffdad8] dark:border-white/10 border-t-[#9e001f] animate-spin motion-reduce:animate-none" />
+              <span>Memuat {activePage.shortLabel}…</span>
+            </div>
+          )}
+          <iframe
+            key={`${activePage.id}-${iframeKey}`}
+            ref={iframeRef}
+            src={activePage.path}
+            title={activePage.title}
+            className="w-full h-full border-0 select-auto"
+            allow="geolocation; camera"
+            onLoad={() => setIframeLoading(false)}
+          />
+        </main>
+      )}
 
       {/* MOBILE BOTTOM NAVIGATION BAR (KHUSUS PENGGUNA HP: ERGONOMIS & MUDAH DIJANGKAU IBU JARI) */}
-      {!focusMode && !isOfficerMode && (
+      {!focusMode && !isOfficerMode && !isLandingMode && (
         <nav
           aria-label="Navigasi Bawah Mobile"
           className="lg:hidden shrink-0 bg-white/95 dark:bg-[#181920]/95 backdrop-blur-md border-t border-[#e5bdbb]/40 dark:border-white/10 px-3 py-1.5 flex items-center justify-around shadow-[0_-4px_16px_rgba(0,0,0,0.06)] z-[1000]"
@@ -881,14 +926,14 @@ export default function App() {
           </button>
 
           <button
-            onClick={() => switchPage('pusat-bantuan')}
+            onClick={() => switchPage('bantuan')}
             className={`flex flex-col items-center justify-center py-1 px-2.5 rounded-xl transition-all ${
-              activeTab === 'pusat-bantuan'
+              activeTab === 'bantuan'
                 ? 'text-[#9e001f] dark:text-[#ffb4ab] font-bold'
                 : 'text-gray-500 dark:text-gray-400 hover:text-gray-800'
             }`}
           >
-            <div className={`p-1 rounded-lg ${activeTab === 'pusat-bantuan' ? 'bg-[#ffdad8] dark:bg-white/10' : ''}`}>
+            <div className={`p-1 rounded-lg ${activeTab === 'bantuan' ? 'bg-[#ffdad8] dark:bg-white/10' : ''}`}>
               <HelpCircle className="w-5 h-5" />
             </div>
             <span className="text-[10px] mt-0.5 tracking-tight font-medium">Bantuan</span>
