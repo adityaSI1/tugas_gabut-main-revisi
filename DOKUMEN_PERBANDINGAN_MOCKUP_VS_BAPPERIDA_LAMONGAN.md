@@ -140,7 +140,7 @@ Setiap poin keunggulan di bawah ini dilengkapi dengan **bukti visual tangkapan l
 
 | Mockup SIPANTAU (Landing Page Terpadu & Dual-Role) | BAPPERIDA Kab. Lamongan (Portal Web Statis Tradisional) |
 | :---: | :---: |
-| ![Mockup Landing Page](./docs/screenshots/mockup_landing_page.png) | ![Beranda Lamongan](./docs/screenshots/lamongan_beranda.png) |
+| ![Mockup Landing Page](https://raw.githubusercontent.com/adityaSI1/tugas_gabut-main-revisi/main/docs/screenshots/mockup_landing_page.png) | ![Beranda Lamongan](https://raw.githubusercontent.com/adityaSI1/tugas_gabut-main-revisi/main/docs/screenshots/lamongan_beranda.png) |
 | *Gambar 1.1: SIPANTAU menyatukan pintu masuk Portal Warga (Mode Tamu) & Petugas ASN (Simulasi Dosen 1-Klik), metrik live 4 jam, dan tombol Lacak Tiket tanpa login.* | *Gambar 1.2: BAPPERIDA Lamongan menggunakan layout CMS standar berbasis berita searah tanpa fasilitas login dwifungsi terpadu untuk warga maupun triase.* |
 
 * **Analisis Komparatif**:
@@ -153,7 +153,7 @@ Setiap poin keunggulan di bawah ini dilengkapi dengan **bukti visual tangkapan l
 
 | Mockup SIPANTAU (Peta Leaflet GIS Interaktif) | BAPPERIDA Kab. Lamongan (Penyajian Dokumen Tekstual) |
 | :---: | :---: |
-| ![Mockup WebGIS Peta](./docs/screenshots/mockup_peta_webgis.png) | ![Profil Bapperida Lamongan](./docs/screenshots/lamongan_profil.png) |
+| ![Mockup WebGIS Peta](https://raw.githubusercontent.com/adityaSI1/tugas_gabut-main-revisi/main/docs/screenshots/mockup_peta_webgis.png) | ![Profil Bapperida Lamongan](https://raw.githubusercontent.com/adityaSI1/tugas_gabut-main-revisi/main/docs/screenshots/lamongan_profil.png) |
 | *Gambar 2.1: SIPANTAU memetakan seluruh titik aduan secara real-time dengan filter 5 kategori, layer satelit, cluster titik, dan pencarian geocoding Nominatim.* | *Gambar 2.2: BAPPERIDA Lamongan menyajikan data daerah dalam bentuk narasi teks, bagan organisasi statis, dan berkas PDF tanpa peta sebaran masalah fisik kota.* |
 
 * **Analisis Komparatif**:
@@ -166,7 +166,7 @@ Setiap poin keunggulan di bawah ini dilengkapi dengan **bukti visual tangkapan l
 
 | Mockup SIPANTAU (Formulir Multi-Step Bertahap) | BAPPERIDA Kab. Lamongan (Daftar Layanan Pasif) |
 | :---: | :---: |
-| ![Mockup Form Aduan](./docs/screenshots/mockup_form_aduan.png) | ![Layanan Lamongan](./docs/screenshots/lamongan_layanan.png) |
+| ![Mockup Form Aduan](https://raw.githubusercontent.com/adityaSI1/tugas_gabut-main-revisi/main/docs/screenshots/mockup_form_aduan.png) | ![Layanan Lamongan](https://raw.githubusercontent.com/adityaSI1/tugas_gabut-main-revisi/main/docs/screenshots/lamongan_layanan.png) |
 | *Gambar 3.1: Formulir 4 langkah terstruktur: Klasifikasi Kategori $\rightarrow$ Titik Koordinat GPS $\rightarrow$ Unggah Bukti dengan Kompresi Canvas $\rightarrow$ Cetak Resi Tiket.* | *Gambar 3.2: Halaman Layanan Bapperida Lamongan hanya memuat info izin magang/KKN serta tombol melempar warga ke SP4N-LAPOR / WhatsApp tanpa form spasial.* |
 
 * **Analisis Komparatif**:
@@ -183,7 +183,7 @@ Setiap poin keunggulan di bawah ini dilengkapi dengan **bukti visual tangkapan l
 
 | Mockup SIPANTAU (Portal Warga & Pelacak Tiket) | BAPPERIDA Kab. Lamongan (Komunikasi Pasif Satu Arah) |
 | :---: | :---: |
-| ![Mockup Portal Warga](./docs/screenshots/mockup_portal_warga.png) | ![Beranda Berita Lamongan](./docs/screenshots/lamongan_beranda.png) |
+| ![Mockup Portal Warga](https://raw.githubusercontent.com/adityaSI1/tugas_gabut-main-revisi/main/docs/screenshots/mockup_portal_warga.png) | ![Beranda Berita Lamongan](https://raw.githubusercontent.com/adityaSI1/tugas_gabut-main-revisi/main/docs/screenshots/lamongan_beranda.png) |
 | *Gambar 4.1: Portal publik SIPANTAU menampilkan ringkasan aduan, transparansi linimasa tahapan dinas, pelacak tiket cepat, dan SLA respon 4 jam.* | *Gambar 4.2: Beranda BAPPERIDA Lamongan didominasi siaran pers dan berita formal tanpa fasilitas pelacakan status penanganan aduan masyarakat secara terbuka.* |
 
 * **Analisis Komparatif**:
@@ -196,7 +196,7 @@ Setiap poin keunggulan di bawah ini dilengkapi dengan **bukti visual tangkapan l
 
 | Mockup SIPANTAU (Dashboard Backoffice Triase OPD) | BAPPERIDA Kab. Lamongan (Tanpa Meja Kerja Terpadu) |
 | :---: | :---: |
-| ![Mockup Backoffice Petugas](./docs/screenshots/mockup_backoffice_petugas.png) | ![Layanan Lamongan](./docs/screenshots/lamongan_layanan.png) |
+| ![Mockup Backoffice Petugas](https://raw.githubusercontent.com/adityaSI1/tugas_gabut-main-revisi/main/docs/screenshots/mockup_backoffice_petugas.png) | ![Layanan Lamongan](https://raw.githubusercontent.com/adityaSI1/tugas_gabut-main-revisi/main/docs/screenshots/lamongan_layanan.png) |
 | *Gambar 5.1: Panel kerja ASN verifikator: Meja triase aduan, tombol disposisi cepat ke 6 dinas, filter prioritas urgensi, log audit, dan ekspor instan CSV.* | *Gambar 5.2: BAPPERIDA Lamongan tidak memiliki antarmuka triase disposisi terpadu di website; proses koordinasi internal berjalan terpisah tanpa integrasi publik.* |
 
 * **Analisis Komparatif**:
@@ -213,7 +213,7 @@ Setiap poin keunggulan di bawah ini dilengkapi dengan **bukti visual tangkapan l
 
 | Mockup SIPANTAU Mobile View (Ukuran Layar Ponsel 390x844) | BAPPERIDA Lamongan Mobile View (Ukuran Layar Ponsel 390x844) |
 | :---: | :---: |
-| ![Mockup Mobile View](./docs/screenshots/mockup_mobile_view.png) | ![Lamongan Mobile View](./docs/screenshots/lamongan_mobile_view.png) |
+| ![Mockup Mobile View](https://raw.githubusercontent.com/adityaSI1/tugas_gabut-main-revisi/main/docs/screenshots/mockup_mobile_view.png) | ![Lamongan Mobile View](https://raw.githubusercontent.com/adityaSI1/tugas_gabut-main-revisi/main/docs/screenshots/lamongan_mobile_view.png) |
 | *Gambar 6.1: Navigasi bawah (Bottom Navigation Bar) ergonomis di zona ibu jari, tombol Peta GIS melayang di tengah, viewport 100dvh, & bottom-sheet popup.* | *Gambar 6.2: Tampilan ponsel merupakan hasil downscaling desktop standar; menu hamburger di pojok atas menyulitkan pengoperasian gawai dengan satu tangan.* |
 
 * **Analisis Komparatif**:
