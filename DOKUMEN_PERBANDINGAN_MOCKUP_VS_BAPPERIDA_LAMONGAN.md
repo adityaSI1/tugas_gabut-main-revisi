@@ -130,34 +130,98 @@ Sebagai langkah adaptif akademik yang bertanggung jawab dan menjaga kelancaran e
 
 ---
 
-## BAB IV: ANALISIS KEUNGGULAN UTAMA MOCKUP SIPANTAU
+## BAB IV: ANALISIS KEUNGGULAN UTAMA DENGAN BUKTI TANGKAPAN LAYAR (SIDE-BY-SIDE SCREENSHOTS)
 
-Berikut adalah elaborasi mendalam mengenai keunggulan mockup SIPANTAU dibandingkan situs pembanding:
+Setiap poin keunggulan di bawah ini dilengkapi dengan **bukti visual tangkapan layar langsung (*direct screenshot*)** yang membandingkan antarmuka Mockup SIPANTAU dengan situs resmi BAPPERIDA Kabupaten Lamongan:
 
-### 4.1 Pemetaan Spasial Interaktif WebGIS (*Spatial Crowdsourcing*)
-* **Kelemahan Web Lamongan**: Pada situs BAPPERIDA Lamongan, data perencanaan pembangunan dan permasalahan masyarakat disajikan dalam format teks, tabel berita, atau dokumen PDF tebal. Masyarakat maupun pimpinan daerah tidak dapat melihat secara visual di mana konsentrasi jalan berlubang, lampu penerangan jalan mati, atau titik genangan banjir terjadi.
-* **Keunggulan Mockup SIPANTAU**: Mockup SIPANTAU mengadopsi mesin **WebGIS Leaflet OpenStreetMap** yang memungkinkan warga:
-  1. Menitikkan lokasi pengaduan secara presisi melalui GPS perangkat atau pencarian alamat otomatis (*Nominatim Geocoder*).
-  2. Memfilter visualisasi peta berdasarkan kategori (Jalan Rusak, Banjir, Lampu Padam, Sampah Liar, Ketertiban Umum).
-  3. Mengganti lapisan peta dari mode peta jalan (*streets*) ke citra satelit resolusi tinggi.
-  4. Melihat sebaran aduan warga lain dan memberikan dukungan (*upvote/dukungan warga*) sehingga meminimalisir duplikasi laporan untuk lokasi yang sama.
+---
 
-### 4.2 Single Entry Portal dengan Dual-Role Switching (Warga & Petugas)
-* **Kelemahan Web Lamongan**: Situs BAPPERIDA Lamongan mengalami fragmentasi sistem (*silo application*). Pengguna yang ingin mengakses SIMela harus menuju sistem tersendiri, SI-RISDA di tautan lain, dan SP4N-LAPOR di domain eksternal. Tidak ada gerbang peran terpadu.
-* **Keunggulan Mockup SIPANTAU**: Memiliki **Login Landing Page Terpadu** yang sangat ramah pengguna:
-  1. **Mode Warga**: Warga cukup memasukkan NIK dan Nama, atau menggunakan tombol **"Jelajahi Portal Langsung (Mode Tamu)"** tanpa hambatan registrasi yang merepotkan.
-  2. **Mode Petugas ASN / OPD**: Dilengkapi sistem verifikasi NIP dinas dan **1-Klik Akun Simulasi** (*Budi Santoso - Diskominfo* & *Siti Maryam - Dinas Bina Marga*) yang dirancang khusus untuk mempermudah evaluasi dosen dan penguji tanpa perlu menghafal kredensial.
-  3. **Navigasi Fleksibel**: Tersedia tombol "Keluar / Ganti Peran" yang memungkinkan pengguna beralih peran kapan saja secara instan.
+### 4.1 Halaman Depan & Gerbang Peran Terpadu (*Unified Dual-Role Landing Gateway*)
 
-### 4.3 Alur Pelaporan Cerdas Multi-Step dengan Validasi Lokasi EXIF
-* **Kelemahan Web Lamongan**: Pengaduan yang diarahkan ke WhatsApp atau formulir teks biasa sering kali menghasilkan laporan tanpa koordinat presisi, foto tanpa metadata tanggal, dan deskripsi yang tidak terstruktur, sehingga menyulitkan dinas teknis dalam memverifikasi ke lapangan.
-* **Keunggulan Mockup SIPANTAU**: Menggunakan **Formulir Bertahap (Multi-Step)** dengan alur validasi ketat:
-  - *Langkah 1*: Pemilihan klasifikasi kategori dan dinas penanggung jawab.
-  - *Langkah 2*: Penentuan titik koordinat peta otomatis melalui GPS gawai.
-  - *Langkah 3*: Unggah foto bukti dengan teknologi ekstraksi metadata dan **kompresi Canvas otomatis di sisi peramban** (mencegah kelebihan kuota memori gawai).
-  - *Langkah 4*: Ringkasan pratinjau sebelum submit resmi dengan penerbitan bukti lapor bernomor tiket unik (misal: `#LAPOR-2410-092`).
+| Mockup SIPANTAU (Landing Page Terpadu & Dual-Role) | BAPPERIDA Kab. Lamongan (Portal Web Statis Tradisional) |
+| :---: | :---: |
+| ![Mockup Landing Page](./docs/screenshots/mockup_landing_page.png) | ![Beranda Lamongan](./docs/screenshots/lamongan_beranda.png) |
+| *Gambar 1.1: SIPANTAU menyatukan pintu masuk Portal Warga (Mode Tamu) & Petugas ASN (Simulasi Dosen 1-Klik), metrik live 4 jam, dan tombol Lacak Tiket tanpa login.* | *Gambar 1.2: BAPPERIDA Lamongan menggunakan layout CMS standar berbasis berita searah tanpa fasilitas login dwifungsi terpadu untuk warga maupun triase.* |
 
-### 4.4 Pelacakan Tiket Transparan & Komunikasi Dua Arah Warga-Petugas
+* **Analisis Komparatif**:
+  - **Situs BAPPERIDA Lamongan**: Tidak memiliki gerbang penanganan terpadu. Pengguna hanya disuguhi artikel seremonial dan spanduk informasi. Jika ingin melapor, warga dilempar ke tautan luar (*external link*), dan jika petugas ingin bekerja, harus masuk ke aplikasi terpisah yang beralamat lain.
+  - **Mockup SIPANTAU**: Menghadirkan *Unified Entry* di mana warga dapat langsung memilih apakah ingin melapor sebagai warga (bahkan tersedia **Mode Tamu** tanpa birokrasi daftar) atau masuk sebagai verifikator ASN. Untuk kemudahan dosen/penilai, disediakan **1-Klik Akun Simulasi Petugas** (*Budi Santoso - Diskominfo* & *Siti Maryam - Bina Marga*).
+
+---
+
+### 4.2 Pemetaan Spasial Interaktif WebGIS (*Spatial Crowdsourcing*)
+
+| Mockup SIPANTAU (Peta Leaflet GIS Interaktif) | BAPPERIDA Kab. Lamongan (Penyajian Dokumen Tekstual) |
+| :---: | :---: |
+| ![Mockup WebGIS Peta](./docs/screenshots/mockup_peta_webgis.png) | ![Profil Bapperida Lamongan](./docs/screenshots/lamongan_profil.png) |
+| *Gambar 2.1: SIPANTAU memetakan seluruh titik aduan secara real-time dengan filter 5 kategori, layer satelit, cluster titik, dan pencarian geocoding Nominatim.* | *Gambar 2.2: BAPPERIDA Lamongan menyajikan data daerah dalam bentuk narasi teks, bagan organisasi statis, dan berkas PDF tanpa peta sebaran masalah fisik kota.* |
+
+* **Analisis Komparatif**:
+  - **Situs BAPPERIDA Lamongan**: Permasalahan tata ruang dan perencanaan hanya ada dalam dokumen laporan tahunan. Masyarakat awam dan perangkat daerah tidak memiliki media visual untuk memantau titik-titik infrastruktur yang rusak secara geospasial.
+  - **Mockup SIPANTAU**: Mengimplementasikan mesin **WebGIS Leaflet OpenStreetMap** yang interaktif. Warga dapat melihat titik aduan publik di sekitar tempat tinggalnya, menyaring berdasarkan kategori (jalan berlubang, lampu padam, banjir, sampah), beralih ke tampilan citra satelit, serta memberikan tanda dukungan (*upvote*) untuk mencegah pelaporan berulang pada satu titik yang sama.
+
+---
+
+### 4.3 Alur Pelaporan Cerdas Multi-Step dengan Geotagging & Kompresi Foto
+
+| Mockup SIPANTAU (Formulir Multi-Step Bertahap) | BAPPERIDA Kab. Lamongan (Daftar Layanan Pasif) |
+| :---: | :---: |
+| ![Mockup Form Aduan](./docs/screenshots/mockup_form_aduan.png) | ![Layanan Lamongan](./docs/screenshots/lamongan_layanan.png) |
+| *Gambar 3.1: Formulir 4 langkah terstruktur: Klasifikasi Kategori $\rightarrow$ Titik Koordinat GPS $\rightarrow$ Unggah Bukti dengan Kompresi Canvas $\rightarrow$ Cetak Resi Tiket.* | *Gambar 3.2: Halaman Layanan Bapperida Lamongan hanya memuat info izin magang/KKN serta tombol melempar warga ke SP4N-LAPOR / WhatsApp tanpa form spasial.* |
+
+* **Analisis Komparatif**:
+  - **Situs BAPPERIDA Lamongan**: Layanan aduan tidak terkelola langsung di web induk. Pengguna diarahkan ke WhatsApp atau SP4N-LAPOR yang formatnya kaku dan tidak mengunci koordinat akurat.
+  - **Mockup SIPANTAU**: Membimbing pengguna secara terstruktur melalui 4 tahapan intuitif:
+    1. *Kategori & Dinas Penanggung Jawab*: Menghindari salah disposisi sejak awal.
+    2. *GPS Geotagging*: Koordinat lintang dan bujur terekam presisi hingga level meter.
+    3. *Kompresi Canvas di Sisi Klien*: Foto kamera beresolusi besar otomatis dikompresi agar hemat kuota dan tidak membebani memori ponsel.
+    4. *Penerbitan Resi Resmi*: Warga langsung memperoleh nomor tiket unik (contoh: `#LAPOR-2410-092`) dan dapat mencetak tanda terima laporan resmi.
+
+---
+
+### 4.4 Transparansi Pelacakan Progres & Komunikasi Dua Arah
+
+| Mockup SIPANTAU (Portal Warga & Pelacak Tiket) | BAPPERIDA Kab. Lamongan (Komunikasi Pasif Satu Arah) |
+| :---: | :---: |
+| ![Mockup Portal Warga](./docs/screenshots/mockup_portal_warga.png) | ![Beranda Berita Lamongan](./docs/screenshots/lamongan_beranda.png) |
+| *Gambar 4.1: Portal publik SIPANTAU menampilkan ringkasan aduan, transparansi linimasa tahapan dinas, pelacak tiket cepat, dan SLA respon 4 jam.* | *Gambar 4.2: Beranda BAPPERIDA Lamongan didominasi siaran pers dan berita formal tanpa fasilitas pelacakan status penanganan aduan masyarakat secara terbuka.* |
+
+* **Analisis Komparatif**:
+  - **Situs BAPPERIDA Lamongan**: Mengalami masalah *"black-box reporting"* di mana warga yang melapor tidak dapat mengetahui apakah laporannya sudah dibaca, sedang diverifikasi, atau ditolak, kecuali bertanya ulang secara manual.
+  - **Mockup SIPANTAU**: Menyediakan **Pelacak Status Tiket Terbuka** yang dapat diakses siapa pun hanya dengan memasukkan nomor tiket. Linimasa menampilkan tahapan detail (*Menunggu Triase $\rightarrow$ Verifikasi OPD $\rightarrow$ Aksi Regu URC $\rightarrow$ Selesai*), dilengkapi obrolan dua arah untuk mengirim foto kondisi terbaru, serta formulir kepuasan masyarakat (CSAT 5 bintang).
+
+---
+
+### 4.5 Meja Kerja Triase & Disposisi Dinas Teknis (*Backoffice Petugas ASN*)
+
+| Mockup SIPANTAU (Dashboard Backoffice Triase OPD) | BAPPERIDA Kab. Lamongan (Tanpa Meja Kerja Terpadu) |
+| :---: | :---: |
+| ![Mockup Backoffice Petugas](./docs/screenshots/mockup_backoffice_petugas.png) | ![Layanan Lamongan](./docs/screenshots/lamongan_layanan.png) |
+| *Gambar 5.1: Panel kerja ASN verifikator: Meja triase aduan, tombol disposisi cepat ke 6 dinas, filter prioritas urgensi, log audit, dan ekspor instan CSV.* | *Gambar 5.2: BAPPERIDA Lamongan tidak memiliki antarmuka triase disposisi terpadu di website; proses koordinasi internal berjalan terpisah tanpa integrasi publik.* |
+
+* **Analisis Komparatif**:
+  - **Situs BAPPERIDA Lamongan**: Petugas dinas tidak memiliki alat kerja berbasis web publik untuk langsung memilah dan mendistribusikan pekerjaan lapangan berdasarkan lokasi geospasial.
+  - **Mockup SIPANTAU**: Menyediakan lingkungan khusus **SIPANTAU BACKOFFICE**:
+    - Verifikator Diskominfo dapat memvalidasi keaslian laporan.
+    - Menentukan tingkat urgensi (*Emergency, Kritis, Sedang, Rendah*).
+    - **Disposisi Sekali Klik ke 6 OPD Teknis**: Dinas Bina Marga, DPKP3, Satpol PP, DLHK, PDAM, dan Dishub.
+    - Dilengkapi tombol **Ekspor CSV (Excel)** untuk laporan bulanan pimpinan dan fitur cadangan database JSON.
+
+---
+
+### 4.6 Ergonomi Antarmuka Layar Ponsel (*Mobile Usability & Thumb Zone*)
+
+| Mockup SIPANTAU Mobile View (Ukuran Layar Ponsel 390x844) | BAPPERIDA Lamongan Mobile View (Ukuran Layar Ponsel 390x844) |
+| :---: | :---: |
+| ![Mockup Mobile View](./docs/screenshots/mockup_mobile_view.png) | ![Lamongan Mobile View](./docs/screenshots/lamongan_mobile_view.png) |
+| *Gambar 6.1: Navigasi bawah (Bottom Navigation Bar) ergonomis di zona ibu jari, tombol Peta GIS melayang di tengah, viewport 100dvh, & bottom-sheet popup.* | *Gambar 6.2: Tampilan ponsel merupakan hasil downscaling desktop standar; menu hamburger di pojok atas menyulitkan pengoperasian gawai dengan satu tangan.* |
+
+* **Analisis Komparatif**:
+  - **Situs BAPPERIDA Lamongan**: Saat diakses melalui smartphone, halaman hanya mengecilkan elemen desktop. Menu navigasi berada di pojok kanan atas di luar jangkauan nyaman ibu jari (*out of thumb zone*), dan membaca dokumen PDF di ponsel sangat tidak nyaman.
+  - **Mockup SIPANTAU**: Mengusung prinsip **Mobile-First UX**:
+    - **Bottom Navigation Bar**: Menu utama (Beranda, Buat Aduan, Peta GIS, Lacak Tiket, Bantuan) berada tepat di bagian bawah layar ponsel.
+    - **Dynamic Viewport `100dvh`**: Tampilan stabil dan tidak terpotong atau tertutup bilah navigasi browser HP.
+    - **Bottom Sheet Card**: Informasi detail titik aduan pada peta GIS muncul melayang dari bawah layar (*bottom-sheet*), sehingga tidak menutupi peta maupun bilah pencarian alamat di atasnya.
 * **Kelemahan Web Lamongan**: Masyarakat yang melapor sering kali mengalami fenomena *"black box reporting"* (tidak mengetahui apakah laporan sudah dibaca, sedang ditangani, atau ditolak, kecuali menanyakan kembali secara manual).
 * **Keunggulan Mockup SIPANTAU**:
   1. Fitur **Pelacak Status Tiket** dapat diakses langsung dari header landing page maupun menu navigasi tanpa harus masuk akun.
@@ -221,3 +285,4 @@ Berdasarkan analisis komparasi yang telah dilakukan, dapat disimpulkan bahwa:
 
 ---
 *Dokumen ini disusun sebagai kelengkapan tugas evaluasi akademik antarmuka dan rekayasa perangkat lunak.*
+
