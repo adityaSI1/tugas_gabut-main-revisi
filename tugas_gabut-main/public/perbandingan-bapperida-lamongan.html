@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Laporan Komparasi: Mockup SIPANTAU vs Web BAPPERIDA Lamongan</title>
+  <meta name="description" content="Dokumen Analisis Perbandingan Komprehensif dan Evaluasi Keunggulan Sistem antara Mockup Aplikasi SIPANTAU dengan Situs Resmi BAPPERIDA Kabupaten Lamongan.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      color: #1e293b;
+      background-color: #f8fafc;
+    }
+    h1, h2, h3, h4, .font-heading {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    code, pre, .font-mono {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    @media print {
+      .no-print {
+        display: none !important;
+      }
+      body {
+        background-color: #ffffff !important;
+        color: #000000 !important;
+        font-size: 11pt;
+      }
+      .page-break {
+        page-break-before: always;
+      }
+      .card-shadow {
+        box-shadow: none !important;
+        border: 1px solid #cbd5e1 !important;
+      }
+    }
+  </style>
+</head>
+<body class="p-4 sm:p-8 md:p-12 selection:bg-rose-100 selection:text-rose-900">
+
+  <!-- TOP ACTION BAR (NO PRINT) -->
+  <aside aria-label="Aksi Dokumen" class="max-w-5xl mx-auto mb-8 flex flex-wrap items-center justify-between gap-4 p-4 bg-white rounded-2xl shadow-sm border border-slate-200 no-print">
+    <div class="flex items-center gap-3">
+      <span class="w-3 h-3 rounded-full bg-rose-600 animate-pulse"></span>
+      <div>
+        <span class="text-xs font-bold uppercase tracking-wider text-rose-700">Dokumen Akademik Resmi</span>
+        <h2 class="text-sm font-bold text-slate-800">Laporan Analisis Perbandingan Sistem (Siap Cetak / PDF)</h2>
+      </div>
+    </div>
+    <div class="flex items-center gap-2">
+      <a href="https://adityasi1.github.io/tugas_gabut-main-revisi/" target="_blank" rel="noopener noreferrer" class="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition flex items-center gap-1.5">
+        <span>Buka Live Mockup</span>
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+      </a>
+      <button onclick="window.print()" class="px-4 py-2 rounded-xl bg-rose-700 hover:bg-rose-800 text-white text-xs font-bold shadow-md shadow-rose-900/10 transition flex items-center gap-1.5">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+        <span>Cetak / Simpan PDF (Ctrl + P)</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- MAIN DOCUMENT CONTAINER -->
+  <main class="max-w-5xl mx-auto bg-white border border-slate-200 rounded-3xl p-6 sm:p-12 shadow-xl card-shadow">
+    
+    <!-- HEADER COVER -->
+    <header class="border-b border-slate-200 pb-8 mb-8">
+      <div class="flex flex-wrap items-center justify-between gap-4 mb-4">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-rose-50 border border-rose-200 text-rose-800 text-xs font-bold">
+          <span>TUGAS REKAYASA PERANGKAT LUNAK &amp; SPBE</span>
+        </div>
+        <div class="text-xs text-slate-500 font-mono">
+          Tanggal Penyusunan: November 2026
+        </div>
+      </div>
+
+      <h1 class="text-2xl sm:text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight leading-tight">
+        ANALISIS PERBANDINGAN DAN EVALUASI KEUNGGULAN SISTEM:
+      </h1>
+      <p class="text-lg sm:text-xl font-bold text-rose-700 mt-2">
+        Studi Komparasi Antara Mockup Aplikasi SIPANTAU (Portal Pengaduan &amp; WebGIS Terpadu) dengan Situs Resmi BAPPERIDA Kabupaten Lamongan
+      </p>
+
+      <!-- METADATA BOX -->
+      <div class="mt-6 p-4 rounded-2xl bg-slate-50 border border-slate-200 grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+        <div>
+          <span class="text-slate-500 block">Objek Mockup Terpadu:</span>
+          <span class="font-bold text-slate-800">SIPANTAU (Sistem Pelayanan &amp; Pemantauan Masyarakat Terpadu Berbasis WebGIS)</span>
+          <span class="block font-mono text-[11px] text-rose-700 mt-0.5">https://adityasi1.github.io/tugas_gabut-main-revisi/</span>
+        </div>
+        <div>
+          <span class="text-slate-500 block">Objek Pembanding Aktif:</span>
+          <span class="font-bold text-slate-800">Website Resmi BAPPERIDA Kabupaten Lamongan</span>
+          <span class="block font-mono text-[11px] text-blue-700 mt-0.5">https://bapperida.lamongankab.go.id</span>
+        </div>
+        <div class="sm:col-span-2 pt-2 border-t border-slate-200 text-slate-600 leading-relaxed">
+          <strong>Catatan Studi Kasus:</strong> Pengalihan objek studi dari target awal (BAPPERIDA Kota Manado - <code>bapperida.manadokota.go.id</code>) dilakukan karena server instansi tersebut sedang mengalami <em>Cloudflare Error 521 (Web Server Down)</em>, sehingga digunakan situs resmi BAPPERIDA Kabupaten Lamongan yang aktif dan beroperasi normal.
+        </div>
+      </div>
+    </header>
+
+    <!-- BAB I: PENDAHULUAN -->
+    <section class="mb-10">
+      <h2 class="text-xl font-bold text-slate-900 border-l-4 border-rose-600 pl-3 mb-4">
+        BAB I: PENDAHULUAN &amp; LATAR BELAKANG
+      </h2>
+      <p class="text-sm text-slate-700 leading-relaxed mb-4 text-justify">
+        Penyelenggaraan Sistem Pemerintahan Berbasis Elektronik (SPBE) menuntut instansi daerah di Indonesia untuk menghadirkan portal pelayanan publik yang tidak sekadar berfungsi sebagai media brosur daring (profil pasif), tetapi mampu menjadi instrumen keterlibatan warga (<em>civic engagement</em>), transparansi penanganan infrastruktur, dan saluran aduan masyarakat yang berbasis geospasial presisi.
+      </p>
+      <p class="text-sm text-slate-700 leading-relaxed text-justify">
+        Dokumen ini menyajikan kajian komparatif mendalam antara rancang bangun prototipe modern <strong>SIPANTAU</strong> yang telah kami kembangkan dan tayangkan secara langsung, berbanding dengan implementasi riil situs dinas <strong>BAPPERIDA Kabupaten Lamongan</strong>. Evaluasi difokuskan pada efektivitas arsitektur informasi, visualisasi geospasial (WebGIS), kecepatan alur triase dinas, dan kenyamanan antarmuka pengguna pada perangkat bergerak (<em>mobile usability</em>).
+      </p>
+    </section>
+
+    <!-- ARSITEKTUR KONSEPTUAL DIAGRAM -->
+    <section class="mb-10">
+      <h2 class="text-xl font-bold text-slate-900 border-l-4 border-rose-600 pl-3 mb-4">
+        BAB II: PERBANDINGAN ARSITEKTUR INFORMASI KEDUA SISTEM
+      </h2>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 my-6">
+        <!-- SYSTEM 1 -->
+        <div class="p-5 rounded-2xl border border-slate-200 bg-slate-50">
+          <div class="flex items-center justify-between mb-3">
+            <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-slate-200 text-slate-700">Model Konvensional</span>
+            <span class="text-xs font-mono text-slate-500">Lamongan</span>
+          </div>
+          <h3 class="font-bold text-base text-slate-800 mb-2">BAPPERIDA Kab. Lamongan</h3>
+          <ul class="text-xs text-slate-600 space-y-2 list-disc pl-4 leading-relaxed">
+            <li><strong>Pola Hubungan:</strong> Dominan satu arah (<em>information push</em>: profil, berita, dokumen perencanaan RPJMD/RKPD).</li>
+            <li><strong>Peta Spasial Publik:</strong> Tidak tersedia. Tidak ada WebGIS interaktif tempat masyarakat memantau titik masalah kota.</li>
+            <li><strong>Penanganan Pengaduan:</strong> Dilempar keluar situs (<em>redirect</em>) ke SP4N-LAPOR! pusat, WBS, atau WhatsApp "Lapor Pak Yes!".</li>
+            <li><strong>Struktur Sistem:</strong> Terfragmentasi (<em>silo application</em>) antara SIMela, SI-RISDA, dan portal utama.</li>
+          </ul>
+        </div>
+
+        <!-- SYSTEM 2 -->
+        <div class="p-5 rounded-2xl border-2 border-rose-600/30 bg-rose-50/50">
+          <div class="flex items-center justify-between mb-3">
+            <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-rose-600 text-white">Model Terpadu Modern</span>
+            <span class="text-xs font-mono text-rose-800">SIPANTAU</span>
+          </div>
+          <h3 class="font-bold text-base text-rose-900 mb-2">Mockup Aplikasi SIPANTAU</h3>
+          <ul class="text-xs text-slate-700 space-y-2 list-disc pl-4 leading-relaxed">
+            <li><strong>Pola Hubungan:</strong> Kolaboratif dua arah (warga lapor &amp; dukung, petugas triase &amp; eksekusi lapangan).</li>
+            <li><strong>Peta Spasial Publik:</strong> WebGIS interaktif Leaflet dengan clustering, filter 5 kategori, layer satelit, dan nominatim geocoder.</li>
+            <li><strong>Penanganan Pengaduan:</strong> Terpadu di dalam sistem dengan tiket unik, timeline real-time, dan chat klarifikasi lokasi.</li>
+            <li><strong>Struktur Sistem:</strong> <em>Single Unified Ecosystem</em> dengan gerbang peran dwifungsi (Warga vs Petugas ASN).</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- BAB III: TABEL MATRIKS PERBANDINGAN -->
+    <section class="mb-10 page-break">
+      <h2 class="text-xl font-bold text-slate-900 border-l-4 border-rose-600 pl-3 mb-4">
+        BAB III: MATRIKS EVALUASI KOMPREHENSIF (10 PARAMETER)
+      </h2>
+      
+      <div class="overflow-x-auto rounded-2xl border border-slate-200 shadow-xs">
+        <table class="w-full text-left text-xs border-collapse">
+          <thead>
+            <tr class="bg-slate-100 text-slate-800 font-bold border-b border-slate-200">
+              <th class="p-3 w-12 text-center">No</th>
+              <th class="p-3 w-40">Parameter Evaluasi</th>
+              <th class="p-3">Website BAPPERIDA Lamongan</th>
+              <th class="p-3">Mockup Aplikasi SIPANTAU</th>
+              <th class="p-3 w-28 text-center">Status</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-200 text-slate-700">
+            <tr class="hover:bg-slate-50">
+              <td class="p-3 text-center font-bold">1</td>
+              <td class="p-3 font-semibold text-slate-900">Paradigma Layanan</td>
+              <td class="p-3">Penyampaian informasi pasif &amp; repositori unduhan berkas PDF.</td>
+              <td class="p-3 font-medium text-rose-900">Aksi partisipasi publik aktif, pemetaan masalah daerah, dan pemantauan tindak lanjut.</td>
+              <td class="p-3 text-center"><span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold">Unggul</span></td>
+            </tr>
+            <tr class="hover:bg-slate-50 bg-rose-50/20">
+              <td class="p-3 text-center font-bold">2</td>
+              <td class="p-3 font-semibold text-slate-900">Visualisasi Geospasial (WebGIS)</td>
+              <td class="p-3 text-rose-700 font-medium">Tidak ada peta GIS publik sebaran aduan atau infrastruktur.</td>
+              <td class="p-3 font-medium text-rose-900">WebGIS Leaflet interaktif dengan filter kategori, cluster titik, dan citra satelit resolusi tinggi.</td>
+              <td class="p-3 text-center"><span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold">Signifikan</span></td>
+            </tr>
+            <tr class="hover:bg-slate-50">
+              <td class="p-3 text-center font-bold">3</td>
+              <td class="p-3 font-semibold text-slate-900">Alur Pelaporan Warga</td>
+              <td class="p-3">Mengarahkan pengguna ke luar situs (SP4N-LAPOR! / WhatsApp).</td>
+              <td class="p-3 font-medium text-rose-900">Formulir Multi-Step cerdas di dalam portal dengan geotagging GPS &amp; kompresi Canvas otomatis.</td>
+              <td class="p-3 text-center"><span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold">Unggul</span></td>
+            </tr>
+            <tr class="hover:bg-slate-50 bg-rose-50/20">
+              <td class="p-3 text-center font-bold">4</td>
+              <td class="p-3 font-semibold text-slate-900">Transparansi Penanganan</td>
+              <td class="p-3">Tertutup (*black-box*); warga tidak tahu tahapan kerja dinas.</td>
+              <td class="p-3 font-medium text-rose-900">Pelacak Tiket Real-time dengan status tahapan dinas, nama petugas penanggung jawab, dan SLA 4 jam.</td>
+              <td class="p-3 text-center"><span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold">Unggul</span></td>
+            </tr>
+            <tr class="hover:bg-slate-50">
+              <td class="p-3 text-center font-bold">5</td>
+              <td class="p-3 font-semibold text-slate-900">Komunikasi Dua Arah</td>
+              <td class="p-3">Terbatas pada obrolan informal chat tanpa riwayat tiket terintegrasi.</td>
+              <td class="p-3 font-medium text-rose-900">Chat interaktif resmi di dalam tiket aduan untuk klarifikasi lokasi dan bukti foto pengerjaan.</td>
+              <td class="p-3 text-center"><span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold">Unggul</span></td>
+            </tr>
+            <tr class="hover:bg-slate-50 bg-rose-50/20">
+              <td class="p-3 text-center font-bold">6</td>
+              <td class="p-3 font-semibold text-slate-900">Gerbang Masuk (Dual-Role)</td>
+              <td class="p-3">Sistem terpisah tanpa login terpadu; harus buka sub-domain lain.</td>
+              <td class="p-3 font-medium text-rose-900">Landing Page terpadu dengan tab Warga (Mode Tamu 1-Klik) dan Petugas (Akun Simulasi Dosen).</td>
+              <td class="p-3 text-center"><span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold">Unggul</span></td>
+            </tr>
+            <tr class="hover:bg-slate-50">
+              <td class="p-3 text-center font-bold">7</td>
+              <td class="p-3 font-semibold text-slate-900">Panel Kerja Triase ASN</td>
+              <td class="p-3">Tidak tersedia dashboard triase disposisi terpadu di website.</td>
+              <td class="p-3 font-medium text-rose-900">Backoffice lengkap dengan disposisi ke 6 dinas teknis, log audit resmi, dan ekspor CSV (Excel).</td>
+              <td class="p-3 text-center"><span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold">Unggul</span></td>
+            </tr>
+            <tr class="hover:bg-slate-50 bg-rose-50/20">
+              <td class="p-3 text-center font-bold">8</td>
+              <td class="p-3 font-semibold text-slate-900">Ergonomi Ponsel (Mobile)</td>
+              <td class="p-3">Penyesuaian responsif standar desktop; menu atas menyulitkan satu tangan.</td>
+              <td class="p-3 font-medium text-rose-900">Mobile Bottom Navigation Bar (zona ibu jari), viewport <code>100dvh</code>, dan bottom sheet.</td>
+              <td class="p-3 text-center"><span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold">Unggul</span></td>
+            </tr>
+            <tr class="hover:bg-slate-50">
+              <td class="p-3 text-center font-bold">9</td>
+              <td class="p-3 font-semibold text-slate-900">Aksesibilitas &amp; Dark Mode</td>
+              <td class="p-3">Hanya mode terang standar; tidak ada opsi penghemat daya atau malam.</td>
+              <td class="p-3 font-medium text-rose-900">Mode Gelap (Dark Mode) tersinkronisasi penuh, mode fokus layar penuh, &amp; pintasan keyboard.</td>
+              <td class="p-3 text-center"><span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold">Unggul</span></td>
+            </tr>
+            <tr class="hover:bg-slate-50 bg-rose-50/20">
+              <td class="p-3 text-center font-bold">10</td>
+              <td class="p-3 font-semibold text-slate-900">Ketahanan Server (Resiliensi)</td>
+              <td class="p-3 text-amber-700">Rentan terhadap gangguan server lokal seperti kasus Manado 521.</td>
+              <td class="p-3 font-medium text-rose-900">Arsitektur Static Jamstack modern di-hosting pada jaringan edge CDN GitHub Pages yang sangat stabil.</td>
+              <td class="p-3 text-center"><span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold">Unggul</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- BAB IV: PEMBAHASAN KEUNGGULAN UTAMA -->
+    <section class="mb-10">
+      <h2 class="text-xl font-bold text-slate-900 border-l-4 border-rose-600 pl-3 mb-6">
+        BAB IV: PEMBAHASAN KEUNGGULAN UTAMA MOCKUP SIPANTAU
+      </h2>
+
+      <div class="space-y-6 text-sm text-slate-700">
+        
+        <div class="p-5 rounded-2xl bg-white border border-slate-200 shadow-2xs">
+          <h3 class="font-bold text-base text-slate-900 flex items-center gap-2 mb-2">
+            <span class="w-6 h-6 rounded-lg bg-rose-100 text-rose-800 flex items-center justify-center text-xs font-extrabold">1</span>
+            Transformasi dari Repositori Pasif Menjadi Spatial Crowdsourcing (WebGIS)
+          </h3>
+          <p class="leading-relaxed text-justify">
+            Pada website BAPPERIDA Lamongan, masyarakat disajikan dengan data pembangunan dalam format tabel berita dan file PDF yang tebal. Hal ini menyulitkan warga awam untuk memahami progres nyata di sekitarnya. Sebaliknya, SIPANTAU menghadirkan <strong>Peta Spasial Kolektif Warga</strong> menggunakan teknologi Leaflet GIS. Warga dapat melihat sebaran aduan fisik (seperti jalan berlubang, lampu penerangan padam, saluran drainase tersumbat) secara visual di peta kota, lengkap dengan foto lapangan dan status verifikasinya.
+          </p>
+        </div>
+
+        <div class="p-5 rounded-2xl bg-white border border-slate-200 shadow-2xs">
+          <h3 class="font-bold text-base text-slate-900 flex items-center gap-2 mb-2">
+            <span class="w-6 h-6 rounded-lg bg-rose-100 text-rose-800 flex items-center justify-center text-xs font-extrabold">2</span>
+            Landing Page Terpadu &amp; Fasilitas 1-Klik Simulasi untuk Penguji
+          </h3>
+          <p class="leading-relaxed text-justify">
+            Salah satu kendala terbesar pengujian aplikasi pemerintah adalah rumitnya birokrasi registrasi akun. Mockup SIPANTAU dirancang dengan kecerdasan UX: warga dapat langsung mengeksplorasi sistem menggunakan tombol <strong>"Mode Tamu"</strong> tanpa harus mendaftar. Sementara itu, untuk evaluasi dosen penilai, disediakan <strong>Akun Simulasi Petugas 1-Klik</strong> (atas nama <em>Budi Santoso - Diskominfo</em> dan <em>Siti Maryam - Dinas Bina Marga</em>), sehingga dosen dapat langsung menguji meja kerja triase, disposisi teknis dinas, dan ekspor CSV dalam hitungan detik.
+          </p>
+        </div>
+
+        <div class="p-5 rounded-2xl bg-white border border-slate-200 shadow-2xs">
+          <h3 class="font-bold text-base text-slate-900 flex items-center gap-2 mb-2">
+            <span class="w-6 h-6 rounded-lg bg-rose-100 text-rose-800 flex items-center justify-center text-xs font-extrabold">3</span>
+            Transparansi SLA (Standar Pelayanan Minimal 4 Jam) &amp; Umpan Balik Dua Arah
+          </h3>
+          <p class="leading-relaxed text-justify">
+            Sistem pengaduan konvensional sering dikritik karena lambat dan tidak transparan. SIPANTAU menjawab hal ini dengan mengimplementasikan penghitung batas waktu tanggap (<strong>SLA Respon Awal Maksimal 4 Jam</strong>). Di samping itu, pelapor tidak hanya menunggu pasif, melainkan dapat berinteraksi langsung melalui fitur chat tiket untuk mengirimkan patokan lokasi tambahan, memantau riwayat disposisi ke dinas terkait, serta memberikan penilaian kepuasan (rating bintang CSAT) setelah pekerjaan selesai.
+          </p>
+        </div>
+
+        <div class="p-5 rounded-2xl bg-white border border-slate-200 shadow-2xs">
+          <h3 class="font-bold text-base text-slate-900 flex items-center gap-2 mb-2">
+            <span class="w-6 h-6 rounded-lg bg-rose-100 text-rose-800 flex items-center justify-center text-xs font-extrabold">4</span>
+            Ergonomi Desain Khusus Layar Smartphone (Mobile-First Thumb Zone)
+          </h3>
+          <p class="leading-relaxed text-justify">
+            Mayoritas warga mengakses layanan pengaduan langsung dari lokasi kejadian menggunakan smartphone. Berbeda dengan web Lamongan yang masih berbasis layout desktop konvensional, SIPANTAU menerapkan <strong>Mobile Bottom Navigation Bar</strong> ergonomis yang dapat dijangkau oleh ibu jari dengan satu tangan, pemanfaatan viewport <code>100dvh</code> agar antarmuka tidak terpotong oleh address bar browser ponsel, serta kartu popup bawah (<em>bottom-sheet</em>) yang tidak menutupi kotak pencarian peta.
+          </p>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- BAB V: KESIMPULAN -->
+    <section class="mb-10 page-break">
+      <h2 class="text-xl font-bold text-slate-900 border-l-4 border-rose-600 pl-3 mb-4">
+        BAB V: KESIMPULAN &amp; REKOMENDASI AKADEMIK
+      </h2>
+      <div class="p-6 rounded-2xl bg-slate-50 border border-slate-200 text-sm text-slate-700 leading-relaxed space-y-3">
+        <p class="text-justify">
+          Melalui kajian komparasi ini, dapat disimpulkan bahwa situs resmi <strong>BAPPERIDA Kabupaten Lamongan</strong> telah menjalankan fungsi mendasar sebagai media publikasi profil dan dokumen daerah, namun memiliki kesenjangan besar dalam hal interaktivitas spasial warga, pelacakan proses penanganan yang transparan, dan optimasi antarmuka ponsel.
+        </p>
+        <p class="text-justify">
+          <strong>Mockup Aplikasi SIPANTAU</strong> hadir membawa kebaruan inovatif dengan memadukan visualisasi geospasial WebGIS, meja triase disposisi dinas yang terukur, alur pelaporan multi-step tervalidasi, serta ergonomi mobile-first. Inovasi ini secara nyata membuktikan kelayakan implementasi (*proof of concept*) sistem pelayanan aspirasi masyarakat yang modern, transparan, dan akuntabel sesuai dengan semangat transformasi SPBE di Indonesia.
+        </p>
+      </div>
+    </section>
+
+    <!-- LAMPIRAN PANDUAN PENGUJIAN -->
+    <section>
+      <h2 class="text-xl font-bold text-slate-900 border-l-4 border-rose-600 pl-3 mb-4">
+        LAMPIRAN: PANDUAN PENGUJIAN SISTEM BAGI DOSEN PENILAI
+      </h2>
+
+      <div class="overflow-x-auto rounded-2xl border border-slate-200">
+        <table class="w-full text-left text-xs border-collapse">
+          <thead>
+            <tr class="bg-slate-100 text-slate-800 font-bold border-b border-slate-200">
+              <th class="p-3 w-10 text-center">No</th>
+              <th class="p-3 w-36">Skenario Uji</th>
+              <th class="p-3">Langkah Pengujian pada Mockup</th>
+              <th class="p-3">Hasil yang Terverifikasi</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-200 text-slate-700">
+            <tr>
+              <td class="p-3 text-center font-bold">1</td>
+              <td class="p-3 font-semibold text-slate-900">Uji Landing &amp; Role</td>
+              <td class="p-3">Buka URL utama $\rightarrow$ klik tombol <em>"Jelajahi Portal Langsung (Mode Tamu)"</em>.</td>
+              <td class="p-3 text-emerald-800 font-medium">Masuk langsung ke Portal Warga tanpa hambatan registrasi form.</td>
+            </tr>
+            <tr>
+              <td class="p-3 text-center font-bold">2</td>
+              <td class="p-3 font-semibold text-slate-900">Uji Peta WebGIS</td>
+              <td class="p-3">Klik menu/ikon <strong>Peta GIS</strong> di bottom nav $\rightarrow$ ganti kategori aduan $\rightarrow$ klik pin di peta.</td>
+              <td class="p-3 text-emerald-800 font-medium">Peta Leaflet merespons interaktif; popup card muncul rapi di bawah layar.</td>
+            </tr>
+            <tr>
+              <td class="p-3 text-center font-bold">3</td>
+              <td class="p-3 font-semibold text-slate-900">Uji Pelaporan Warga</td>
+              <td class="p-3">Buka menu <strong>Buat Aduan</strong> $\rightarrow$ ikuti 4 tahap $\rightarrow$ pilih titik peta $\rightarrow$ cetak resi.</td>
+              <td class="p-3 text-emerald-800 font-medium">Tiket terbit resmi dan modal cetak tanda terima dapat diunduh/cetak.</td>
+            </tr>
+            <tr>
+              <td class="p-3 text-center font-bold">4</td>
+              <td class="p-3 font-semibold text-slate-900">Uji Lacak Cepat</td>
+              <td class="p-3">Klik tombol <strong>Lacak Tiket</strong> di header $\rightarrow$ cari nomor tiket <code>#LAPOR-2410-092</code>.</td>
+              <td class="p-3 text-emerald-800 font-medium">Tampil linimasa penanganan, chat dua arah warga-petugas, dan rating CSAT.</td>
+            </tr>
+            <tr>
+              <td class="p-3 text-center font-bold">5</td>
+              <td class="p-3 font-semibold text-slate-900">Uji Meja Petugas</td>
+              <td class="p-3">Klik <strong>Keluar/Ganti Peran</strong> $\rightarrow$ pilih tab Petugas $\rightarrow$ klik simulasi <em>Budi Santoso</em>.</td>
+              <td class="p-3 text-emerald-800 font-medium">Terbuka Backoffice verifikator dengan tombol disposisi ke 6 dinas &amp; ekspor CSV.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- FOOTER RESMI -->
+    <footer class="mt-12 pt-6 border-t border-slate-200 text-center text-xs text-slate-500">
+      <p>&copy; 2026 SIPANTAU - Dokumen Evaluasi dan Analisis Komparasi Antarmuka Web Perencanaan Daerah.</p>
+      <p class="text-[11px] text-slate-400 mt-1">Dapat dicetak langsung atau disimpan sebagai berkas PDF melalui menu cetak peramban web.</p>
+    </footer>
+
+  </main>
+
+</body>
+</html>
