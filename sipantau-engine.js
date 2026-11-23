@@ -221,10 +221,27 @@
     } catch (e) {}
   }
 
+  // Sinkronisasi data otomatis dengan Backend REST API & Database SQLite jika server aktif
+  async function syncWithBackend() {
+    try {
+      const res = await fetch('/api/tickets', { cache: 'no-store' });
+      if (res.ok) {
+        const json = await res.json();
+        if (json && json.success && Array.isArray(json.data) && json.data.length > 0) {
+          localStorage.setItem(DB_KEY, JSON.stringify(json.data));
+          window.dispatchEvent(new CustomEvent('sipantau:db-updated', { detail: { source: 'backend' } }));
+        }
+      }
+    } catch (_) {
+      // Backend offline / GitHub Pages mode statis
+    }
+  }
+
   // SiPantauDB API - Menghubungkan semua halaman dan aksi verifikasi petugas
   const SiPantauDB = {
     getTickets,
     saveTickets,
+    syncWithBackend,
     resetDB() {
       localStorage.setItem(DB_KEY, JSON.stringify(initialTickets));
       window.dispatchEvent(new CustomEvent('sipantau:db-updated'));
@@ -249,6 +266,21 @@
           active: newStatus !== 'Selesai'
         });
         saveTickets(list);
+
+        // Async sync to SQLite Backend REST API
+        try {
+          fetch('/api/tickets/' + encodeURIComponent(cleanId) + '/status', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              status: newStatus,
+              targetDinas: dinas,
+              notes: note,
+              officer: officer
+            })
+          }).catch(() => {});
+        } catch (_) {}
+
         return ticket;
       }
       return null;
@@ -272,6 +304,22 @@
         };
         ticket.messages.push(newMsg);
         saveTickets(list);
+
+        // Async sync to SQLite Backend REST API
+        try {
+          fetch('/api/tickets/' + encodeURIComponent(cleanId) + '/messages', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              senderRole: newMsg.senderRole,
+              senderName: newMsg.senderName,
+              roleBadge: newMsg.roleBadge,
+              text: newMsg.text,
+              foto: newMsg.foto
+            })
+          }).catch(() => {});
+        } catch (_) {}
+
         return newMsg;
       }
       return null;
@@ -297,9 +345,40 @@
           done: true
         });
         saveTickets(list);
+
+        // Async sync to SQLite Backend REST API
+        try {
+          fetch('/api/tickets/' + encodeURIComponent(cleanId) + '/rating', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(ticket.rating)
+          }).catch(() => {});
+        } catch (_) {}
+
         return ticket;
       }
       return null;
+    },
+    upvote(ticketId) {
+      const list = getTickets();
+      const cleanId = (ticketId || '').trim().toUpperCase();
+      const ticket = list.find(
+        (t) => t.id.toUpperCase() === cleanId || t.code.toUpperCase() === cleanId.replace('#', '')
+      );
+      if (ticket) {
+        ticket.upvotes = (ticket.upvotes || 0) + 1;
+        saveTickets(list);
+
+        // Async sync to SQLite Backend REST API
+        try {
+          fetch('/api/tickets/' + encodeURIComponent(cleanId) + '/upvote', {
+            method: 'POST'
+          }).catch(() => {});
+        } catch (_) {}
+
+        return ticket.upvotes;
+      }
+      return 0;
     },
     getDailyStats() {
       const tickets = getTickets();
@@ -317,6 +396,14 @@
       const rataWaktuResponMenit = Math.max(18, 24 + sedangDiproses * 2);
       const rataWaktuResponFormat = `${rataWaktuResponMenit} Menit`;
 
+      // Rating kepuasan warga aktual dari database
+      const ratedTickets = tickets.filter((t) => t.rating && t.rating.stars);
+      let indeksKepuasan = '4.9';
+      if (ratedTickets.length > 0) {
+        const sumRating = ratedTickets.reduce((acc, t) => acc + (t.rating?.stars || 5), 0);
+        indeksKepuasan = (sumRating / ratedTickets.length).toFixed(1);
+      }
+
       const catMap = {};
       tickets.forEach((t) => {
         catMap[t.kategori] = (catMap[t.kategori] || 0) + 1;
@@ -333,6 +420,7 @@
         tuntasHariIni: tuntas,
         persentaseSelesai,
         totalAduan: total,
+        indeksKepuasan,
         kategoriPopuler
       };
     }
@@ -1249,14 +1337,10 @@
         if (upvoteBtn) {
           upvoteBtn.innerHTML = `<span class="material-symbols-outlined text-[16px]">thumb_up</span> Dukung Aduan Ini (${ticket.upvotes} Warga)`;
           upvoteBtn.onclick = () => {
-            const list = getTickets();
-            const found = list.find((x) => x.id === ticket.id);
-            if (found) {
-              found.upvotes = (found.upvotes || 0) + 1;
-              saveTickets(list);
-              upvoteBtn.innerHTML = `<span class="material-symbols-outlined text-[16px]">thumb_up</span> Dukung Aduan Ini (${found.upvotes} Warga)`;
-              showToast(`Dukungan berhasil ditambahkan pada tiket ${found.id}!`, 'success');
-            }
+            const newVotes = window.SiPantauDB.upvote(ticket.id);
+            ticket.upvotes = newVotes;
+            upvoteBtn.innerHTML = `<span class="material-symbols-outlined text-[16px]">thumb_up</span> Dukung Aduan Ini (${newVotes} Warga)`;
+            showToast(`Dukungan berhasil ditambahkan pada tiket ${ticket.id}!`, 'success');
           };
 
           // Tombol Buka Linimasa & Percakapan Langsung dari Peta
@@ -1266,7 +1350,7 @@
             trackerBtn.className = 'btn-open-map-tracker w-full mt-2 py-2 px-3 rounded-xl border border-[#9e001f] text-[#9e001f] hover:bg-[#ffdad8]/50 font-bold text-xs flex items-center justify-center gap-1.5 transition shadow-2xs';
             upvoteBtn.parentNode.insertBefore(trackerBtn, upvoteBtn.nextSibling);
           }
-          trackerBtn.innerHTML = `<span class="material-symbols-outlined text-[16px]">forum</span> Buka Linimasa & Diskusi Tiket ↗`;
+          trackerBtn.innerHTML = `<svg class="w-4 h-4 fill-none stroke-current shrink-0" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg> <span>Buka Linimasa &amp; Diskusi Tiket ↗</span>`;
           trackerBtn.onclick = () => {
             window.openTicketTrackerModal(ticket.id);
           };
@@ -1308,6 +1392,10 @@
 
       renderMapMarkers();
       updatePopupCard(getTickets()[0]);
+      window.addEventListener('sipantau:db-updated', () => {
+        renderMapMarkers();
+        updatePopupCard(getTickets()[0]);
+      });
 
       // Tutup popup card
       const closeBtn = popupCard?.querySelector('button');
@@ -1948,7 +2036,8 @@
                 ← Ubah / Perbaiki Data
               </button>
               <button type="button" id="btn-confirm-publish-report" class="px-5 py-2 rounded-xl bg-[#c8102e] hover:bg-[#9e001f] text-white font-bold text-xs transition flex items-center gap-1.5 shadow-md">
-                <span class="material-symbols-outlined text-sm">send</span> Konfirmasi & Terbitkan Laporan
+                <svg class="w-3.5 h-3.5 fill-none stroke-current shrink-0" stroke-width="2" viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                <span>Konfirmasi &amp; Terbitkan Laporan</span>
               </button>
             </div>
           </div>
@@ -2067,6 +2156,19 @@
               { tahap: 'Selesai & Evaluasi Publik', waktu: '-', keterangan: '-', done: false }
             ]
           };
+
+          // Simpan ke SQLite Database Backend jika aktif
+          try {
+            fetch('/api/tickets', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(newTicket)
+            }).then(r => r.json()).then(data => {
+              if (data && data.success && data.data) {
+                console.log('[SIPANTAU] Laporan tersimpan di SQLite persisten:', data.data.id);
+              }
+            }).catch(() => {});
+          } catch (_) {}
 
           const list = getTickets();
           list.unshift(newTicket);
@@ -2202,8 +2304,8 @@
           <!-- Section 4: Form Keputusan Verifikasi & Disposisi OPD -->
           <div class="bg-surface-container-low p-4 rounded-xl border border-outline-variant space-y-3">
             <h3 class="text-label-md font-label-md text-primary font-bold flex items-center gap-1.5">
-              <span class="material-symbols-outlined text-base">send</span>
-              Formulir Instruksi Disposisi OPD
+              <svg class="w-4 h-4 fill-none stroke-current shrink-0" stroke-width="2" viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+              <span>Formulir Instruksi Disposisi OPD</span>
             </h3>
             <div>
               <label class="block text-xs font-semibold text-on-surface mb-1">Dinas / OPD Teknis Tujuan</label>
@@ -2308,7 +2410,7 @@
         <div class="bg-white rounded-2xl max-w-lg w-full border-2 border-[#9e001f] shadow-2xl overflow-hidden animate-in fade-in zoom-in-95">
           <div class="bg-[#9e001f] text-white p-5 flex items-center justify-between">
             <div class="flex items-center gap-2.5">
-              <span class="material-symbols-outlined text-2xl">send</span>
+              <svg class="w-6 h-6 fill-none stroke-current shrink-0" stroke-width="2" viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
               <div>
                 <h3 class="font-bold text-base" style="font-family:'Plus Jakarta Sans',sans-serif;">Disposisi Cepat Massal</h3>
                 <p class="text-xs text-[#ffdad8]">${tickets.length} Laporan Warga Dipilih Sekaligus</p>
@@ -2349,7 +2451,8 @@
             <div class="pt-2 flex items-center justify-end gap-2.5">
               <button type="button" id="btn-cancel-bulk" class="px-4 py-2 rounded-xl border border-gray-300 text-gray-700 hover:bg-gray-100 text-xs font-semibold transition">Batal</button>
               <button type="button" id="btn-confirm-bulk" class="px-5 py-2 rounded-xl bg-[#c8102e] hover:bg-[#9e001f] text-white font-bold text-xs transition flex items-center gap-1.5 shadow-md">
-                <span class="material-symbols-outlined text-sm">send</span> Teruskan ${tickets.length} Tiket ke OPD
+                <svg class="w-3.5 h-3.5 fill-none stroke-current shrink-0" stroke-width="2" viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                <span>Teruskan ${tickets.length} Tiket ke OPD</span>
               </button>
             </div>
           </div>
@@ -2375,7 +2478,7 @@
       const bulkBtns = Array.from(document.querySelectorAll('button')).filter((b) => (b.textContent || '').includes('Disposisi Cepat Massal'));
       bulkBtns.forEach((btn) => {
         const count = checkedTicketIds.size;
-        btn.innerHTML = `<span class="material-symbols-outlined text-sm">send</span> Disposisi Cepat Massal (${count})`;
+        btn.innerHTML = `<svg class="w-3.5 h-3.5 fill-none stroke-current shrink-0" stroke-width="2" viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg> <span>Disposisi Cepat Massal (${count})</span>`;
         if (count > 0) {
           btn.className = 'px-3.5 py-1.5 rounded-lg text-label-md font-label-md bg-[#c8102e] hover:bg-[#9e001f] text-white font-bold transition shadow-sm flex items-center gap-1.5 cursor-pointer';
         } else {
@@ -2514,6 +2617,15 @@
         }).length,
         'Satpol PP': rawTickets.filter((t) => (t.dinas || '').toLowerCase().includes('satpol')).length
       };
+
+      // Update 4 Kartu KPI Utama Dashboard dari Database SQLite / Storage
+      const kpis = document.querySelectorAll('.text-headline-xl');
+      if (kpis.length >= 4) {
+        kpis[0].textContent = rawTickets.length.toString();
+        kpis[1].textContent = rawTickets.filter(t => t.status === 'Diajukan').length.toString();
+        kpis[2].textContent = rawTickets.filter(t => t.status === 'Diverifikasi' || t.status === 'Penanganan').length.toString();
+        kpis[3].textContent = rawTickets.filter(t => t.status === 'Selesai').length.toString();
+      }
 
       document.querySelectorAll('#opd-filter-chips-container .opd-chip').forEach((chip) => {
         const opdKey = chip.getAttribute('data-opd');
@@ -3923,6 +4035,15 @@
         }, 300);
       });
     }
+
+    // Auto-refresh Dashboard saat ada aduan baru atau update status dari SQLite / storage
+    window.addEventListener('sipantau:db-updated', () => {
+      renderTable();
+      if (selectedTicket) {
+        const refreshed = getTickets().find((x) => x.id === selectedTicket.id);
+        if (refreshed) renderDrawer(refreshed);
+      }
+    });
   }
 
   // 9. NAVIGASI GLOBAL & INTERAKSI TERPADU HALAMAN STITCH
@@ -4040,13 +4161,86 @@
     function renderDailyStatsComponent() {
       const stats = window.SiPantauDB.getDailyStats();
 
-      // 1. Update 4 Kartu Metrik di Strip Hero Utama
+      // 1. Update 4 Kartu Metrik di Strip Hero Utama (Data Riil Database SQLite / Storage)
       const heroMetricTexts = document.querySelectorAll('.text-headline-lg');
       if (heroMetricTexts.length >= 4) {
-        heroMetricTexts[0].textContent = (48900 + stats.totalAduan).toLocaleString('id-ID');
-        heroMetricTexts[1].textContent = `${stats.persentaseSelesai || 94}%`;
+        heroMetricTexts[0].textContent = stats.totalAduan.toLocaleString('id-ID');
+        heroMetricTexts[1].textContent = `${stats.persentaseSelesai}%`;
         heroMetricTexts[2].textContent = stats.rataWaktuResponFormat;
-        heroMetricTexts[3].innerHTML = `4.9 <span class="text-body-sm font-normal text-on-surface-variant">/ 5.0</span>`;
+        heroMetricTexts[3].innerHTML = `${stats.indeksKepuasan || '4.9'} <span class="text-body-sm font-normal text-on-surface-variant">/ 5.0</span>`;
+      }
+
+      // Update Kartu Pratinjau Terkini di Hero Kanan dengan Laporan Terakhir dari Database
+      const latestTicket = window.SiPantauDB.getTickets()[0];
+      if (latestTicket) {
+        const previewWrap = document.querySelector('.lg\\:col-span-5');
+        if (previewWrap) {
+          const statusBadge = latestTicket.status === 'Selesai'
+            ? `<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 text-label-sm font-label-sm border border-emerald-200"><span class="w-2 h-2 rounded-full bg-emerald-600"></span> SELESAI</span>`
+            : latestTicket.status === 'Diajukan'
+            ? `<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-50 text-amber-700 text-label-sm font-label-sm border border-amber-200"><span class="w-2 h-2 rounded-full bg-amber-600"></span> DIAJUKAN</span>`
+            : `<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 text-blue-700 text-label-sm font-label-sm border border-blue-200"><span class="w-2 h-2 rounded-full bg-blue-600"></span> ${(latestTicket.status || 'PROSES').toUpperCase()}</span>`;
+
+          const progressPercent = latestTicket.status === 'Selesai' ? 100 : latestTicket.status === 'Penanganan' ? 65 : latestTicket.status === 'Diverifikasi' ? 35 : 15;
+          const progressLabel = latestTicket.status === 'Selesai' ? 'Tuntas Terverifikasi' : latestTicket.status === 'Penanganan' ? 'Regu Teknis Lapangan' : latestTicket.status === 'Diverifikasi' ? 'Terverifikasi & Disposisi' : 'Menunggu Triase';
+
+          previewWrap.innerHTML = `
+            <div class="bg-white rounded-xl p-6 text-slate-900 shadow-md border border-slate-200">
+              <div class="flex items-center justify-between pb-4 border-b border-surface-container-high">
+                <div class="flex items-center gap-2">
+                  <span class="px-2.5 py-1 rounded bg-surface-container text-on-surface font-mono font-semibold text-xs">${latestTicket.id}</span>
+                  <span class="text-xs text-on-surface-variant font-medium">${latestTicket.waktu || 'Baru saja'}</span>
+                </div>
+                ${statusBadge}
+              </div>
+              <div class="pt-4 space-y-3">
+                <div class="flex items-start justify-between gap-3">
+                  <div>
+                    <h3 class="text-headline-sm font-headline-sm text-on-surface font-bold">${latestTicket.judul}</h3>
+                    <p class="text-body-sm font-body-sm text-on-surface-variant mt-1">${latestTicket.kecamatan || 'Kecamatan Terdata'} • ${latestTicket.dinas}</p>
+                  </div>
+                  <span class="material-symbols-outlined text-primary text-2xl" data-icon="warning">warning</span>
+                </div>
+                <p class="text-body-sm font-body-sm text-on-surface-variant bg-surface-container-low p-3.5 rounded-lg border border-surface-container leading-relaxed">
+                  "${latestTicket.deskripsi}"
+                </p>
+                <div class="pt-2">
+                  <div class="flex items-center justify-between text-xs text-on-surface-variant font-medium mb-1">
+                    <span class="text-emerald-700 font-semibold flex items-center gap-1">
+                      <span class="material-symbols-outlined text-sm" data-icon="check_circle">check_circle</span>
+                      ${progressLabel}
+                    </span>
+                    <span>Progres: ${progressPercent}%</span>
+                  </div>
+                  <div class="w-full h-2 rounded-full bg-surface-container-highest overflow-hidden">
+                    <div class="h-full bg-primary-container rounded-full" style="width: ${progressPercent}%;"></div>
+                  </div>
+                </div>
+                <div class="pt-3 flex items-center justify-between text-xs text-on-surface-variant border-t border-surface-container-high">
+                  <span class="flex items-center gap-1">
+                    <span class="material-symbols-outlined text-sm" data-icon="engineering">engineering</span>
+                    ${latestTicket.petugas || 'Unit Reaksi Cepat'}
+                  </span>
+                  <button type="button" id="btn-hero-preview-tracker" class="text-primary font-semibold hover:underline cursor-pointer bg-transparent border-0 p-0 text-xs">
+                    Lihat Riwayat &amp; Tanggapan →
+                  </button>
+                </div>
+                <div class="pt-2 flex items-center gap-1.5 text-xs text-on-surface-variant font-mono">
+                  <span class="material-symbols-outlined text-sm text-primary" data-icon="location_on">location_on</span>
+                  <span>Geotag GPS: ${typeof latestTicket.lat === 'number' ? latestTicket.lat.toFixed(4) : '-6.9175'}, ${typeof latestTicket.lng === 'number' ? latestTicket.lng.toFixed(4) : '107.6191'} (Terverifikasi)</span>
+                </div>
+              </div>
+            </div>
+          `;
+
+          previewWrap.querySelector('#btn-hero-preview-tracker')?.addEventListener('click', () => {
+            if (window.parent !== window) {
+              window.parent.postMessage({ type: 'sipantau:open-tracker', ticketId: latestTicket.id }, '*');
+            } else if (typeof window.openTicketTrackerModal === 'function') {
+              window.openTicketTrackerModal(latestTicket.id);
+            }
+          });
+        }
       }
 
       // 2. Cari atau Buat Wadah Komponen Ringkasan Statistik Harian
@@ -4212,6 +4406,7 @@
 
   function init() {
     syncDarkMode();
+    syncWithBackend();
     window.addEventListener('storage', (e) => {
       if (e.key === 'SIPANTAU_DARK_MODE') syncDarkMode();
     });
