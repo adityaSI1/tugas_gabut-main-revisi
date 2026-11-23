@@ -40,7 +40,11 @@ import {
   ImagePlus,
   Send,
   Camera,
-  Wrench
+  Wrench,
+  Database,
+  Server,
+  HardDrive,
+  RefreshCw
 } from 'lucide-react';
 
 import {
@@ -52,6 +56,18 @@ import {
   DailyStats,
   CivicTicket
 } from './utils/civic-db';
+import {
+  checkBackendHealth,
+  fetchTickets,
+  fetchTicketById,
+  createTicket,
+  updateTicketStatus,
+  sendTicketMessage,
+  sendTicketRating,
+  upvoteTicket,
+  resetDatabase,
+  BackendHealth
+} from './utils/api-client';
 import { LandingLoginPage } from './components/LandingLoginPage';
 
 interface PageItem {
@@ -179,6 +195,15 @@ export default function App() {
   const [showShortcutsModal, setShowShortcutsModal] = useState<boolean>(false);
   const [copiedTicketId, setCopiedTicketId] = useState<boolean>(false);
 
+  // Status Koneksi Backend REST API & Database SQLite
+  const [backendStatus, setBackendStatus] = useState<BackendHealth>({
+    connected: false,
+    database: 'LocalStorage Cache',
+    mode: 'localStorage'
+  });
+  const [showDatabaseModal, setShowDatabaseModal] = useState<boolean>(false);
+  const [isPingingBackend, setIsPingingBackend] = useState<boolean>(false);
+
   // Dark Mode & Focus Mode
   const [darkMode, setDarkMode] = useState<boolean>(() => {
     try {
@@ -234,7 +259,24 @@ export default function App() {
     setDailyStats(calculateDailyStats(currentTickets));
   };
 
-  const handleSearchTicket = (queryStr: string) => {
+  // Cek dan sinkronkan status backend REST API & SQLite
+  const checkBackend = async () => {
+    setIsPingingBackend(true);
+    try {
+      const status = await checkBackendHealth();
+      setBackendStatus(status);
+      if (status.connected) {
+        const freshTickets = await fetchTickets();
+        setDailyStats(calculateDailyStats(freshTickets));
+      }
+    } catch (e) {
+      console.warn('Backend check error:', e);
+    } finally {
+      setIsPingingBackend(false);
+    }
+  };
+
+  const handleSearchTicket = async (queryStr: string) => {
     const norm = (s: string) => s.trim().toUpperCase().replace(/^#/, '');
     const q = norm(queryStr);
     const tickets = loadTickets();
@@ -258,6 +300,16 @@ export default function App() {
       : undefined;
     setTrackerResult(found || null);
     refreshStats();
+
+    // Bila ada koneksi backend, ambil data tiket paling mutakhir dari database SQLite
+    if (q) {
+      try {
+        const fresh = await fetchTicketById(q);
+        if (fresh) {
+          setTrackerResult(fresh);
+        }
+      } catch (e) {}
+    }
   };
 
   useEffect(() => {
@@ -268,6 +320,7 @@ export default function App() {
       }
     } catch (e) {}
     refreshStats();
+    checkBackend();
     const handleStorage = () => refreshStats();
     window.addEventListener('storage', handleStorage);
     window.addEventListener('sipantau:db-updated', handleStorage);
@@ -373,11 +426,12 @@ export default function App() {
     return () => window.removeEventListener('keydown', onKey);
   }, [showReceiptModal, showOfficerLoginModal, showTracker, focusMode, showShortcutsModal, mobileMenuOpen]);
 
-  const handleResetDB = () => {
+  const handleResetDB = async () => {
     if (!window.confirm('Kembalikan semua data ke data contoh? Aduan yang sudah dibuat akan terhapus.')) return;
-    localStorage.removeItem('SIPANTAU_CIVIC_DB_V2');
+    await resetDatabase();
     setIframeKey((k) => k + 1);
     refreshStats();
+    checkBackend();
   };
 
   const handleExportBackup = () => {
@@ -413,43 +467,41 @@ export default function App() {
     refreshStats();
   };
 
-  const handleSendAppReply = () => {
+  const handleSendAppReply = async () => {
     if (!trackerResult) return;
     if (!replyText.trim() && !replyPhoto) return;
 
-    const tickets = loadTickets();
-    const idx = tickets.findIndex((t: any) => t.id === trackerResult.id);
-    if (idx !== -1) {
-      const updated = addTicketMessage(tickets[idx], {
+    try {
+      const updated = await sendTicketMessage(trackerResult.id, {
         senderRole: replyRole,
         senderName: replyName.trim() || (replyRole === 'warga' ? 'Budi Pratama' : 'Petugas OPD'),
         text: replyText.trim() || (replyPhoto ? '(Melampirkan foto pendukung)' : ''),
         foto: replyPhoto || undefined
       });
-      tickets[idx] = updated;
-      localStorage.setItem('SIPANTAU_CIVIC_DB_V2', JSON.stringify(tickets));
-      window.dispatchEvent(new CustomEvent('sipantau:db-updated'));
       setTrackerResult(updated);
       setReplyText('');
       setReplyPhoto(null);
+      refreshStats();
+      window.dispatchEvent(new CustomEvent('sipantau:db-updated'));
+    } catch (err) {
+      console.error('Gagal mengirim pesan klarifikasi:', err);
     }
   };
 
-  const handleSendRating = () => {
+  const handleSendRating = async () => {
     if (!trackerResult) return;
-    const tickets = loadTickets();
-    const idx = tickets.findIndex((t: any) => t.id === trackerResult.id);
-    if (idx !== -1) {
-      const updated = addTicketRating(tickets[idx], {
+    try {
+      const updated = await sendTicketRating(trackerResult.id, {
         stars: ratingStars,
         aspects: ratingAspects,
         comment: ratingComment
       });
-      tickets[idx] = updated;
-      localStorage.setItem('SIPANTAU_CIVIC_DB_V2', JSON.stringify(tickets));
-      window.dispatchEvent(new CustomEvent('sipantau:db-updated'));
       setTrackerResult(updated);
       setRatingComment('');
+      refreshStats();
+      window.dispatchEvent(new CustomEvent('sipantau:db-updated'));
+    } catch (err) {
+      console.error('Gagal mengirim evaluasi rating:', err);
     }
   };
 
@@ -565,6 +617,19 @@ export default function App() {
 
           {/* KANAN: Link Portal OPD + Tombol Masuk & Daftar + Hamburger */}
           <div className="flex items-center gap-2.5 sm:gap-3">
+            {/* Status Backend & Database SQLite Pill */}
+            <button
+              onClick={() => setShowDatabaseModal(true)}
+              className="cursor-pointer hidden md:inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 text-slate-700 dark:text-slate-200 hover:border-[#9e001f] transition text-[11px] font-medium"
+              title="Klik untuk melihat status backend & database SQLite"
+            >
+              <Database className="w-3.5 h-3.5 text-[#9e001f] dark:text-[#ffb4ab]" />
+              <span className={`w-1.5 h-1.5 rounded-full ${backendStatus.connected ? 'bg-emerald-500 animate-pulse' : 'bg-amber-500'}`} />
+              <span className="font-mono text-[10px]">
+                {backendStatus.connected ? 'SQLite DB' : 'Offline'}
+              </span>
+            </button>
+
             {/* Dark Mode switcher */}
             <button
               onClick={() => setDarkMode(!darkMode)}
@@ -717,6 +782,17 @@ export default function App() {
 
           {/* Backoffice Tools & Exit Button */}
           <div className="flex items-center gap-2">
+            {/* Status Database SQLite Backoffice */}
+            <button
+              onClick={() => setShowDatabaseModal(true)}
+              className="cursor-pointer hidden lg:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-950/50 border border-emerald-500/40 hover:bg-emerald-900/50 text-emerald-300 text-xs font-semibold transition"
+              title="Status Database SQLite & REST API Server"
+            >
+              <Database className="w-3.5 h-3.5 text-emerald-400" />
+              <span className={`w-1.5 h-1.5 rounded-full ${backendStatus.connected ? 'bg-emerald-400 animate-pulse' : 'bg-amber-400'}`} />
+              <span>{backendStatus.connected ? 'SQLite (Port 3001)' : 'Cache Browser'}</span>
+            </button>
+
             <button
               onClick={handleExportCSV}
               className="cursor-pointer min-h-[38px] flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-800 hover:bg-emerald-700 text-white border border-emerald-500/40 text-xs font-semibold shadow-xs transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400"
@@ -1591,6 +1667,154 @@ export default function App() {
                   className="px-4 py-1.5 rounded-lg bg-[#9e001f] hover:bg-[#c8102e] text-white font-bold text-xs transition"
                 >
                   Mengerti
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL STATUS BACKEND & DATABASE SQLITE */}
+      {showDatabaseModal && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-label="Status Backend & Database SIPANTAU"
+          onClick={(e) => e.target === e.currentTarget && setShowDatabaseModal(false)}
+          className="fixed inset-0 z-50 flex items-center justify-center p-3 md:p-4 bg-black/60 backdrop-blur-xs"
+        >
+          <div className="bg-white dark:bg-[#1e1e22] text-[#1b1b1f] dark:text-white rounded-2xl max-w-lg w-full border border-slate-200 dark:border-white/10 shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+            {/* Modal Header */}
+            <div className="bg-[#9e001f] text-white p-4 md:p-5 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-white/15 flex items-center justify-center">
+                  <Database className="w-5 h-5 text-white" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-base md:text-lg">Status Backend &amp; Database</h3>
+                  <p className="text-xs text-[#ffdad8]">Pangkalan Data Terpusat Relasional SIPANTAU</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setShowDatabaseModal(false)}
+                className="cursor-pointer p-1.5 rounded-lg hover:bg-white/15 text-white transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+                aria-label="Tutup status database"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Modal Body */}
+            <div className="p-5 md:p-6 space-y-4 text-xs">
+              {/* Status Banner */}
+              <div className={`p-3.5 rounded-xl border flex items-center justify-between gap-3 ${
+                backendStatus.connected
+                  ? 'bg-emerald-50 dark:bg-emerald-950/30 border-emerald-300 dark:border-emerald-800 text-emerald-900 dark:text-emerald-200'
+                  : 'bg-amber-50 dark:bg-amber-950/30 border-amber-300 dark:border-amber-800 text-amber-900 dark:text-amber-200'
+              }`}>
+                <div className="flex items-center gap-2.5">
+                  <span className={`w-3 h-3 rounded-full shrink-0 ${
+                    backendStatus.connected ? 'bg-emerald-600 animate-pulse' : 'bg-amber-500'
+                  }`} />
+                  <div>
+                    <p className="font-bold text-sm">
+                      {backendStatus.connected ? 'Server & Database SQLite Online' : 'Mode Offline / LocalStorage'}
+                    </p>
+                    <p className="text-[11px] opacity-90">
+                      {backendStatus.connected
+                        ? 'REST API aktif di port 3001 dengan Database SQLite persisten'
+                        : 'Berjalan via browser storage (kompatibel GitHub Pages)'}
+                    </p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={checkBackend}
+                  disabled={isPingingBackend}
+                  className="cursor-pointer px-2.5 py-1.5 rounded-lg bg-white dark:bg-white/10 border border-current font-bold text-[11px] hover:opacity-80 transition shrink-0 flex items-center gap-1"
+                >
+                  <RefreshCw className={`w-3 h-3 ${isPingingBackend ? 'animate-spin' : ''}`} />
+                  <span>Uji Ping</span>
+                </button>
+              </div>
+
+              {/* Data Specifications Grid */}
+              <div className="grid grid-cols-2 gap-2.5">
+                <div className="p-3 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 space-y-1">
+                  <span className="text-[10px] text-gray-500 uppercase font-semibold">Engine Database</span>
+                  <p className="font-bold text-slate-800 dark:text-white flex items-center gap-1.5">
+                    <Server className="w-3.5 h-3.5 text-[#9e001f]" />
+                    <span>{backendStatus.connected ? 'SQLite 3' : 'LocalStorage'}</span>
+                  </p>
+                  <span className="text-[10px] text-gray-400 font-mono">
+                    {backendStatus.connected ? 'node:sqlite (WAL mode)' : 'Client-side Storage'}
+                  </span>
+                </div>
+
+                <div className="p-3 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 space-y-1">
+                  <span className="text-[10px] text-gray-500 uppercase font-semibold">Tabel Relasional</span>
+                  <p className="font-bold text-slate-800 dark:text-white flex items-center gap-1.5">
+                    <HardDrive className="w-3.5 h-3.5 text-[#9e001f]" />
+                    <span>5 Tabel SQL</span>
+                  </p>
+                  <span className="text-[10px] text-gray-400 font-mono">tickets, messages, audit, dll</span>
+                </div>
+
+                <div className="p-3 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 space-y-1">
+                  <span className="text-[10px] text-gray-500 uppercase font-semibold">Total Tiket Tersimpan</span>
+                  <p className="font-bold text-slate-800 dark:text-white text-base">
+                    {backendStatus.totalTickets || dailyStats.totalAduan} <span className="text-xs font-normal text-gray-500">Aduan</span>
+                  </p>
+                  <span className="text-[10px] text-emerald-600 font-semibold">Sinkronisasi Real-time</span>
+                </div>
+
+                <div className="p-3 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 space-y-1">
+                  <span className="text-[10px] text-gray-500 uppercase font-semibold">Pesan Dua Arah</span>
+                  <p className="font-bold text-slate-800 dark:text-white text-base">
+                    {backendStatus.totalMessages || 6} <span className="text-xs font-normal text-gray-500">Pesan/Foto</span>
+                  </p>
+                  <span className="text-[10px] text-gray-400 font-mono">Disposisi &amp; Klarifikasi</span>
+                </div>
+              </div>
+
+              {/* Lokasi File & Endpoints */}
+              <div className="p-3 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="font-bold text-[11px] text-slate-700 dark:text-gray-300">File Database Persisten:</span>
+                  <span className="font-mono text-[10px] text-gray-500">SQLite On-Disk</span>
+                </div>
+                <div className="p-2 rounded bg-white dark:bg-[#181920] border border-slate-200 dark:border-white/10 font-mono text-[11px] text-[#9e001f] dark:text-[#ffdad8] select-all break-all">
+                  tugas_gabut-main/database/sipantau.sqlite
+                </div>
+
+                <div className="pt-2 border-t border-slate-200 dark:border-white/10 space-y-1">
+                  <span className="font-bold text-[11px] text-slate-700 dark:text-gray-300">REST API Endpoints:</span>
+                  <div className="grid grid-cols-2 gap-1 text-[10px] font-mono text-gray-600 dark:text-gray-400">
+                    <span className="truncate">GET /api/health</span>
+                    <span className="truncate">GET /api/tickets</span>
+                    <span className="truncate">POST /api/tickets</span>
+                    <span className="truncate">PUT /api/tickets/:id/status</span>
+                    <span className="truncate">POST /api/tickets/:id/messages</span>
+                    <span className="truncate">GET /api/stats</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex items-center justify-between pt-2">
+                <button
+                  type="button"
+                  onClick={handleResetDB}
+                  className="cursor-pointer text-xs font-semibold text-red-600 dark:text-red-400 hover:underline"
+                >
+                  Reset &amp; Reseed Database
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setShowDatabaseModal(false)}
+                  className="cursor-pointer px-4 py-2 rounded-lg bg-[#9e001f] hover:bg-[#800019] text-white text-xs font-bold transition shadow-xs"
+                >
+                  Tutup
                 </button>
               </div>
             </div>
