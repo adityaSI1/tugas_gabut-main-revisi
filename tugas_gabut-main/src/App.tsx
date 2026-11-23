@@ -155,10 +155,10 @@ export default function App() {
   const [portalMode, setPortalMode] = useState<'landing' | 'warga' | 'petugas'>(() => {
     try {
       const saved = localStorage.getItem('SIPANTAU_PORTAL_MODE');
-      if (saved === 'petugas' || saved === 'warga' || saved === 'landing') return saved;
-      return 'landing';
+      if (saved === 'petugas') return 'petugas';
+      return 'warga';
     } catch (e) {
-      return 'landing';
+      return 'warga';
     }
   });
   const [activeTab, setActiveTab] = useState<string>('beranda');
@@ -256,6 +256,12 @@ export default function App() {
   };
 
   useEffect(() => {
+    try {
+      if (localStorage.getItem('SIPANTAU_PORTAL_MODE') === 'landing') {
+        localStorage.setItem('SIPANTAU_PORTAL_MODE', 'warga');
+        setPortalMode('warga');
+      }
+    } catch (e) {}
     refreshStats();
     const handleStorage = () => refreshStats();
     window.addEventListener('storage', handleStorage);
@@ -495,7 +501,7 @@ export default function App() {
       )}
 
       {/* ================= SATU STICKY NAVBAR PUTIH BERSIH ================= */}
-      {!focusMode && !isOfficerMode && !isLandingMode && (
+      {!focusMode && !isOfficerMode && (
         <header className="sticky top-0 z-50 h-16 md:h-[68px] bg-white dark:bg-[#181920] border-b border-[#E2E8F0] dark:border-white/10 px-4 md:px-8 flex items-center justify-between shadow-xs shrink-0 transition-colors">
           {/* KIRI: Logo + SIPANTAU */}
           <div className="flex items-center gap-3">
@@ -605,7 +611,7 @@ export default function App() {
       )}
 
       {/* DROPDOWN MENU MOBILE: 5 Menu + Portal OPD + Masuk & Daftar */}
-      {!focusMode && !isOfficerMode && !isLandingMode && mobileMenuOpen && (
+      {!focusMode && !isOfficerMode && mobileMenuOpen && (
         <div className="lg:hidden bg-white dark:bg-[#181920] border-b border-[#E2E8F0] dark:border-white/10 px-4 py-3 space-y-2 shadow-lg z-40 animate-in slide-in-from-top-2 duration-150">
           <div className="flex flex-col space-y-1">
             {[
