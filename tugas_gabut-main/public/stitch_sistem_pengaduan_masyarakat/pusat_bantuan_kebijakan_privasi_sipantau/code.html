@@ -120,6 +120,11 @@
       }
     }
   </script>
+  <style>
+    body.embedded-in-app > header {
+      display: none !important;
+    }
+  </style>
 </head>
 <body class="bg-background text-on-surface antialiased font-body-md text-body-md selection:bg-primary-fixed selection:text-on-primary-fixed">
 <!-- TOP NAV BAR COMPONENT -->
@@ -127,7 +132,7 @@
 <div class="max-w-7xl mx-auto px-4 md:px-8 flex justify-between items-center h-16">
 <!-- Brand & Left Section -->
 <div class="flex items-center gap-6">
-<a class="flex items-center gap-3" href="#">
+<a class="flex items-center gap-3" href="../beranda_sistem_pengaduan_masyarakat/code.html">
 <div class="w-9 h-9 rounded-lg bg-primary-container text-on-primary flex items-center justify-center shadow-sm">
 <span class="material-symbols-outlined text-[20px]" data-icon="policy">policy</span>
 </div>
@@ -136,9 +141,9 @@
 </div>
 <!-- Navigation Links (Active: Bantuan) -->
 <nav class="hidden md:flex items-center gap-8 text-label-md font-label-md">
-<a class="text-on-surface-variant dark:text-surface-variant hover:text-on-surface transition-colors pb-1" href="#">Beranda</a>
-<a class="text-on-surface-variant dark:text-surface-variant hover:text-on-surface transition-colors pb-1" href="#">Peta Pengaduan</a>
-<a class="border-b-2 border-primary text-primary dark:text-inverse-primary font-semibold pb-1" href="#">Bantuan</a>
+<a class="text-on-surface-variant dark:text-surface-variant hover:text-on-surface transition-colors pb-1" href="../beranda_sistem_pengaduan_masyarakat/code.html">Beranda</a>
+<a class="text-on-surface-variant dark:text-surface-variant hover:text-on-surface transition-colors pb-1" href="../peta_pengaduan_kolektif_warga/code.html">Peta Pengaduan</a>
+<a class="border-b-2 border-primary text-primary dark:text-inverse-primary font-semibold pb-1" href="#top">Bantuan</a>
 <a class="text-on-surface-variant dark:text-surface-variant hover:text-on-surface transition-colors pb-1" href="#kebijakan-privasi">Kebijakan Privasi</a>
 </nav>
 <!-- Trailing Action Cluster -->
@@ -150,8 +155,8 @@
 <span class="material-symbols-outlined" data-icon="help_outline">help_outline</span>
 </button>
 <div class="h-6 w-px bg-surface-variant mx-1 hidden sm:block"></div>
-<a class="hidden sm:inline-flex items-center px-3.5 py-1.5 text-label-md font-label-md text-on-surface hover:bg-surface-container-low rounded-lg transition duration-150" href="#">Masuk</a>
-<a class="inline-flex items-center justify-center px-4 py-2 text-label-md font-label-md bg-primary-container hover:bg-primary text-on-primary rounded-lg shadow-sm transition duration-150 active:scale-95" href="#">Daftar</a>
+<a class="hidden sm:inline-flex items-center px-3.5 py-1.5 text-label-md font-label-md text-on-surface hover:bg-surface-container-low rounded-lg transition duration-150" href="javascript:void(0)" onclick="if(window.parent &amp;&amp; window.parent.postMessage){window.parent.postMessage({type:'sipantau:switch-portal',mode:'landing'},'*')}">Masuk</a>
+<a class="inline-flex items-center justify-center px-4 py-2 text-label-md font-label-md bg-primary-container hover:bg-primary text-on-primary rounded-lg shadow-sm transition duration-150 active:scale-95" href="javascript:void(0)" onclick="if(window.parent &amp;&amp; window.parent.postMessage){window.parent.postMessage({type:'sipantau:switch-portal',mode:'landing'},'*')}">Daftar</a>
 </div>
 </div>
 </header>
@@ -406,7 +411,7 @@
 </div>
 <div class="mt-6 pt-5 border-t border-surface-container flex items-center justify-between text-label-md font-label-md">
 <span class="text-on-surface-variant">Lacak Tiket Aduan?</span>
-<a class="text-primary hover:underline flex items-center gap-1" href="#">
+<a class="text-primary hover:underline flex items-center gap-1" href="../sistem_pengaduan_masyarakat_sipantau/code.html">
                 Buka Pelacak
                 <span class="material-symbols-outlined text-[16px]" data-icon="arrow_forward">arrow_forward</span>
 </a>
@@ -611,7 +616,7 @@
 <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center relative z-10">
 <div class="lg:col-span-8">
 <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-on-primary/10 border border-on-primary/20 text-label-sm font-label-sm mb-4">
-<span class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span>
+<span class="w-2 h-2 rounded-full bg-green-400"></span>
             Pelayanan Publik Terbuka
           </div>
 <h2 class="text-headline-xl-mobile md:text-headline-xl font-headline-xl-mobile md:font-headline-xl tracking-tight text-white mb-3">
@@ -669,16 +674,16 @@
 <a class="text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-inverse-primary transition-colors" href="#kebijakan-privasi">
           Kebijakan Privasi
         </a>
-<a class="text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-inverse-primary transition-colors" href="#">
+<a class="text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-inverse-primary transition-colors" href="#kebijakan-privasi">
           Ketentuan Layanan
         </a>
-<a class="text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-inverse-primary transition-colors" href="#">
+<a class="text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-inverse-primary transition-colors" href="../formulir_pengaduan_multi_step_warga/code.html">
           Pedoman Pengaduan SIPANTAU
         </a>
-<a class="text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-inverse-primary transition-colors" href="#">
+<a class="text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-inverse-primary transition-colors" href="../peta_pengaduan_kolektif_warga/code.html">
           Keterbukaan Informasi Publik
         </a>
-<a class="text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-inverse-primary transition-colors font-semibold" href="#">
+<a class="text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-inverse-primary transition-colors font-semibold" href="#top">
           Pusat Bantuan Warga
         </a>
 </div>

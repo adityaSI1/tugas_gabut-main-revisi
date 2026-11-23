@@ -146,6 +146,9 @@
     ::-webkit-scrollbar-thumb:hover {
       background: #906f6e;
     }
+    body.embedded-in-app > header {
+      display: none !important;
+    }
   </style>
 </head>
 <body class="bg-[#FAF7F7] text-on-surface antialiased flex h-screen overflow-hidden selection:bg-primary-fixed selection:text-on-primary-fixed">
@@ -216,7 +219,7 @@
 <!-- System Status Micro Tag -->
 <div class="px-3 py-2 mt-2 bg-surface-container rounded-lg flex items-center justify-between">
 <div class="flex items-center gap-2">
-<span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+<span class="w-2 h-2 rounded-full bg-emerald-500"></span>
 <span class="text-body-sm font-body-sm text-on-surface-variant text-[11px]">Server Triase Aktif</span>
 </div>
 <span class="text-label-sm font-label-sm text-on-surface-variant font-mono">v2.4.0</span>
@@ -341,11 +344,11 @@
 <div class="mt-2 flex items-baseline gap-2">
 <span class="text-headline-xl font-headline-xl font-extrabold text-primary">28</span>
 <span class="text-label-sm font-label-sm text-primary bg-primary-fixed px-2 py-0.5 rounded-full font-bold">
-                SLA &lt; 4 jam
+                SLA Maks. 24 Jam
               </span>
 </div>
 <div class="mt-2 text-body-sm font-body-sm text-on-surface-variant text-[12px] flex items-center gap-1 font-medium">
-<span class="w-1.5 h-1.5 rounded-full bg-primary animate-ping"></span>
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
               Menunggu validasi berkas fisik &amp; koordinat
             </div>
 </div>
@@ -543,7 +546,7 @@
 </td>
 <td class="py-3.5 px-3 whitespace-nowrap">
 <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-50 border border-amber-200 text-amber-900 text-label-sm font-label-sm font-semibold">
-<span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span> Diajukan
+<span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span> Diajukan
                   </span>
 </td>
 <td class="py-3.5 px-3 whitespace-nowrap text-xs">
@@ -637,7 +640,7 @@
 </td>
 <td class="py-3.5 px-3 whitespace-nowrap">
 <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-50 border border-amber-200 text-amber-900 text-label-sm font-label-sm font-semibold">
-<span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span> Diajukan
+<span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span> Diajukan
                   </span>
 </td>
 <td class="py-3.5 px-3 whitespace-nowrap text-xs">
@@ -782,7 +785,7 @@
                 #TKT-2024-8841
               </span>
 <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-error-container text-on-error-container text-label-sm font-label-sm font-bold">
-<span class="w-1.5 h-1.5 rounded-full bg-error animate-ping"></span> URGENSI TINGGI
+<span class="w-1.5 h-1.5 rounded-full bg-error"></span> URGENSI TINGGI
               </span>
 </div>
 <h2 class="text-headline-sm font-headline-sm font-bold text-on-surface leading-tight mt-1">

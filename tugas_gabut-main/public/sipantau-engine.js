@@ -1042,9 +1042,22 @@
     });
 
     function renderTracked(query) {
-      const q = (query || '').trim().toUpperCase();
+      const q = (query || '').trim().toUpperCase().replace(/^#/, '');
       const all = getTickets();
-      const item = all.find((t) => t.id.toUpperCase() === q || t.code.toUpperCase() === q.replace('#', '') || t.judul.toUpperCase().includes(q)) || all[0];
+      const item = all.find((t) => {
+        const tid = (t.id || '').toUpperCase().replace(/^#/, '');
+        const tcode = (t.code || '').toUpperCase().replace(/^#/, '');
+        return (
+          tid === q ||
+          tcode === q ||
+          tid.replace('TKT-', 'LAPOR-') === q ||
+          tid.replace('LAPOR-', 'TKT-') === q ||
+          tcode.replace('TKT-', 'LAPOR-') === q ||
+          tcode.replace('LAPOR-', 'TKT-') === q ||
+          (q.length >= 4 && (tid.includes(q.slice(-4)) || tcode.includes(q.slice(-4)))) ||
+          (t.judul && t.judul.toUpperCase().includes(q))
+        );
+      }) || all[0];
       const badgeStyles = {
         Diajukan: 'bg-[#FDECEF] text-[#C8102E] border-[#F9CBD2]',
         Diverifikasi: 'bg-[#FEF3C7] text-[#D97706] border-amber-300',
@@ -1448,9 +1461,9 @@
           const searchIcon = window.L.divIcon({
             className: 'sipantau-search-marker',
             html: `
-              <div class="relative flex items-center justify-center animate-bounce">
+              <div class="relative flex items-center justify-center">
                 <span class="material-symbols-outlined text-4xl text-[#9E001F] drop-shadow-lg" style="font-variation-settings: 'FILL' 1;">location_on</span>
-                <span class="absolute -top-1 -right-1 w-3 h-3 bg-amber-400 rounded-full animate-ping"></span>
+                <span class="absolute -top-1 -right-1 w-2.5 h-2.5 bg-amber-400 rounded-full border border-white"></span>
               </div>
             `,
             iconSize: [36, 36],
@@ -1534,7 +1547,7 @@
               const searchIcon = window.L.divIcon({
                 className: 'sipantau-search-marker',
                 html: `
-                  <div class="relative flex items-center justify-center animate-bounce">
+                  <div class="relative flex items-center justify-center">
                     <span class="material-symbols-outlined text-4xl text-[#9E001F] drop-shadow-lg" style="font-variation-settings: 'FILL' 1;">location_on</span>
                   </div>
                 `,
@@ -1970,7 +1983,7 @@
 
             <div class="p-3 bg-gray-50 rounded-xl border border-gray-200 text-xs text-left space-y-1">
               <div>Instansi Penanggung Jawab: <strong class="text-black">${newTicket.dinas}</strong></div>
-              <div>Batas Tanggap Awal: <strong class="text-amber-700">Maksimal 4 Jam (SLA)</strong></div>
+              <div>Batas Tanggap Awal: <strong class="text-amber-700">Maksimal 24 Jam (SLA)</strong></div>
             </div>
 
             <div class="space-y-2 pt-2">
@@ -2023,10 +2036,10 @@
         // Buka Step 4 Pratinjau Modal untuk Warga memeriksa rekapitulasi data sebelum final submit
         showFormPreviewModal(ticketData, () => {
           const randomNum = Math.floor(1000 + Math.random() * 9000);
-          const newId = `#TKT-2026-${randomNum}`;
+          const newId = `#LAPOR-2026-${randomNum}`;
           const newTicket = {
             id: newId,
-            code: `TKT-2026-${randomNum}`,
+            code: `LAPOR-2026-${randomNum}`,
             judul: ticketData.judul,
             kategori: ticketData.kategori,
             kategoriLabel: ticketData.kategoriLabel,
@@ -2034,7 +2047,7 @@
             alamat: ticketData.alamat,
             kecamatan: 'Kec. Sukajadi',
             waktu: 'Baru saja',
-            sla: 'SLA 4j 00m',
+            sla: 'SLA Maks. 24 Jam',
             urgensi: ticketData.urgensi,
             triaseLevel: 'Triase Level 1',
             status: 'Diajukan',
@@ -2100,7 +2113,7 @@
             <div class="flex flex-wrap items-center gap-2 mb-1">
               <span class="px-2 py-0.5 text-label-sm font-label-sm rounded bg-primary-fixed text-primary font-mono font-bold">${ticket.id}</span>
               <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-error-container text-on-error-container text-label-sm font-label-sm font-bold">
-                <span class="w-1.5 h-1.5 rounded-full bg-error animate-ping"></span> URGENSI ${(ticket.urgensi || 'TINGGI').toUpperCase()}
+                <span class="w-1.5 h-1.5 rounded-full bg-error"></span> URGENSI ${(ticket.urgensi || 'TINGGI').toUpperCase()}
               </span>
               <span class="px-2 py-0.5 rounded-full text-[11px] font-bold bg-surface-container text-on-surface">${ticket.status}</span>
             </div>
@@ -2407,7 +2420,7 @@
 
       const statusPill = (st) => {
         if (st === 'Diajukan')
-          return `<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-50 border border-amber-200 text-amber-900 text-label-sm font-label-sm font-semibold"><span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span> Diajukan</span>`;
+          return `<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-50 border border-amber-200 text-amber-900 text-label-sm font-label-sm font-semibold"><span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span> Diajukan</span>`;
         if (st === 'Diverifikasi' || st === 'Penanganan')
           return `<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-blue-50 border border-blue-200 text-blue-900 text-label-sm font-label-sm font-semibold"><span class="w-1.5 h-1.5 rounded-full bg-blue-600"></span> ${st}</span>`;
         if (st === 'Selesai')
@@ -2886,7 +2899,7 @@
               ${tickets.filter((t) => t.status === 'Diajukan' || t.status === 'Diverifikasi').length + 22}
             </div>
             <div class="mt-1 text-xs text-primary font-semibold flex items-center gap-1">
-              <span class="w-2 h-2 rounded-full bg-primary animate-ping"></span> SLA Kritis &lt; 4 Jam
+              <span class="w-2 h-2 rounded-full bg-primary"></span> SLA Kritis &lt; 24 Jam
             </div>
           </div>
 
@@ -2982,7 +2995,7 @@
           <div class="bg-surface-container-lowest p-5 rounded-xl border border-outline-variant shadow-sm space-y-3">
             <div class="flex items-center justify-between pb-2 border-b border-outline-variant/60">
               <h2 class="text-sm font-bold text-error flex items-center gap-2">
-                <span class="material-symbols-outlined text-error text-base animate-bounce">warning</span>
+                <span class="material-symbols-outlined text-error text-base">warning</span>
                 Tiket Mendekati Batas Maksimal SLA
               </h2>
               <span class="text-[10px] px-2 py-0.5 rounded bg-error-container text-on-error-container font-bold">Prioritas 1</span>
@@ -3912,10 +3925,15 @@
     }
   }
 
-  // 9. NAVIGASI GLOBAL & QUICK-SWITCHER DOCK ANTAR 5 HALAMAN STITCH
+  // 9. NAVIGASI GLOBAL & INTERAKSI TERPADU HALAMAN STITCH
   function initNavigationAndDock() {
-    // Tambahkan safe-area padding bottom agar elemen footer/tabel tidak tertutup floating dock
-    document.body.style.paddingBottom = '5.5rem';
+    // Sembunyikan header duplikat jika berjalan di dalam viewport iframe App.tsx
+    if (window.parent !== window) {
+      document.body.classList.add('embedded-in-app');
+      document.querySelectorAll('body > header').forEach((h) => {
+        h.style.display = 'none';
+      });
+    }
 
     const pages = {
       beranda: resolvePageUrl('beranda_sistem_pengaduan_masyarakat'),
@@ -3930,24 +3948,62 @@
       const href = el.getAttribute('href') || '';
 
       if (el.tagName === 'A') {
-        if (txt === 'beranda' || href === '#beranda') el.href = pages.beranda;
-        else if (txt.includes('peta pengaduan') || txt.includes('peta sebaran') || href === '#peta') el.href = pages.peta;
-        else if (txt === 'bantuan' || txt.includes('pusat bantuan') || txt.includes('pedoman pengaduan')) el.href = pages.bantuan;
-        else if (txt.includes('kebijakan privasi') || txt.includes('ketentuan layanan') || txt.includes('keterbukaan informasi')) {
+        if (txt === 'beranda' || href === '#beranda') {
+          el.href = pages.beranda;
+          el.addEventListener('click', (e) => {
+            if (window.parent !== window) {
+              e.preventDefault();
+              window.parent.postMessage({ type: 'sipantau:navigate', page: 'beranda' }, '*');
+            }
+          });
+        } else if (txt.includes('peta pengaduan') || txt.includes('peta sebaran') || href === '#peta') {
+          el.href = pages.peta;
+          el.addEventListener('click', (e) => {
+            if (window.parent !== window) {
+              e.preventDefault();
+              window.parent.postMessage({ type: 'sipantau:navigate', page: 'peta' }, '*');
+            }
+          });
+        } else if (txt === 'bantuan' || txt.includes('pusat bantuan') || txt.includes('pedoman pengaduan')) {
+          el.href = pages.bantuan;
+          el.addEventListener('click', (e) => {
+            if (window.parent !== window) {
+              e.preventDefault();
+              window.parent.postMessage({ type: 'sipantau:navigate', page: 'bantuan' }, '*');
+            }
+          });
+        } else if (txt.includes('kebijakan privasi') || txt.includes('ketentuan layanan') || txt.includes('keterbukaan informasi')) {
           if (!window.location.pathname.includes('pusat_bantuan')) el.href = pages.bantuan + '#kebijakan-privasi';
-        } else if (txt.includes('buat pengaduan') || href === '#ajukan') el.href = pages.formulir;
-        else if (txt.includes('lacak pengaduan') || txt.includes('buka pelacak') || href === '#lacak') {
+        } else if (txt.includes('buat pengaduan') || href === '#ajukan') {
+          el.href = pages.formulir;
+          el.addEventListener('click', (e) => {
+            if (window.parent !== window) {
+              e.preventDefault();
+              window.parent.postMessage({ type: 'sipantau:navigate', page: 'formulir' }, '*');
+            }
+          });
+        } else if (txt.includes('lacak pengaduan') || txt.includes('buka pelacak') || href === '#lacak') {
           el.addEventListener('click', (e) => {
             e.preventDefault();
-            window.openTicketTrackerModal();
+            if (window.parent !== window) {
+              window.parent.postMessage({ type: 'sipantau:open-tracker' }, '*');
+            } else {
+              window.openTicketTrackerModal();
+            }
           });
-        } else if (txt.includes('lihat arsip transparansi')) el.href = pages.peta;
+        } else if (txt.includes('lihat arsip transparansi')) {
+          el.href = pages.peta;
+        }
       }
 
       if (txt === 'masuk' || txt === 'daftar') {
         el.addEventListener('click', (e) => {
           e.preventDefault();
-          window.openCivicAuthModal();
+          if (window.parent !== window) {
+            window.parent.postMessage({ type: 'sipantau:switch-portal', mode: 'landing' }, '*');
+          } else {
+            window.openCivicAuthModal();
+          }
         });
       } else if (txt.includes('mulai buat pengaduan') || txt.includes('buat aduan baru')) {
         el.addEventListener('click', (e) => {
@@ -3961,110 +4017,14 @@
       } else if (txt.includes('lihat riwayat')) {
         el.addEventListener('click', (e) => {
           e.preventDefault();
-          window.openTicketTrackerModal('#TKT-2024-8841');
+          if (window.parent !== window) {
+            window.parent.postMessage({ type: 'sipantau:open-tracker', ticketId: '#LAPOR-2024-8841' }, '*');
+          } else {
+            window.openTicketTrackerModal('#LAPOR-2024-8841');
+          }
         });
       }
     });
-
-    // Floating Quick-Switcher Pill di bagian bawah layar
-    const path = window.location.pathname;
-
-    const dock = document.createElement('div');
-    dock.id = 'sipantau-floating-dock';
-    dock.style.fontFamily = "'Plus Jakarta Sans', sans-serif";
-
-    // JIKA DI HALAMAN ADMIN / DASHBOARD PETUGAS OPD: Tampilkan Dock Khusus Backoffice
-    if (path.includes('dashboard_petugas')) {
-      dock.className = 'fixed bottom-3 left-1/2 -translate-x-1/2 z-[9990] bg-[#1a1b22]/95 text-white backdrop-blur-md border border-red-500/40 rounded-full shadow-2xl px-3 py-1.5 flex items-center gap-2 text-xs transition-all duration-200';
-      dock.innerHTML = `
-        <div class="flex items-center gap-1.5 font-bold text-red-400 pr-2 border-r border-white/20">
-          <span class="material-symbols-outlined text-[16px]">admin_panel_settings</span>
-          <span class="text-[11px] uppercase tracking-wider">Backoffice OPD</span>
-        </div>
-        <a href="${pages.beranda}" class="flex items-center gap-1.5 px-3 py-1.5 rounded-full font-bold bg-[#9e001f] hover:bg-[#c8102e] text-white transition-all shadow-xs" title="Keluar dari Panel Admin ke Portal Warga">
-          <span class="material-symbols-outlined text-[15px]">arrow_back</span>
-          <span>Keluar ke Portal Warga</span>
-        </a>
-        <button type="button" id="btn-admin-export-csv" class="flex items-center gap-1 px-2.5 py-1.5 rounded-full bg-emerald-800/90 hover:bg-emerald-700 text-white font-medium transition" title="Unduh CSV">
-          <span class="material-symbols-outlined text-[15px]">download</span>
-          <span class="hidden sm:inline">Ekspor CSV</span>
-        </button>
-      `;
-      dock.querySelector('#btn-admin-export-csv')?.addEventListener('click', () => {
-        if (window.SiPantauDB && window.SiPantauDB.exportCSV) {
-          window.SiPantauDB.exportCSV();
-        }
-      });
-      dock.querySelector('a')?.addEventListener('click', (ev) => {
-        if (window.parent !== window) {
-          ev.preventDefault();
-          window.parent.postMessage({ type: 'sipantau:switch-portal', mode: 'warga' }, '*');
-        }
-      });
-      document.body.appendChild(dock);
-      return;
-    }
-
-    // JIKA DI HALAMAN WARGA: Hanya tampilkan menu warga (Beranda, Buat Aduan, Peta Publik, Bantuan)
-    let isCollapsed = localStorage.getItem('SIPANTAU_DOCK_COLLAPSED') === 'true';
-    dock.className = 'fixed bottom-3 left-1/2 -translate-x-1/2 z-[9990] bg-white/95 backdrop-blur-md border border-[#e5bdbb] rounded-full shadow-2xl px-2 py-1.5 flex items-center gap-1 text-xs transition-all duration-200';
-
-    const navItems = [
-      { label: 'Beranda', icon: 'home', url: pages.beranda, match: 'beranda', page: 'beranda' },
-      { label: 'Buat Aduan', icon: 'edit_note', url: pages.formulir, match: 'formulir', page: 'formulir' },
-      { label: 'Peta Publik', icon: 'map', url: pages.peta, match: 'peta_pengaduan', page: 'peta' },
-      { label: 'Bantuan & Privasi', icon: 'help', url: pages.bantuan, match: 'pusat_bantuan', page: 'bantuan' }
-    ];
-
-    function renderDock() {
-      if (isCollapsed) {
-        dock.innerHTML = `
-          <button type="button" id="btn-expand-dock" class="flex items-center gap-1 px-3 py-1.5 rounded-full bg-[#9e001f] text-white font-bold hover:bg-[#c8102e] transition shadow-xs" title="Tampilkan Menu Navigasi">
-            <span class="material-symbols-outlined text-[16px]">menu</span>
-            <span class="text-[11px]">Navigasi SIPANTAU</span>
-          </button>
-        `;
-        dock.querySelector('#btn-expand-dock')?.addEventListener('click', () => {
-          isCollapsed = false;
-          localStorage.setItem('SIPANTAU_DOCK_COLLAPSED', 'false');
-          renderDock();
-        });
-      } else {
-        dock.innerHTML = `
-          ${navItems.map((item) => {
-            const active = path.includes(item.match) || (item.match === 'beranda' && path.includes('sistem_pengaduan_masyarakat_sipantau'));
-            return `
-              <a href="${item.url}" data-page="${item.page}" aria-label="${item.label}" ${active ? 'aria-current="page"' : ''} class="flex items-center gap-1.5 px-3 py-1.5 rounded-full font-semibold transition-all ${
-                active ? 'bg-[#c8102e] text-white shadow-sm' : 'text-[#5c403f] hover:bg-[#ffdad8]/40 hover:text-[#9e001f]'
-              }">
-                <span class="material-symbols-outlined text-[16px]">${item.icon}</span>
-                <span class="hidden sm:inline">${item.label}</span>
-              </a>
-            `;
-          }).join('')}
-          <button type="button" id="btn-collapse-dock" class="p-1 rounded-full text-gray-400 hover:text-[#9e001f] transition ml-1" title="Ciutkan Menu Dock" aria-label="Ciutkan menu">
-            <span class="material-symbols-outlined text-sm">unfold_less</span>
-          </button>
-        `;
-        dock.querySelector('#btn-collapse-dock')?.addEventListener('click', () => {
-          isCollapsed = true;
-          localStorage.setItem('SIPANTAU_DOCK_COLLAPSED', 'true');
-          renderDock();
-        });
-      }
-    }
-
-    renderDock();
-    dock.addEventListener('click', (ev) => {
-      const link = ev.target && ev.target.closest ? ev.target.closest('a[data-page]') : null;
-      if (link && window.parent !== window) {
-        ev.preventDefault();
-        window.parent.postMessage({ type: 'sipantau:navigate', page: link.dataset.page }, '*');
-      }
-    });
-    // Beri ruang agar dock tidak menutupi tombol/footer di bagian bawah halaman
-    document.body.style.paddingBottom = 'max(env(safe-area-inset-bottom), 4.5rem)';
-    document.body.appendChild(dock);
   }
 
   // 10. KOMPONEN RINGKASAN STATISTIK HARIAN PADA HALAMAN BERANDA (DATA LOCALSTORAGE)
@@ -4118,7 +4078,7 @@
                     Ringkasan Statistik Harian SIPANTAU
                   </h3>
                   <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">
-                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> LIVE LOCALSTORAGE
+                    <span class="w-2 h-2 rounded-full bg-emerald-500"></span> LIVE LOCALSTORAGE
                   </span>
                 </div>
                 <p class="text-xs text-[#5c403f] mt-0.5">

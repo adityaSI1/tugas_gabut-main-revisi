@@ -120,6 +120,17 @@
       },
     }
   </script>
+<style>
+    body.embedded-in-app > header {
+      display: none !important;
+    }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      line-height: 1;
+      display: inline-block;
+      vertical-align: middle;
+    }
+  </style>
 </head>
 <body class="bg-surface text-on-surface antialiased min-h-screen flex flex-col font-body-md selection:bg-primary-fixed selection:text-on-primary-fixed">
 <!-- TopNavBar (Shared Component from JSON) -->
@@ -127,21 +138,22 @@
 <div class="max-w-7xl mx-auto px-4 md:px-8 flex justify-between items-center h-16">
 <!-- Brand & Left Section -->
 <div class="flex items-center gap-8">
-<a class="flex items-center gap-2.5 text-primary" href="#">
+<a class="flex items-center gap-2.5 text-primary" href="../beranda_sistem_pengaduan_masyarakat/code.html">
 <div class="w-9 h-9 rounded-lg bg-primary-container text-on-primary flex items-center justify-center shadow-sm">
 <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">account_balance</span>
 </div>
 <div class="flex flex-col">
-<span class="text-headline-md font-headline-md font-bold tracking-tight text-primary leading-tight">Sistem Pengaduan Masyarakat</span>
+<span class="text-headline-md font-headline-md font-bold tracking-tight text-primary leading-tight">SIPANTAU</span>
 <span class="text-label-sm font-label-sm text-on-surface-variant font-normal">Pemerintah Daerah Terintegrasi</span>
 </div>
 </a>
 <!-- Desktop Navigation Links from JSON -->
 <nav class="hidden lg:flex items-center gap-6 pt-1">
-<a class="text-on-surface-variant hover:text-on-surface transition-colors pb-1 text-label-md font-label-md" href="#">Beranda</a>
-<a class="text-on-surface-variant hover:text-on-surface transition-colors pb-1 text-label-md font-label-md" href="#">Peta Pengaduan</a>
-<a class="text-on-surface-variant hover:text-on-surface transition-colors pb-1 text-label-md font-label-md" href="#">Bantuan</a>
-<a class="text-on-surface-variant hover:text-on-surface transition-colors pb-1 text-label-md font-label-md" href="#">Kebijakan Privasi</a>
+<a class="text-on-surface-variant hover:text-on-surface transition-colors pb-1 text-label-md font-label-md" href="../beranda_sistem_pengaduan_masyarakat/code.html">Beranda</a>
+<a class="text-primary font-bold transition-colors pb-1 text-label-md font-label-md border-b-2 border-primary" href="code.html">Buat Aduan</a>
+<a class="text-on-surface-variant hover:text-on-surface transition-colors pb-1 text-label-md font-label-md" href="../peta_pengaduan_kolektif_warga/code.html">Peta Pengaduan</a>
+<a class="text-on-surface-variant hover:text-on-surface transition-colors pb-1 text-label-md font-label-md cursor-pointer" onclick="window.openTicketTrackerModal &amp;&amp; window.openTicketTrackerModal()">Lacak Tiket</a>
+<a class="text-on-surface-variant hover:text-on-surface transition-colors pb-1 text-label-md font-label-md" href="../pusat_bantuan_kebijakan_privasi_sipantau/code.html">Bantuan</a>
 </nav>
 </div>
 <!-- Trailing Action & User Status -->
@@ -194,7 +206,7 @@
 </div>
 <!-- Step 2: Lokasi Geotagging (Aktif dengan pin) -->
 <div class="relative z-10 flex flex-col items-center group cursor-pointer">
-<div class="w-10 h-10 rounded-full bg-primary-container text-on-primary flex items-center justify-center font-label-md shadow-md ring-4 ring-primary-fixed animate-pulse">
+<div class="w-10 h-10 rounded-full bg-primary-container text-on-primary flex items-center justify-center font-label-md shadow-md ring-4 ring-primary-fixed">
 <span class="material-symbols-outlined text-xl" style="font-variation-settings: 'FILL' 1;">location_on</span>
 </div>
 <span class="mt-2 text-label-md font-label-md text-primary-container font-bold">2. Lokasi Geotagging</span>
@@ -311,7 +323,7 @@
 </div>
 <!-- Map Overlay Glass UI -->
 <div class="absolute top-3 left-3 bg-surface-container-lowest/90 backdrop-blur-md px-3 py-1.5 rounded-lg border border-outline-variant/60 text-label-sm font-label-sm text-on-surface flex items-center gap-2 shadow-sm">
-<span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping"></span>
+<span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
 <span>Akurasi GPS: Presisi ±3 Meter</span>
 </div>
 <!-- Draggable Center Pin Representation -->
@@ -545,10 +557,10 @@
 </div>
 <!-- Links from JSON -->
 <div class="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-label-sm font-label-sm">
-<a class="text-on-surface-variant hover:text-primary transition-colors" href="#">Kebijakan Privasi</a>
-<a class="text-on-surface-variant hover:text-primary transition-colors" href="#">Ketentuan Layanan</a>
-<a class="text-on-surface-variant hover:text-primary transition-colors" href="#">Pedoman Pengaduan SIPANTAU</a>
-<a class="text-on-surface-variant hover:text-primary transition-colors" href="#">Keterbukaan Informasi Publik</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors" href="../pusat_bantuan_kebijakan_privasi_sipantau/code.html#kebijakan-privasi">Kebijakan Privasi</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors" href="../pusat_bantuan_kebijakan_privasi_sipantau/code.html">Ketentuan Layanan</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors" href="../pusat_bantuan_kebijakan_privasi_sipantau/code.html">Pedoman Pengaduan SIPANTAU</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors" href="../pusat_bantuan_kebijakan_privasi_sipantau/code.html">Keterbukaan Informasi Publik</a>
 </div>
 </div>
 </footer>

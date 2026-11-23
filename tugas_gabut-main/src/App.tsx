@@ -235,10 +235,20 @@ export default function App() {
     const tickets = loadTickets();
     const found = q
       ? tickets.find(
-          (t: any) =>
-            (t.id && norm(t.id) === q) ||
-            (t.code && norm(t.code) === q) ||
-            (t.judul && t.judul.toUpperCase().includes(q))
+          (t: any) => {
+            const tid = norm(t.id || '');
+            const tcode = norm(t.code || '');
+            return (
+              tid === q ||
+              tcode === q ||
+              tid.replace('TKT-', 'LAPOR-') === q ||
+              tid.replace('LAPOR-', 'TKT-') === q ||
+              tcode.replace('TKT-', 'LAPOR-') === q ||
+              tcode.replace('LAPOR-', 'TKT-') === q ||
+              (q.length >= 4 && (tid.includes(q.slice(-4)) || tcode.includes(q.slice(-4)))) ||
+              (t.judul && t.judul.toUpperCase().includes(q))
+            );
+          }
         )
       : undefined;
     setTrackerResult(found || null);
@@ -464,11 +474,19 @@ export default function App() {
 
   return (
     <div className={`flex flex-col h-screen h-[100dvh] w-screen ${darkMode ? 'dark bg-[#121214] text-[#e3e2e6]' : 'bg-[#fbf8fe] text-[#1b1b1f]'} overflow-hidden font-sans transition-colors`}>
+      {/* Aksesibilitas: Lewati ke konten utama (WCAG 2.4.1) */}
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[9999] focus:px-4 focus:py-2 focus:bg-[#9e001f] focus:text-white focus:rounded-lg focus:shadow-xl focus:font-bold focus:outline-none focus:ring-2 focus:ring-white"
+      >
+        Lewati ke Konten Utama
+      </a>
+
       {/* FLOATING FOCUS MODE RESTORE BUTTON */}
       {focusMode && (
         <button
           onClick={() => setFocusMode(false)}
-          className="fixed top-3 right-3 z-50 px-3.5 py-1.5 rounded-full bg-[#9e001f] text-white text-xs font-semibold shadow-xl flex items-center gap-1.5 border border-white/20 hover:bg-[#c8102e] transition animate-in fade-in"
+          className="cursor-pointer fixed top-3 right-3 z-50 px-3.5 py-1.5 rounded-full bg-[#9e001f] text-white text-xs font-semibold shadow-xl flex items-center gap-1.5 border border-white/20 hover:bg-[#c8102e] transition animate-in fade-in focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
           title="Tampilkan kembali bilah portal atas"
         >
           <Minimize2 className="w-3.5 h-3.5" />
@@ -476,300 +494,252 @@ export default function App() {
         </button>
       )}
 
-      {/* DEDICATED HEADER: PORTAL WARGA VS BACKOFFICE PETUGAS OPD */}
+      {/* ================= SATU STICKY NAVBAR PUTIH BERSIH ================= */}
       {!focusMode && !isOfficerMode && !isLandingMode && (
-        <header className="h-14 md:h-16 bg-[#9e001f] text-white px-3 md:px-6 flex items-center justify-between shadow-md shrink-0 border-b border-[#ffdad8]/20 z-[1000]">
-          {/* Brand & Emblem (Portal Warga) */}
-          <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 md:w-9 md:h-9 rounded-xl bg-white/15 flex items-center justify-center text-white border border-white/20 shadow-xs shrink-0">
-              <ShieldCheck className="w-4 h-4 md:w-5 md:h-5 text-white" />
-            </div>
-            <div>
-              <div className="flex items-center gap-1.5">
-                <span className="font-extrabold text-sm md:text-lg tracking-tight font-serif" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+        <header className="sticky top-0 z-50 h-16 md:h-[68px] bg-white dark:bg-[#181920] border-b border-[#E2E8F0] dark:border-white/10 px-4 md:px-8 flex items-center justify-between shadow-xs shrink-0 transition-colors">
+          {/* KIRI: Logo + SIPANTAU */}
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => switchPage('beranda')}
+              className="cursor-pointer flex items-center gap-2.5 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#9e001f] rounded-xl p-1 group"
+              title="Beranda SIPANTAU"
+            >
+              <div className="w-9 h-9 rounded-xl bg-[#9e001f] text-white flex items-center justify-center shadow-sm group-hover:bg-[#b00b25] transition">
+                <ShieldCheck className="w-5 h-5 text-white" />
+              </div>
+              <div>
+                <span className="font-extrabold text-lg md:text-xl tracking-tight text-[#9e001f] dark:text-[#ffb4ab] font-sans block leading-none">
                   SIPANTAU
                 </span>
-                <span className="text-[9px] md:text-[10px] uppercase font-bold tracking-wider px-1.5 md:px-2 py-0.5 rounded bg-[#ffdad8] text-[#9e001f] shrink-0">
-                  PORTAL WARGA
+                <span className="text-[10px] text-slate-500 dark:text-slate-400 font-medium hidden sm:block mt-0.5">
+                  Layanan Pengaduan Masyarakat
                 </span>
               </div>
-              <p className="text-[10px] text-[#ffdad8] leading-none hidden lg:block">
-                Sistem Layanan & Pemantauan Pengaduan Masyarakat Terpadu
-              </p>
-            </div>
+            </button>
           </div>
 
-          {/* Navigation Tabs (Desktop - Hanya Halaman Publik Warga) */}
-          <nav className="hidden lg:flex items-center gap-1 bg-black/15 p-1 rounded-xl border border-white/10">
-            {CITIZEN_PAGES.map((page) => {
-              const Icon = page.icon;
-              const isActive = activeTab === page.id;
+          {/* TENGAH: Tepat 5 menu teks bersih TANPA ikon di tiap menu */}
+          <nav className="hidden lg:flex items-center gap-8 text-sm font-semibold" aria-label="Navigasi Utama">
+            {[
+              { id: 'beranda', label: 'Beranda' },
+              { id: 'formulir', label: 'Buat Aduan' },
+              { id: 'peta', label: 'Peta Pengaduan' },
+              { id: 'lacak', label: 'Lacak Tiket' },
+              { id: 'bantuan', label: 'Bantuan' }
+            ].map((item) => {
+              const isActive = (item.id === 'lacak' && showTracker) || (activeTab === item.id && !showTracker);
               return (
                 <button
-                  key={page.id}
-                  onClick={() => switchPage(page.id)}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                  key={item.id}
+                  onClick={() => {
+                    if (item.id === 'lacak') {
+                      setShowTracker(true);
+                      handleSearchTicket(trackerQuery);
+                    } else {
+                      setShowTracker(false);
+                      switchPage(item.id);
+                    }
+                  }}
+                  className={`cursor-pointer py-1.5 px-1 transition-colors relative rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#9e001f] ${
                     isActive
-                      ? 'bg-white text-[#9e001f] shadow-xs'
-                      : 'text-[#ffdad8] hover:text-white hover:bg-white/10'
+                      ? 'text-[#9e001f] dark:text-[#ffb4ab] font-bold after:content-[""] after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-[#9e001f] dark:after:bg-[#ffb4ab]'
+                      : 'text-slate-600 dark:text-slate-300 hover:text-[#9e001f] dark:hover:text-white'
                   }`}
-                  title={page.description}
                 >
-                  <Icon className="w-3.5 h-3.5" />
-                  <span>{page.shortLabel}</span>
+                  {item.label}
                 </button>
               );
             })}
           </nav>
 
-          {/* Quick Action Buttons (Portal Warga) */}
-          <div className="flex items-center gap-1.5 md:gap-2">
-            {/* Daily Stats Quick Pill (Desktop) */}
-            <div className="hidden xl:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-black/20 border border-white/10 text-xs">
-              <span className="flex items-center gap-1 text-emerald-300 font-bold">
-                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                {dailyStats.aduanHariIni} Hari Ini
-              </span>
-              <span className="text-white/40">•</span>
-              <span className="text-amber-200 font-medium">Respon {dailyStats.rataWaktuResponFormat}</span>
-            </div>
-
-            {/* Lacak Tiket Button */}
-            <button
-              onClick={() => {
-                setShowTracker(true);
-                handleSearchTicket(trackerQuery);
-              }}
-              className="flex items-center gap-1.5 px-2.5 md:px-3 py-1.5 rounded-lg bg-[#c8102e] hover:bg-[#b00b25] text-white border border-white/20 text-xs font-semibold shadow-xs transition"
-              title="Lacak status pengaduan & komunikasi tiket"
-            >
-              <Search className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">Lacak Tiket</span>
-            </button>
-
-            {/* Dark Mode Switcher */}
+          {/* KANAN: Link Portal OPD + Tombol Masuk & Daftar + Hamburger */}
+          <div className="flex items-center gap-2.5 sm:gap-3">
+            {/* Dark Mode switcher */}
             <button
               onClick={() => setDarkMode(!darkMode)}
-              className="p-1.5 md:p-2 rounded-lg bg-white/15 hover:bg-white/25 text-[#ffdad8] hover:text-white transition"
+              className="cursor-pointer p-2 rounded-lg border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/5 text-slate-600 dark:text-amber-300 hover:text-[#9e001f] transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#9e001f]"
               title={darkMode ? 'Beralih ke Mode Terang' : 'Beralih ke Mode Gelap'}
-              aria-label={darkMode ? 'Beralih ke mode terang' : 'Beralih ke mode gelap'}
+              aria-label="Ganti tema"
             >
-              {darkMode ? <Sun className="w-3.5 h-3.5 md:w-4 md:h-4 text-amber-300" /> : <Moon className="w-3.5 h-3.5 md:w-4 md:h-4" />}
+              {darkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
             </button>
 
-            {/* Focus Fullscreen Mode Toggle */}
-            <button
-              onClick={() => setFocusMode(true)}
-              className="p-1.5 md:p-2 rounded-lg bg-white/15 hover:bg-white/25 text-[#ffdad8] hover:text-white transition"
-              title="Layar Penuh (Sembunyikan Bilah Atas)"
-              aria-label="Layar penuh"
-            >
-              <Maximize2 className="w-3.5 h-3.5 md:w-4 md:h-4" />
-            </button>
-
-            {/* Pintasan Keyboard Modal Trigger */}
-            <button
-              onClick={() => setShowShortcutsModal(true)}
-              className="p-1.5 md:p-2 rounded-lg bg-white/15 hover:bg-white/25 text-[#ffdad8] hover:text-white transition hidden md:flex"
-              title="Pintasan Keyboard (?)"
-              aria-label="Pintasan Keyboard"
-            >
-              <Keyboard className="w-3.5 h-3.5 md:w-4 md:h-4" />
-            </button>
-
-            {/* Akses Khusus Petugas ASN / OPD (Terpisah rapi dari navigasi warga) */}
+            {/* Link Portal OPD */}
             <button
               onClick={() => setShowOfficerLoginModal(true)}
-              className="flex items-center gap-1.5 px-2.5 md:px-3 py-1.5 rounded-lg bg-black/25 hover:bg-black/40 text-white border border-white/20 text-xs font-semibold transition shadow-xs"
-              title="Akses Terbatas Khusus Personel ASN & Verifikator OPD"
+              className="cursor-pointer text-xs font-semibold text-slate-700 dark:text-slate-200 hover:text-[#9e001f] px-2.5 py-1.5 rounded-lg hover:bg-slate-50 dark:hover:bg-white/5 transition hidden sm:inline-flex items-center gap-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#9e001f]"
+              title="Akses Portal Petugas OPD"
             >
-              <Lock className="w-3.5 h-3.5 text-amber-300" />
-              <span className="hidden sm:inline">Akses Petugas OPD</span>
-              <span className="sm:hidden">Petugas</span>
+              <span>Portal OPD</span>
             </button>
 
-            {/* Ganti Peran / Keluar ke Landing */}
+            {/* Tombol Masuk */}
             <button
               onClick={() => {
                 setPortalMode('landing');
                 localStorage.setItem('SIPANTAU_PORTAL_MODE', 'landing');
               }}
-              className="flex items-center gap-1.5 px-2.5 md:px-3 py-1.5 rounded-lg bg-black/25 hover:bg-black/40 text-white border border-white/20 text-xs font-semibold transition shadow-xs"
-              title="Keluar ke Halaman Login & Pilih Peran"
+              className="cursor-pointer px-3.5 py-2 rounded-lg border border-slate-300 dark:border-white/20 text-slate-700 dark:text-slate-200 hover:border-[#9e001f] hover:text-[#9e001f] text-xs font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#9e001f]"
             >
-              <LogOut className="w-3.5 h-3.5 text-[#ffdad8]" />
-              <span className="hidden xl:inline">Ganti Peran</span>
+              Masuk
             </button>
 
-            {/* Mobile Navigation Menu Toggle */}
+            {/* Tombol Daftar */}
+            <button
+              onClick={() => switchPage('formulir')}
+              className="cursor-pointer px-4 py-2 rounded-lg bg-[#9e001f] hover:bg-[#800019] text-white text-xs font-bold shadow-xs transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#9e001f] focus-visible:ring-offset-1"
+            >
+              Daftar
+            </button>
+
+            {/* Mobile Hamburger Menu Button (Min 44x44px touch target) */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-1.5 md:p-2 rounded-lg bg-white/15 hover:bg-white/25 text-[#ffdad8] hover:text-white transition lg:hidden"
-              title="Menu Navigasi Mobile"
-              aria-label="Buka menu navigasi"
+              className="cursor-pointer min-h-[44px] min-w-[44px] flex items-center justify-center p-2 rounded-lg border border-slate-200 dark:border-white/10 text-slate-700 dark:text-slate-200 lg:hidden hover:bg-slate-100 dark:hover:bg-white/10 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#9e001f]"
+              aria-label="Buka navigasi mobile"
             >
-              {mobileMenuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
+              {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
-
-            {/* Open Standalone Page */}
-            <a
-              href={activePage.path}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="p-1.5 md:p-2 rounded-lg bg-white/10 hover:bg-white/20 text-[#ffdad8] hover:text-white transition hidden sm:inline-flex"
-              title="Buka Halaman Langsung di Tab Baru"
-              aria-label="Buka halaman di tab baru"
-            >
-              <ExternalLink className="w-3.5 h-3.5 md:w-4 md:h-4" />
-            </a>
           </div>
         </header>
       )}
 
-      {/* DROPDOWN MENU MOBILE PORTAL WARGA */}
+      {/* DROPDOWN MENU MOBILE: 5 Menu + Portal OPD + Masuk & Daftar */}
       {!focusMode && !isOfficerMode && !isLandingMode && mobileMenuOpen && (
-        <div className="lg:hidden bg-[#85001a] border-b border-[#ffdad8]/30 px-3 py-2.5 space-y-1 shadow-lg z-20 animate-in slide-in-from-top-2 duration-150">
-          <div className="text-[10px] uppercase font-bold text-[#ffdad8]/70 px-2 py-1 tracking-wider">Halaman Portal:</div>
-          <div className="grid grid-cols-2 gap-1.5">
-            {CITIZEN_PAGES.map((page) => {
-              const Icon = page.icon;
-              const isActive = activeTab === page.id;
-              return (
-                <button
-                  key={page.id}
-                  onClick={() => {
-                    switchPage(page.id);
-                    setMobileMenuOpen(false);
-                  }}
-                  className={`flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-semibold text-left transition ${
-                    isActive
-                      ? 'bg-white text-[#9e001f] shadow-xs'
-                      : 'text-white hover:bg-white/15'
-                  }`}
-                >
-                  <Icon className="w-4 h-4 shrink-0" />
-                  <span className="truncate">{page.shortLabel}</span>
-                </button>
-              );
-            })}
+        <div className="lg:hidden bg-white dark:bg-[#181920] border-b border-[#E2E8F0] dark:border-white/10 px-4 py-3 space-y-2 shadow-lg z-40 animate-in slide-in-from-top-2 duration-150">
+          <div className="flex flex-col space-y-1">
+            {[
+              { id: 'beranda', label: 'Beranda' },
+              { id: 'formulir', label: 'Buat Aduan' },
+              { id: 'peta', label: 'Peta Pengaduan' },
+              { id: 'lacak', label: 'Lacak Tiket' },
+              { id: 'bantuan', label: 'Bantuan' }
+            ].map((item) => (
+              <button
+                key={item.id}
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  if (item.id === 'lacak') {
+                    setShowTracker(true);
+                    handleSearchTicket(trackerQuery);
+                  } else {
+                    switchPage(item.id);
+                  }
+                }}
+                className={`cursor-pointer min-h-[44px] flex items-center text-left px-3 py-2 rounded-lg text-sm font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#9e001f] ${
+                  activeTab === item.id
+                    ? 'bg-[#ffdad8]/50 text-[#9e001f] dark:bg-[#9e001f]/20 dark:text-[#ffdad8]'
+                    : 'text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-white/5'
+                }`}
+              >
+                {item.label}
+              </button>
+            ))}
           </div>
-          <div className="pt-2 border-t border-white/15 flex items-center justify-between text-xs text-[#ffdad8] px-1">
-            <span className="flex items-center gap-1 text-[11px]">
-              <Clock className="w-3.5 h-3.5" /> SLA Tanggap: 4 Jam
-            </span>
+
+          <div className="pt-2 border-t border-slate-200 dark:border-white/10 flex items-center justify-between gap-2">
             <button
               onClick={() => {
-                setPortalMode('landing');
-                localStorage.setItem('SIPANTAU_PORTAL_MODE', 'landing');
                 setMobileMenuOpen(false);
+                setShowOfficerLoginModal(true);
               }}
-              className="flex items-center gap-1 px-2.5 py-1 rounded-md bg-black/30 text-white text-[11px] font-bold hover:bg-black/50 transition"
+              className="cursor-pointer min-h-[40px] text-xs font-semibold text-slate-700 dark:text-slate-300 py-1.5 px-2 hover:text-[#9e001f] rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#9e001f]"
             >
-              <LogOut className="w-3 h-3 text-[#ffdad8]" />
-              <span>Keluar / Ganti Peran</span>
+              Portal OPD
             </button>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  setPortalMode('landing');
+                  localStorage.setItem('SIPANTAU_PORTAL_MODE', 'landing');
+                }}
+                className="cursor-pointer min-h-[40px] px-3.5 py-1.5 rounded-lg border border-slate-300 text-xs font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#9e001f]"
+              >
+                Masuk
+              </button>
+              <button
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  switchPage('formulir');
+                }}
+                className="cursor-pointer min-h-[40px] px-3.5 py-1.5 rounded-lg bg-[#9e001f] text-white text-xs font-bold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#9e001f]"
+              >
+                Daftar
+              </button>
+            </div>
           </div>
         </div>
       )}
 
-      {/* DEDICATED HEADER: BACKOFFICE PETUGAS OPD (TERPISAH TOTAL DARI UI WARGA) */}
+      {/* DEDICATED HEADER: BACKOFFICE PETUGAS OPD (SATU NAVBAR BERSIH) */}
       {!focusMode && isOfficerMode && (
-        <header className="h-14 md:h-16 bg-[#131418] text-white px-3 md:px-6 flex items-center justify-between shadow-lg shrink-0 border-b-2 border-[#9e001f] z-[1000]">
+        <header className="h-16 md:h-[68px] bg-[#131418] text-white px-4 md:px-8 flex items-center justify-between shadow-md shrink-0 border-b border-red-500/30 sticky top-0 z-50">
           {/* Brand & Emblem (Backoffice Petugas) */}
-          <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 md:w-9 md:h-9 rounded-xl bg-red-600/20 border border-red-500/40 flex items-center justify-center text-red-400 shadow-xs shrink-0">
-              <ShieldAlert className="w-4 h-4 md:w-5 md:h-5 text-red-500" />
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-red-600/20 border border-red-500/40 flex items-center justify-center text-red-400 shadow-xs shrink-0">
+              <ShieldAlert className="w-5 h-5 text-red-500" />
             </div>
             <div>
-              <div className="flex items-center gap-1.5">
-                <span className="font-extrabold text-sm md:text-lg tracking-tight font-serif text-white" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+              <div className="flex items-center gap-2">
+                <span className="font-extrabold text-lg md:text-xl tracking-tight text-white">
                   SIPANTAU BACKOFFICE
                 </span>
-                <span className="text-[9px] md:text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded bg-red-600/30 text-red-300 border border-red-500/30 shrink-0">
+                <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded bg-red-600/30 text-red-300 border border-red-500/30 shrink-0">
                   PETUGAS OPD
                 </span>
               </div>
-              <p className="text-[10px] text-gray-400 leading-none hidden lg:block">
-                Panel Verifikasi, Validasi Kelayakan Teknis & Triase Disposisi Dinas
+              <p className="text-[10px] text-gray-400 leading-none hidden sm:block mt-0.5">
+                Panel Verifikasi &amp; Triase Disposisi Dinas Pemda
               </p>
             </div>
           </div>
 
-          {/* Officer Identity & Live Triage Status (Desktop) */}
-          <div className="hidden lg:flex items-center gap-3 bg-white/5 border border-white/10 px-3.5 py-1.5 rounded-xl text-xs text-gray-300">
-            <div className="flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-              <span className="font-semibold text-white">Budi Santoso, S.STP</span>
-              <span className="text-gray-400 text-[11px]">(Verifikator Diskominfo)</span>
-            </div>
+          {/* Live Status Triase */}
+          <div className="hidden lg:flex items-center gap-3 text-xs text-gray-300 bg-white/5 border border-white/10 px-3.5 py-1.5 rounded-xl">
+            <span className="font-semibold text-white">Budi Santoso, S.STP</span>
             <span className="text-white/20">|</span>
-            <div className="flex items-center gap-2 text-[11px]">
-              <span className="text-amber-300 font-semibold">{dailyStats.aduanHariIni} Aduan Hari Ini</span>
-              <span className="text-white/30">•</span>
-              <span className="text-emerald-400 font-semibold">{dailyStats.sedangDiproses} Dalam Penanganan</span>
-            </div>
+            <span className="text-amber-300 font-semibold">{dailyStats.aduanHariIni} Aduan Hari Ini</span>
+            <span className="text-white/20">|</span>
+            <span className="text-emerald-400 font-semibold">{dailyStats.sedangDiproses} Dalam Penanganan</span>
           </div>
 
           {/* Backoffice Tools & Exit Button */}
-          <div className="flex items-center gap-1.5 md:gap-2">
-            {/* Ekspor CSV Rekapitulasi OPD */}
+          <div className="flex items-center gap-2">
             <button
               onClick={handleExportCSV}
-              className="flex items-center gap-1.5 px-2.5 md:px-3 py-1.5 rounded-lg bg-emerald-800/80 hover:bg-emerald-700 text-white border border-emerald-500/40 text-xs font-semibold shadow-xs transition"
-              title="Unduh Rekapitulasi Seluruh Aduan Format CSV (Excel)"
+              className="cursor-pointer min-h-[38px] flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-800 hover:bg-emerald-700 text-white border border-emerald-500/40 text-xs font-semibold shadow-xs transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400"
+              title="Unduh Rekapitulasi CSV"
             >
               <FileSpreadsheet className="w-3.5 h-3.5" />
               <span className="hidden sm:inline">Ekspor CSV</span>
             </button>
 
-            {/* Backup DB (JSON) */}
             <button
               onClick={handleExportBackup}
-              className="p-1.5 md:p-2 rounded-lg bg-white/10 hover:bg-white/20 text-gray-300 hover:text-white transition"
-              title="Unduh Cadangan Basis Data (JSON)"
+              className="cursor-pointer min-h-[38px] min-w-[38px] flex items-center justify-center p-2 rounded-lg bg-white/10 hover:bg-white/20 text-gray-300 hover:text-white transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+              title="Unduh Cadangan JSON"
               aria-label="Unduh cadangan data"
             >
-              <Download className="w-3.5 h-3.5 md:w-4 md:h-4" />
+              <Download className="w-4 h-4" />
             </button>
 
-            {/* Reset DB */}
-            <button
-              onClick={handleResetDB}
-              className="p-1.5 md:p-2 rounded-lg bg-white/10 hover:bg-white/20 text-gray-300 hover:text-white transition"
-              title="Muat Ulang Database Contoh"
-              aria-label="Kembalikan data contoh"
-            >
-              <RotateCcw className="w-3.5 h-3.5 md:w-4 md:h-4" />
-            </button>
-
-            {/* Dark Mode Switcher */}
             <button
               onClick={() => setDarkMode(!darkMode)}
-              className="p-1.5 md:p-2 rounded-lg bg-white/10 hover:bg-white/20 text-gray-300 hover:text-white transition"
+              className="cursor-pointer min-h-[38px] min-w-[38px] flex items-center justify-center p-2 rounded-lg bg-white/10 hover:bg-white/20 text-gray-300 hover:text-white transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
               title={darkMode ? 'Beralih ke Mode Terang' : 'Beralih ke Mode Gelap'}
-              aria-label={darkMode ? 'Beralih ke mode terang' : 'Beralih ke mode gelap'}
+              aria-label="Ganti mode"
             >
-              {darkMode ? <Sun className="w-3.5 h-3.5 md:w-4 md:h-4 text-amber-300" /> : <Moon className="w-3.5 h-3.5 md:w-4 md:h-4" />}
+              {darkMode ? <Sun className="w-4 h-4 text-amber-300" /> : <Moon className="w-4 h-4" />}
             </button>
 
-            {/* Focus Fullscreen Mode Toggle */}
-            <button
-              onClick={() => setFocusMode(true)}
-              className="p-1.5 md:p-2 rounded-lg bg-white/10 hover:bg-white/20 text-gray-300 hover:text-white transition"
-              title="Layar Penuh (Sembunyikan Bilah Atas)"
-              aria-label="Layar penuh"
-            >
-              <Maximize2 className="w-3.5 h-3.5 md:w-4 md:h-4" />
-            </button>
-
-            {/* Tombol Utama: KELUAR SESI PETUGAS */}
             <button
               onClick={() => {
                 setPortalMode('landing');
                 localStorage.setItem('SIPANTAU_PORTAL_MODE', 'landing');
               }}
-              className="flex items-center gap-1.5 px-3 md:px-3.5 py-1.5 rounded-lg bg-[#9e001f] hover:bg-[#c8102e] text-white border border-red-400/40 text-xs font-bold shadow-md transition ml-1"
-              title="Akhiri sesi kerja dan keluar ke Halaman Landing"
+              className="cursor-pointer min-h-[38px] flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-[#9e001f] hover:bg-[#c8102e] text-white border border-red-400/40 text-xs font-bold shadow-md transition ml-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-400"
+              title="Keluar Sesi ke Halaman Landing"
             >
               <LogOut className="w-3.5 h-3.5" />
               <span>Keluar Sesi</span>
@@ -778,48 +748,7 @@ export default function App() {
         </header>
       )}
 
-      {/* SECONDARY STATUS STRIP */}
-      {!focusMode && !isOfficerMode && !isLandingMode && (
-        <div className="hidden sm:flex h-8 bg-[#f5f2f8] dark:bg-[#1e1e22] border-b border-[#e5bdbb]/40 dark:border-white/10 px-4 md:px-6 items-center justify-between text-xs text-[#5c403f] dark:text-gray-300 shrink-0">
-          <div className="flex items-center gap-3">
-            <span className="font-semibold text-[#1b1b1f] dark:text-white flex items-center gap-1">
-              <span className="w-2 h-2 rounded-full bg-emerald-600 animate-pulse"></span>
-              Halaman Publik Warga: <span className="text-[#9e001f] dark:text-[#ffb4ab] font-bold">{activePage.shortLabel}</span>
-            </span>
-            <span className="hidden sm:inline text-[#e5bdbb]">|</span>
-            <span className="hidden md:flex items-center gap-1 text-[11px]">
-              <Clock className="w-3 h-3 text-[#9a5200] dark:text-amber-400" /> Standar Pelayanan Minimal (SPM): Respon Awal <strong>Maks. 4 Jam</strong>
-            </span>
-          </div>
-          <div className="flex items-center gap-3 text-[11px] text-emerald-700 dark:text-emerald-400 font-medium">
-            <span className="w-2 h-2 rounded-full bg-emerald-500"></span> Layanan Aspirasi Terpadu Aktif
-          </div>
-        </div>
-      )}
 
-      {!focusMode && isOfficerMode && (
-        <div className="hidden sm:flex h-8 bg-[#181920] border-b border-red-500/20 px-4 md:px-6 items-center justify-between text-xs text-gray-300 shrink-0">
-          <div className="flex items-center gap-3">
-            <span className="font-semibold text-white flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-red-500 animate-ping"></span>
-              <span className="text-red-400 font-bold uppercase tracking-wider text-[11px]">Lingkungan Backoffice Terbatas</span>
-            </span>
-            <span className="text-white/20">|</span>
-            <span className="text-[11px] text-gray-400">
-              Disposisi aktif ke 6 Dinas Teknis (Bina Marga, DPKP3, Satpol PP, DLHK, PDAM, Dishub)
-            </span>
-          </div>
-          <div className="flex items-center gap-3 text-[11px] text-gray-400">
-            <span className="px-2 py-0.5 rounded bg-white/10 text-white text-[10px] font-mono">
-              SESI: BUDI SANTOSO (NIP: 19850312...)
-            </span>
-            <span className="text-white/20">|</span>
-            <span className="text-emerald-400 font-semibold text-[10px]">
-              LOG AUDIT AKTIF
-            </span>
-          </div>
-        </div>
-      )}
 
       {/* MAIN VIEWPORT: IFRAME RENDERING STITCH PAGES OR DEDICATED LANDING LOGIN */}
       {isLandingMode ? (
@@ -843,7 +772,7 @@ export default function App() {
           dailyStats={dailyStats}
         />
       ) : (
-        <main className="flex-1 w-full h-full relative overflow-hidden bg-white dark:bg-[#1b1b1f]">
+        <main id="main-content" tabIndex={-1} className="flex-1 w-full h-full relative overflow-hidden bg-white dark:bg-[#1b1b1f] focus:outline-none">
           {iframeLoading && (
             <div role="status" className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-3 bg-[#fbf8fe] dark:bg-[#121214] text-sm text-[#5c403f] dark:text-gray-300">
               <span aria-hidden="true" className="w-8 h-8 rounded-full border-4 border-[#ffdad8] dark:border-white/10 border-t-[#9e001f] animate-spin motion-reduce:animate-none" />
@@ -862,84 +791,7 @@ export default function App() {
         </main>
       )}
 
-      {/* MOBILE BOTTOM NAVIGATION BAR (KHUSUS PENGGUNA HP: ERGONOMIS & MUDAH DIJANGKAU IBU JARI) */}
-      {!focusMode && !isOfficerMode && !isLandingMode && (
-        <nav
-          aria-label="Navigasi Bawah Mobile"
-          className="lg:hidden shrink-0 bg-white/95 dark:bg-[#181920]/95 backdrop-blur-md border-t border-[#e5bdbb]/40 dark:border-white/10 px-3 py-1.5 flex items-center justify-around shadow-[0_-4px_16px_rgba(0,0,0,0.06)] z-[1000]"
-          style={{ paddingBottom: 'calc(0.35rem + env(safe-area-inset-bottom, 0px))' }}
-        >
-          <button
-            onClick={() => switchPage('beranda')}
-            className={`flex flex-col items-center justify-center py-1 px-2.5 rounded-xl transition-all ${
-              activeTab === 'beranda'
-                ? 'text-[#9e001f] dark:text-[#ffb4ab] font-bold'
-                : 'text-gray-500 dark:text-gray-400 hover:text-gray-800'
-            }`}
-          >
-            <div className={`p-1 rounded-lg ${activeTab === 'beranda' ? 'bg-[#ffdad8] dark:bg-white/10' : ''}`}>
-              <Home className="w-5 h-5" />
-            </div>
-            <span className="text-[10px] mt-0.5 tracking-tight font-medium">Beranda</span>
-          </button>
 
-          <button
-            onClick={() => switchPage('formulir')}
-            className={`flex flex-col items-center justify-center py-1 px-2.5 rounded-xl transition-all ${
-              activeTab === 'formulir'
-                ? 'text-[#9e001f] dark:text-[#ffb4ab] font-bold'
-                : 'text-gray-500 dark:text-gray-400 hover:text-gray-800'
-            }`}
-          >
-            <div className={`p-1 rounded-lg ${activeTab === 'formulir' ? 'bg-[#ffdad8] dark:bg-white/10' : ''}`}>
-              <FileEdit className="w-5 h-5" />
-            </div>
-            <span className="text-[10px] mt-0.5 tracking-tight font-medium">Buat Aduan</span>
-          </button>
-
-          {/* Special Floating Center Map Action Button */}
-          <button
-            onClick={() => switchPage('peta')}
-            className="flex flex-col items-center justify-center -mt-5 py-1 px-2 transition-all group"
-          >
-            <div className={`w-12 h-12 rounded-full flex items-center justify-center shadow-lg border-2 border-white dark:border-[#181920] transition-transform active:scale-95 ${
-              activeTab === 'peta'
-                ? 'bg-[#9e001f] text-white ring-2 ring-[#ffdad8]'
-                : 'bg-[#9e001f] text-white'
-            }`}>
-              <MapPin className="w-6 h-6" />
-            </div>
-            <span className={`text-[10px] mt-0.5 font-bold ${activeTab === 'peta' ? 'text-[#9e001f] dark:text-[#ffb4ab]' : 'text-gray-600 dark:text-gray-300'}`}>Peta GIS</span>
-          </button>
-
-          <button
-            onClick={() => {
-              setShowTracker(true);
-              handleSearchTicket(trackerQuery);
-            }}
-            className="flex flex-col items-center justify-center py-1 px-2.5 rounded-xl transition-all text-gray-500 dark:text-gray-400 hover:text-gray-800"
-          >
-            <div className="p-1 rounded-lg">
-              <Search className="w-5 h-5" />
-            </div>
-            <span className="text-[10px] mt-0.5 tracking-tight font-medium">Lacak Tiket</span>
-          </button>
-
-          <button
-            onClick={() => switchPage('bantuan')}
-            className={`flex flex-col items-center justify-center py-1 px-2.5 rounded-xl transition-all ${
-              activeTab === 'bantuan'
-                ? 'text-[#9e001f] dark:text-[#ffb4ab] font-bold'
-                : 'text-gray-500 dark:text-gray-400 hover:text-gray-800'
-            }`}
-          >
-            <div className={`p-1 rounded-lg ${activeTab === 'bantuan' ? 'bg-[#ffdad8] dark:bg-white/10' : ''}`}>
-              <HelpCircle className="w-5 h-5" />
-            </div>
-            <span className="text-[10px] mt-0.5 tracking-tight font-medium">Bantuan</span>
-          </button>
-        </nav>
-      )}
 
       {/* TRACKER MODAL */}
       {showTracker && (
@@ -958,7 +810,7 @@ export default function App() {
               <button
                 onClick={() => setShowTracker(false)}
                 aria-label="Tutup pelacak"
-                className="p-1.5 rounded-lg hover:bg-white/15 text-white transition"
+                className="cursor-pointer p-1.5 rounded-lg hover:bg-white/15 text-white transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -973,11 +825,11 @@ export default function App() {
                   onChange={(e) => setTrackerQuery(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && handleSearchTicket(trackerQuery)}
                   placeholder="Masukkan nomor tiket (misal: #LAPOR-2410-092 atau #TKT-2024-8841)..."
-                  className="flex-1 px-4 py-2.5 rounded-xl border border-[#e5bdbb] dark:border-white/20 bg-white dark:bg-[#2b2b30] text-sm focus:outline-none focus:border-[#9e001f] focus:ring-1 focus:ring-[#9e001f]"
+                  className="flex-1 px-4 py-2.5 rounded-xl border border-[#e5bdbb] dark:border-white/20 bg-white dark:bg-[#2b2b30] text-sm focus:outline-none focus:border-[#9e001f] focus:ring-2 focus:ring-[#9e001f]"
                 />
                 <button
                   onClick={() => handleSearchTicket(trackerQuery)}
-                  className="px-4 md:px-5 py-2.5 rounded-xl bg-[#c8102e] hover:bg-[#9e001f] text-white font-semibold text-sm transition"
+                  className="cursor-pointer min-h-[44px] px-4 md:px-5 py-2.5 rounded-xl bg-[#c8102e] hover:bg-[#9e001f] text-white font-semibold text-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#9e001f]"
                 >
                   Lacak
                 </button>
@@ -993,7 +845,7 @@ export default function App() {
                       setTrackerQuery(id);
                       handleSearchTicket(id);
                     }}
-                    className="px-2.5 py-1 rounded-full bg-[#ffdad8]/70 dark:bg-white/10 text-[#9e001f] dark:text-[#ffdad8] font-mono font-bold hover:bg-[#ffdad8] transition text-xs"
+                    className="cursor-pointer px-2.5 py-1.5 rounded-full bg-[#ffdad8]/70 dark:bg-white/10 text-[#9e001f] dark:text-[#ffdad8] font-mono font-bold hover:bg-[#ffdad8] transition text-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#9e001f]"
                   >
                     {id}
                   </button>
@@ -1156,10 +1008,10 @@ export default function App() {
                                     if (active) setRatingAspects(ratingAspects.filter((x) => x !== tag));
                                     else setRatingAspects([...ratingAspects, tag]);
                                   }}
-                                  className={`px-2.5 py-1 rounded-full text-[11px] font-semibold transition ${
+                                  className={`cursor-pointer px-2.5 py-1 rounded-full text-[11px] font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 ${
                                     active
                                       ? 'bg-emerald-700 text-white shadow-2xs'
-                                      : 'bg-white dark:bg-[#1e1e22] text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800'
+                                      : 'bg-white dark:bg-[#1e1e22] text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800 hover:bg-emerald-50 dark:hover:bg-emerald-950/20'
                                   }`}
                                 >
                                   {active ? '✓ ' : '+ '} {tag}
@@ -1174,12 +1026,12 @@ export default function App() {
                               value={ratingComment}
                               onChange={(e) => setRatingComment(e.target.value)}
                               placeholder="Tulis ulasan/masukan warga untuk evaluasi dinas..."
-                              className="flex-1 px-3 py-1.5 rounded-lg border border-emerald-300 dark:border-emerald-800 bg-white dark:bg-[#1e1e22] text-xs focus:outline-none focus:ring-1 focus:ring-emerald-600"
+                              className="flex-1 px-3 py-1.5 rounded-lg border border-emerald-300 dark:border-emerald-800 bg-white dark:bg-[#1e1e22] text-xs focus:outline-none focus:ring-2 focus:ring-emerald-600"
                             />
                             <button
                               type="button"
                               onClick={handleSendRating}
-                              className="px-4 py-1.5 rounded-lg bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs transition shadow-2xs"
+                              className="cursor-pointer min-h-[36px] px-4 py-1.5 rounded-lg bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs transition shadow-2xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600"
                             >
                               Kirim Evaluasi
                             </button>
@@ -1390,14 +1242,14 @@ export default function App() {
                           <button
                             type="button"
                             onClick={() => setReplyPhoto('https://lh3.googleusercontent.com/aida-public/AB6AXuDF8T8kAUNM-_2HbGnXu8uBKMJ2muGoOIIVwsW-LJXlvjeUyggI0kmrcFyCrJjw5DGqCVi2YjGD6kjq4_gY3-wkkU7CUJuk3ewvRC13mHt8lJyLnqVDv-klbEXOR1R1qkaKxAKpJP1LKp9Pib0NfqapWtlBZyChM_CTjE5aay9TegQ8LnoxrCAjItLPcfcuLGBXQVWqAm4o_HFnPV0BLEExLo7eqWfAbvwqq5KEy88')}
-                            className="px-2 py-1 rounded bg-gray-100 dark:bg-white/10 text-gray-700 dark:text-gray-300 text-[10px] hover:bg-gray-200"
+                            className="cursor-pointer px-2 py-1 rounded bg-gray-100 dark:bg-white/10 text-gray-700 dark:text-gray-300 text-[10px] hover:bg-gray-200 transition focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-gray-400"
                           >
                             📷 Bukti Warga
                           </button>
                           <button
                             type="button"
                             onClick={() => setReplyPhoto('https://images.unsplash.com/photo-1578328819058-b69f3a3b0f6b?auto=format&fit=crop&w=600&q=80')}
-                            className="px-2 py-1 rounded bg-blue-50 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 text-[10px] hover:bg-blue-100"
+                            className="cursor-pointer px-2 py-1 rounded bg-blue-50 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 text-[10px] hover:bg-blue-100 transition focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-blue-400"
                           >
                             🛠️ Foto URC
                           </button>
@@ -1406,7 +1258,7 @@ export default function App() {
                         <button
                           type="button"
                           onClick={handleSendAppReply}
-                          className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-lg bg-[#c8102e] hover:bg-[#9e001f] text-white font-bold text-xs transition"
+                          className="cursor-pointer min-h-[36px] inline-flex items-center gap-1.5 px-4 py-1.5 rounded-lg bg-[#c8102e] hover:bg-[#9e001f] text-white font-bold text-xs transition shadow-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#9e001f]"
                         >
                           <span className="material-symbols-outlined text-sm">send</span>
                           <span>Kirim</span>
@@ -1487,7 +1339,7 @@ export default function App() {
                   <div className="text-xl font-mono font-extrabold text-[#9e001f] tracking-tight">{receiptTicket.id}</div>
                   <div className="text-xs text-gray-700">Waktu Lapor: <strong>{receiptTicket.waktu}</strong></div>
                   <div className="text-xs text-gray-700">Status Awal: <strong className="text-emerald-700 font-bold">{receiptTicket.status}</strong></div>
-                  <div className="text-xs text-gray-700">Target Tanggap: <strong className="text-amber-700">Maksimal 4 Jam (SLA)</strong></div>
+                  <div className="text-xs text-gray-700">Target Tanggap: <strong className="text-amber-700">Maksimal 24 Jam (SLA)</strong></div>
                 </div>
 
                 {/* SVG QR Code Simulation */}
@@ -1588,7 +1440,7 @@ export default function App() {
               <button
                 onClick={() => setShowOfficerLoginModal(false)}
                 aria-label="Tutup login petugas"
-                className="p-1 rounded-lg hover:bg-white/10 text-gray-400 hover:text-white transition"
+                className="cursor-pointer p-1.5 rounded-lg hover:bg-white/10 text-gray-400 hover:text-white transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -1631,7 +1483,7 @@ export default function App() {
                     setShowOfficerLoginModal(false);
                     setIframeKey((k) => k + 1);
                   }}
-                  className="w-full text-left p-3 rounded-xl border border-red-500/40 bg-red-50/50 dark:bg-red-950/20 hover:bg-red-100/60 dark:hover:bg-red-950/40 transition flex items-center justify-between group"
+                  className="cursor-pointer min-h-[44px] w-full text-left p-3 rounded-xl border border-red-500/40 bg-red-50/50 dark:bg-red-950/20 hover:bg-red-100/60 dark:hover:bg-red-950/40 transition flex items-center justify-between group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-600"
                 >
                   <div className="flex items-center gap-2.5">
                     <span className="w-8 h-8 rounded-lg bg-red-600 text-white flex items-center justify-center font-bold text-xs">BS</span>
@@ -1651,7 +1503,7 @@ export default function App() {
                     setShowOfficerLoginModal(false);
                     setIframeKey((k) => k + 1);
                   }}
-                  className="w-full text-left p-3 rounded-xl border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 hover:bg-blue-50/50 dark:hover:bg-blue-950/20 transition flex items-center justify-between group"
+                  className="cursor-pointer min-h-[44px] w-full text-left p-3 rounded-xl border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 hover:bg-blue-50/50 dark:hover:bg-blue-950/20 transition flex items-center justify-between group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
                 >
                   <div className="flex items-center gap-2.5">
                     <span className="w-8 h-8 rounded-lg bg-blue-700 text-white flex items-center justify-center font-bold text-xs">SM</span>
@@ -1668,7 +1520,7 @@ export default function App() {
                 <button
                   type="button"
                   onClick={() => setShowOfficerLoginModal(false)}
-                  className="text-xs text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 font-semibold"
+                  className="cursor-pointer min-h-[38px] text-xs text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-400 rounded-lg px-3 py-1"
                 >
                   Batal dan Tetap di Portal Warga
                 </button>
