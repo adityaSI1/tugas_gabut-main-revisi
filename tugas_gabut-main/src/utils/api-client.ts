@@ -559,3 +559,79 @@ export async function resetDatabase(): Promise<CivicTicket[]> {
   saveLocalTickets(INITIAL_TICKETS);
   return INITIAL_TICKETS;
 }
+
+/**
+ * Autentikasi Riil Warga atau Petugas / Admin ke Backend SQLite
+ */
+export async function loginUser(credentials: {
+  type: 'warga' | 'petugas';
+  nik?: string;
+  nama?: string;
+  telepon?: string;
+  nip?: string;
+  password?: string;
+}): Promise<{ success: boolean; user?: any; message?: string }> {
+  try {
+    const res = await fetch(`${API_BASE_URL}/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(credentials),
+      signal: AbortSignal.timeout(3500)
+    });
+
+    const json = await res.json().catch(() => ({}));
+    if (res.ok && json.success) {
+      return json;
+    }
+    return { success: false, message: json.message || 'Autentikasi gagal' };
+  } catch (_e) {
+    // Mode Offline / GitHub Pages
+    if (credentials.type === 'warga') {
+      const cleanNik = (credentials.nik || '').trim();
+      if (!cleanNik || cleanNik.length < 6) {
+        return { success: false, message: 'Nomor Induk Kependudukan (NIK) minimal 6 digit' };
+      }
+      return {
+        success: true,
+        user: {
+          role: 'warga',
+          nik: cleanNik,
+          name: credentials.nama?.trim() || 'Warga Terverifikasi',
+          phone: credentials.telepon?.trim() || '',
+          title: 'Warga Pelapor Terdaftar'
+        }
+      };
+    } else {
+      const cleanNip = (credentials.nip || '').replace(/\s+/g, '').trim().toLowerCase();
+      const pwd = credentials.password?.trim() || '';
+      if (!cleanNip || !pwd) {
+        return { success: false, message: 'NIP dan Kata Sandi wajib diisi' };
+      }
+      const matched = INITIAL_VERIFIER_ACCOUNTS.find((v) => {
+        const vClean = v.nip.replace(/\s+/g, '').trim().toLowerCase();
+        return vClean === cleanNip || (cleanNip === 'admin' && v.role === 'Superadmin');
+      });
+      if (!matched) {
+        return { success: false, message: 'NIP tidak ditemukan dalam daftar aparatur verifikator OPD' };
+      }
+      const isSuperadmin = cleanNip === 'admin' || matched.role === 'Superadmin';
+      const validSuperadmin = isSuperadmin && (pwd === 'admin123' || pwd === 'sipantau2026' || pwd === 'petugas123');
+      const validOfficer = !isSuperadmin && (pwd === 'petugas123' || pwd === 'sipantau2026');
+      if (!validSuperadmin && !validOfficer) {
+        return { success: false, message: 'Kata sandi tidak sesuai untuk akun petugas ini' };
+      }
+      return {
+        success: true,
+        message: `Autentikasi berhasil. Selamat datang, ${matched.nama}`,
+        user: {
+          role: 'petugas',
+          nip: matched.nip,
+          name: matched.nama,
+          instansi: matched.instansi,
+          jabatan: matched.jabatan,
+          userRole: matched.role
+        }
+      };
+    }
+  }
+}

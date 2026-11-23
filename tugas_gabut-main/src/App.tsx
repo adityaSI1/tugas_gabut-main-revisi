@@ -13,6 +13,7 @@ import {
   Search,
   ExternalLink,
   RotateCcw,
+  User,
   UserCheck,
   CheckCircle2,
   AlertTriangle,
@@ -66,6 +67,7 @@ import {
   sendTicketRating,
   upvoteTicket,
   resetDatabase,
+  loginUser,
   BackendHealth
 } from './utils/api-client';
 import { LandingLoginPage } from './components/LandingLoginPage';
@@ -219,10 +221,23 @@ export default function App() {
   const isLandingMode = portalMode === 'landing';
   const activePage = isOfficerMode ? OFFICER_PAGE : (CITIZEN_PAGES.find((p) => p.id === activeTab) || CITIZEN_PAGES[0]);
 
+  const [userSession, setUserSession] = useState<any>(() => {
+    try {
+      const raw = localStorage.getItem('SIPANTAU_USER_SESSION');
+      if (raw) return JSON.parse(raw);
+    } catch (_) {}
+    return null;
+  });
+
+  const [officerModalNip, setOfficerModalNip] = useState<string>('');
+  const [officerModalPassword, setOfficerModalPassword] = useState<string>('');
+  const [officerModalError, setOfficerModalError] = useState<string>('');
+  const [officerModalLoading, setOfficerModalLoading] = useState<boolean>(false);
+
   const [replyText, setReplyText] = useState<string>('');
   const [replyPhoto, setReplyPhoto] = useState<string | null>(null);
   const [replyRole, setReplyRole] = useState<'warga' | 'petugas'>('warga');
-  const [replyName, setReplyName] = useState<string>('Budi Pratama (Warga)');
+  const [replyName, setReplyName] = useState<string>(() => userSession?.name ? `${userSession.name} (${userSession.role === 'petugas' ? (userSession.title || 'Petugas OPD') : 'Warga'})` : '');
   const [dailyStats, setDailyStats] = useState<DailyStats>(() => calculateDailyStats(INITIAL_TICKETS));
 
   // Rating CSAT State
@@ -649,24 +664,48 @@ export default function App() {
               <span>Portal OPD</span>
             </button>
 
-            {/* Tombol Masuk */}
-            <button
-              onClick={() => {
-                setPortalMode('landing');
-                localStorage.setItem('SIPANTAU_PORTAL_MODE', 'landing');
-              }}
-              className="cursor-pointer px-3.5 py-2 rounded-lg border border-slate-300 dark:border-white/20 text-slate-700 dark:text-slate-200 hover:border-[#9e001f] hover:text-[#9e001f] text-xs font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#9e001f]"
-            >
-              Masuk
-            </button>
+            {/* Sesi Pengguna / Tombol Masuk & Daftar */}
+            {userSession && userSession.role === 'warga' ? (
+              <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800 text-xs font-semibold text-emerald-800 dark:text-emerald-300">
+                  <User className="w-3.5 h-3.5" />
+                  <span className="truncate max-w-[120px]">{userSession.name}</span>
+                </div>
+                <button
+                  onClick={() => {
+                    localStorage.removeItem('SIPANTAU_USER_SESSION');
+                    setUserSession(null);
+                    setReplyName('Warga Pelapor');
+                  }}
+                  title="Keluar Sesi Warga"
+                  className="cursor-pointer px-2 py-1.5 rounded-lg text-slate-500 hover:text-red-600 text-xs font-semibold transition"
+                >
+                  Keluar
+                </button>
+              </div>
+            ) : (
+              <>
+                <button
+                  onClick={() => {
+                    setPortalMode('landing');
+                    localStorage.setItem('SIPANTAU_PORTAL_MODE', 'landing');
+                  }}
+                  className="cursor-pointer px-3.5 py-2 rounded-lg border border-slate-300 dark:border-white/20 text-slate-700 dark:text-slate-200 hover:border-[#9e001f] hover:text-[#9e001f] text-xs font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#9e001f]"
+                >
+                  Masuk
+                </button>
 
-            {/* Tombol Daftar */}
-            <button
-              onClick={() => switchPage('formulir')}
-              className="cursor-pointer px-4 py-2 rounded-lg bg-[#9e001f] hover:bg-[#800019] text-white text-xs font-bold shadow-xs transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#9e001f] focus-visible:ring-offset-1"
-            >
-              Daftar
-            </button>
+                <button
+                  onClick={() => {
+                    setPortalMode('landing');
+                    localStorage.setItem('SIPANTAU_PORTAL_MODE', 'landing');
+                  }}
+                  className="cursor-pointer px-4 py-2 rounded-lg bg-[#9e001f] hover:bg-[#800019] text-white text-xs font-bold shadow-xs transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#9e001f] focus-visible:ring-offset-1"
+                >
+                  Daftar
+                </button>
+              </>
+            )}
 
             {/* Mobile Hamburger Menu Button (Min 44x44px touch target) */}
             <button
@@ -773,7 +812,8 @@ export default function App() {
 
           {/* Live Status Triase */}
           <div className="hidden lg:flex items-center gap-3 text-xs text-gray-300 bg-white/5 border border-white/10 px-3.5 py-1.5 rounded-xl">
-            <span className="font-semibold text-white">Budi Santoso, S.STP</span>
+            <span className="font-semibold text-white">{userSession?.name || 'Aparatur ASN Terverifikasi'}</span>
+            {userSession?.opd && <span className="text-white/50 text-[11px] truncate max-w-[160px]">({userSession.opd})</span>}
             <span className="text-white/20">|</span>
             <span className="text-amber-300 font-semibold">{dailyStats.aduanHariIni} Aduan Hari Ini</span>
             <span className="text-white/20">|</span>
@@ -843,6 +883,11 @@ export default function App() {
           onSelectRole={(role, profile) => {
             setPortalMode(role);
             localStorage.setItem('SIPANTAU_PORTAL_MODE', role);
+            if (profile) {
+              setUserSession(profile);
+              localStorage.setItem('SIPANTAU_USER_SESSION', JSON.stringify(profile));
+              setReplyName(`${profile.name} (${role === 'petugas' ? 'Petugas OPD' : 'Warga'})`);
+            }
             if (role === 'warga') {
               setActiveTab('beranda');
             } else {
@@ -1231,7 +1276,11 @@ export default function App() {
                               checked={replyRole === 'warga'}
                               onChange={() => {
                                 setReplyRole('warga');
-                                setReplyName('Budi Pratama (Warga)');
+                                if (userSession?.role === 'warga') {
+                                  setReplyName(`${userSession.name} (Warga)`);
+                                } else {
+                                  setReplyName('');
+                                }
                               }}
                               className="accent-[#9e001f]"
                             />
@@ -1245,7 +1294,11 @@ export default function App() {
                               checked={replyRole === 'petugas'}
                               onChange={() => {
                                 setReplyRole('petugas');
-                                setReplyName('Siti M. (Petugas OPD)');
+                                if (userSession?.role === 'petugas') {
+                                  setReplyName(`${userSession.name} (${userSession.title || 'Petugas OPD'})`);
+                                } else {
+                                  setReplyName('');
+                                }
                               }}
                               className="accent-[#9e001f]"
                             />
@@ -1277,7 +1330,7 @@ export default function App() {
                           type="text"
                           value={replyName}
                           onChange={(e) => setReplyName(e.target.value)}
-                          placeholder="Nama pengirim..."
+                          placeholder="Nama pengirim / NIP..."
                           className="w-1/3 px-3 py-2 rounded-lg border border-[#e5bdbb] dark:border-white/20 bg-white dark:bg-[#2b2b30] text-xs focus:outline-none focus:border-[#9e001f] focus:ring-1 focus:ring-[#9e001f]"
                         />
                         <input
@@ -1328,22 +1381,6 @@ export default function App() {
                               }}
                             />
                           </label>
-                          <button
-                            type="button"
-                            onClick={() => setReplyPhoto('https://lh3.googleusercontent.com/aida-public/AB6AXuDF8T8kAUNM-_2HbGnXu8uBKMJ2muGoOIIVwsW-LJXlvjeUyggI0kmrcFyCrJjw5DGqCVi2YjGD6kjq4_gY3-wkkU7CUJuk3ewvRC13mHt8lJyLnqVDv-klbEXOR1R1qkaKxAKpJP1LKp9Pib0NfqapWtlBZyChM_CTjE5aay9TegQ8LnoxrCAjItLPcfcuLGBXQVWqAm4o_HFnPV0BLEExLo7eqWfAbvwqq5KEy88')}
-                            className="cursor-pointer inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-gray-100 dark:bg-white/10 text-gray-700 dark:text-gray-300 text-[11px] font-medium hover:bg-gray-200 dark:hover:bg-white/20 transition focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-gray-400"
-                          >
-                            <Camera className="w-3 h-3 text-gray-500 dark:text-gray-400 shrink-0" />
-                            <span>Bukti Warga</span>
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => setReplyPhoto('https://images.unsplash.com/photo-1578328819058-b69f3a3b0f6b?auto=format&fit=crop&w=600&q=80')}
-                            className="cursor-pointer inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-blue-50 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 text-[11px] font-medium hover:bg-blue-100 dark:hover:bg-blue-900/60 transition focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-blue-400"
-                          >
-                            <Wrench className="w-3 h-3 text-blue-500 dark:text-blue-400 shrink-0" />
-                            <span>Foto URC</span>
-                          </button>
                         </div>
 
                         <button
@@ -1543,69 +1580,89 @@ export default function App() {
                 <span>Area terbatas verifikator Diskominfo &amp; dinas teknis daerah. Setiap aktivitas dan disposisi dicatat dalam log audit resmi.</span>
               </div>
 
-              <div className="space-y-3 text-xs">
+              {officerModalError && (
+                <div className="p-3 rounded-lg bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 text-xs text-red-700 dark:text-red-300 flex items-center gap-2">
+                  <AlertCircle className="w-4 h-4 shrink-0" />
+                  <span>{officerModalError}</span>
+                </div>
+              )}
+
+              <form
+                onSubmit={async (e) => {
+                  e.preventDefault();
+                  if (!officerModalNip.trim()) {
+                    setOfficerModalError('Silakan masukkan NIP atau akun admin');
+                    return;
+                  }
+                  if (!officerModalPassword.trim()) {
+                    setOfficerModalError('Silakan masukkan kata sandi');
+                    return;
+                  }
+                  setOfficerModalError('');
+                  setOfficerModalLoading(true);
+                  try {
+                    const res = await loginUser({
+                      type: 'petugas',
+                      nip: officerModalNip.trim(),
+                      password: officerModalPassword.trim()
+                    });
+                    if (res.success && res.user) {
+                      setPortalMode('petugas');
+                      setActiveTab('dashboard');
+                      localStorage.setItem('SIPANTAU_PORTAL_MODE', 'petugas');
+                      localStorage.setItem('SIPANTAU_USER_SESSION', JSON.stringify(res.user));
+                      setUserSession(res.user);
+                      setShowOfficerLoginModal(false);
+                      setIframeKey((k) => k + 1);
+                    } else {
+                      setOfficerModalError(res.message || 'NIP atau kata sandi tidak valid');
+                    }
+                  } catch (_err) {
+                    setOfficerModalError('Terjadi kendala saat melakukan autentikasi');
+                  } finally {
+                    setOfficerModalLoading(false);
+                  }
+                }}
+                className="space-y-3.5 text-xs"
+              >
                 <div>
-                  <label className="block font-bold text-gray-700 dark:text-gray-300 mb-1">NIP / Nomor Induk Pegawai</label>
+                  <label className="block font-bold text-gray-700 dark:text-gray-300 mb-1">NIP / Akun Admin *</label>
                   <input
                     type="text"
-                    defaultValue="19850312 201001 1 008"
-                    className="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-white/15 bg-white dark:bg-[#2b2b30] font-mono text-xs focus:ring-1 focus:ring-red-600"
-                    placeholder="19850312..."
+                    required
+                    value={officerModalNip}
+                    onChange={(e) => setOfficerModalNip(e.target.value)}
+                    className="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-white/15 bg-white dark:bg-[#2b2b30] font-mono text-xs focus:ring-1 focus:ring-red-600 focus:outline-none"
+                    placeholder="Masukkan NIP atau 'admin'..."
                   />
                 </div>
                 <div>
-                  <label className="block font-bold text-gray-700 dark:text-gray-300 mb-1">Kata Sandi ASN</label>
+                  <label className="block font-bold text-gray-700 dark:text-gray-300 mb-1">Kata Sandi ASN *</label>
                   <input
                     type="password"
-                    defaultValue="••••••••••••"
-                    className="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-white/15 bg-white dark:bg-[#2b2b30] text-xs focus:ring-1 focus:ring-red-600"
+                    required
+                    value={officerModalPassword}
+                    onChange={(e) => setOfficerModalPassword(e.target.value)}
+                    className="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-white/15 bg-white dark:bg-[#2b2b30] text-xs focus:ring-1 focus:ring-red-600 focus:outline-none"
+                    placeholder="Masukkan kata sandi..."
                   />
                 </div>
-              </div>
-
-              <div className="pt-2 space-y-2">
-                <span className="text-[11px] font-bold text-gray-500 uppercase tracking-wider block">Pilih Akun Simulasi Verifikator:</span>
-                
-                <button
-                  onClick={() => {
-                    setPortalMode('petugas');
-                    setActiveTab('dashboard');
-                    localStorage.setItem('SIPANTAU_PORTAL_MODE', 'petugas');
-                    setShowOfficerLoginModal(false);
-                    setIframeKey((k) => k + 1);
-                  }}
-                  className="cursor-pointer min-h-[44px] w-full text-left p-3 rounded-xl border border-red-500/40 bg-red-50/50 dark:bg-red-950/20 hover:bg-red-100/60 dark:hover:bg-red-950/40 transition flex items-center justify-between group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-600"
-                >
-                  <div className="flex items-center gap-2.5">
-                    <span className="w-8 h-8 rounded-lg bg-red-600 text-white flex items-center justify-center font-bold text-xs">BS</span>
-                    <div>
-                      <div className="font-bold text-xs text-red-900 dark:text-red-200">Budi Santoso, S.STP</div>
-                      <div className="text-[10px] text-gray-600 dark:text-gray-400">Koordinator Verifikator &amp; Triase (Diskominfo)</div>
-                    </div>
-                  </div>
-                  <Check className="w-4 h-4 text-red-600 opacity-0 group-hover:opacity-100 transition" />
-                </button>
 
                 <button
-                  onClick={() => {
-                    setPortalMode('petugas');
-                    setActiveTab('dashboard');
-                    localStorage.setItem('SIPANTAU_PORTAL_MODE', 'petugas');
-                    setShowOfficerLoginModal(false);
-                    setIframeKey((k) => k + 1);
-                  }}
-                  className="cursor-pointer min-h-[44px] w-full text-left p-3 rounded-xl border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 hover:bg-blue-50/50 dark:hover:bg-blue-950/20 transition flex items-center justify-between group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
+                  type="submit"
+                  disabled={officerModalLoading}
+                  className="cursor-pointer min-h-[44px] w-full py-2.5 rounded-lg bg-[#9e001f] hover:bg-[#800019] text-white font-bold text-xs shadow-xs transition flex items-center justify-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#9e001f] disabled:opacity-70 mt-2"
                 >
-                  <div className="flex items-center gap-2.5">
-                    <span className="w-8 h-8 rounded-lg bg-blue-700 text-white flex items-center justify-center font-bold text-xs">SM</span>
-                    <div>
-                      <div className="font-bold text-xs text-gray-900 dark:text-gray-200">Siti Maryam, S.T.</div>
-                      <div className="text-[10px] text-gray-500">Verifikator Teknis Dinas Bina Marga &amp; Tata Ruang</div>
-                    </div>
-                  </div>
-                  <Check className="w-4 h-4 text-blue-600 opacity-0 group-hover:opacity-100 transition" />
+                  {officerModalLoading ? (
+                    <span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
+                  ) : (
+                    <>
+                      <Lock className="w-4 h-4" />
+                      <span>Masuk ke Portal Petugas OPD</span>
+                    </>
+                  )}
                 </button>
-              </div>
+              </form>
 
               <div className="pt-2 border-t border-gray-200 dark:border-white/10 text-center">
                 <button

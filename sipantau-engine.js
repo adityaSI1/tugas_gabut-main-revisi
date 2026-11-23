@@ -775,6 +775,16 @@
     const messages = Array.isArray(ticket.messages) ? ticket.messages : [];
     let selectedPhotoData = null;
 
+    let activeUser = null;
+    try {
+      const rawUser = localStorage.getItem('SIPANTAU_USER_SESSION');
+      if (rawUser) activeUser = JSON.parse(rawUser);
+    } catch (_) {}
+
+    const defaultSenderName = activeUser?.name
+      ? `${activeUser.name} (${activeUser.role === 'petugas' ? (activeUser.title || 'Petugas OPD') : 'Warga'})`
+      : '';
+
     container.innerHTML = `
       <div class="space-y-4">
         <!-- Header Komunikasi -->
@@ -878,7 +888,7 @@
 
           <div class="flex flex-col sm:flex-row gap-2">
             <input type="text" id="reply-sender-name-${ticket.id.replace('#', '')}" 
-              value="${defaultRole === 'warga' ? 'Budi Pratama (Warga)' : 'Siti M. (Petugas OPD)'}"
+              value="${defaultSenderName}"
               placeholder="Nama pengirim..."
               class="sm:w-1/3 px-3 py-1.5 rounded-lg border border-[#e5bdbb] text-xs focus:border-[#c8102e] focus:ring-1 focus:ring-[#c8102e]" />
             <input type="text" id="reply-text-input-${ticket.id.replace('#', '')}" 
@@ -907,13 +917,6 @@
               <button type="button" id="btn-trigger-upload-${ticket.id.replace('#', '')}" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-[#e5bdbb] bg-[#fbf8fe] hover:bg-[#ffdad8]/40 text-[#9e001f] font-semibold text-xs transition">
                 <svg class="w-3.5 h-3.5 fill-none stroke-current shrink-0" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
                 <span>Unggah Foto</span>
-              </button>
-
-              <button type="button" id="btn-sample-warga-photo-${ticket.id.replace('#', '')}" class="cursor-pointer inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-700 text-[11px] font-medium transition">
-                <span>📷 Bukti Warga</span>
-              </button>
-              <button type="button" id="btn-sample-petugas-photo-${ticket.id.replace('#', '')}" class="cursor-pointer inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-700 text-[11px] font-medium transition">
-                <span>🛠️ Foto URC</span>
               </button>
             </div>
 
@@ -1008,20 +1011,7 @@
       fileInput.value = '';
     });
 
-    // Sample Photos
-    container.querySelector(`#btn-sample-warga-photo-${cleanId}`)?.addEventListener('click', () => {
-      selectedPhotoData = 'https://lh3.googleusercontent.com/aida-public/AB6AXuDF8T8kAUNM-_2HbGnXu8uBKMJ2muGoOIIVwsW-LJXlvjeUyggI0kmrcFyCrJjw5DGqCVi2YjGD6kjq4_gY3-wkkU7CUJuk3ewvRC13mHt8lJyLnqVDv-klbEXOR1R1qkaKxAKpJP1LKp9Pib0NfqapWtlBZyChM_CTjE5aay9TegQ8LnoxrCAjItLPcfcuLGBXQVWqAm4o_HFnPV0BLEExLo7eqWfAbvwqq5KEy88';
-      previewImg.src = selectedPhotoData;
-      previewWrap.classList.remove('hidden');
-      showToast('Contoh foto kondisi lapangan disematkan!', 'info');
-    });
 
-    container.querySelector(`#btn-sample-petugas-photo-${cleanId}`)?.addEventListener('click', () => {
-      selectedPhotoData = 'https://images.unsplash.com/photo-1578328819058-b69f3a3b0f6b?auto=format&fit=crop&w=600&q=80';
-      previewImg.src = selectedPhotoData;
-      previewWrap.classList.remove('hidden');
-      showToast('Contoh foto pengerjaan tim URC disematkan!', 'info');
-    });
 
     // Kirim Balasan
     const sendBtn = container.querySelector(`#btn-send-reply-${cleanId}`);
@@ -1658,6 +1648,25 @@
   function initCitizenFormPage() {
     if (!window.location.pathname.includes('formulir_pengaduan')) return;
 
+    // Update profil identitas warga nyata di header dari sesi aktif
+    try {
+      const rawUser = localStorage.getItem('SIPANTAU_USER_SESSION');
+      if (rawUser) {
+        const u = JSON.parse(rawUser);
+        if (u.name) {
+          const profileName = document.querySelector('header span.text-label-md');
+          if (profileName) profileName.textContent = u.name;
+        }
+        if (u.nik) {
+          const profileNik = document.querySelector('header span.text-label-sm');
+          if (profileNik) {
+            const maskedNik = u.nik.length >= 10 ? u.nik.slice(0, 6) + '******' + u.nik.slice(-4) : u.nik;
+            profileNik.textContent = `NIK: ${maskedNik}`;
+          }
+        }
+      }
+    } catch (_) {}
+
     // A. Karakter Counter pada Kronologi (#deskripsi)
     const descEl = document.getElementById('deskripsi');
     if (descEl) {
@@ -2126,6 +2135,17 @@
         showFormPreviewModal(ticketData, () => {
           const randomNum = Math.floor(1000 + Math.random() * 9000);
           const newId = `#LAPOR-2026-${randomNum}`;
+
+          let activeUser = null;
+          try {
+            const rawUser = localStorage.getItem('SIPANTAU_USER_SESSION');
+            if (rawUser) activeUser = JSON.parse(rawUser);
+          } catch (_) {}
+
+          const citizenName = activeUser?.name || 'Warga Terverifikasi';
+          const citizenNik = activeUser?.nik ? (activeUser.nik.length >= 10 ? activeUser.nik.slice(0, 6) + '******' + activeUser.nik.slice(-4) : activeUser.nik) : '327320******0004';
+          const citizenTel = activeUser?.phone || '+62 812-****-8800';
+
           const newTicket = {
             id: newId,
             code: `LAPOR-2026-${randomNum}`,
@@ -2143,9 +2163,9 @@
             upvotes: 1,
             lat: ticketData.lat,
             lng: ticketData.lng,
-            pelapor: 'Budi Pratama (Warga Terverifikasi)',
-            nik: '327320******0004',
-            telepon: '+62 812-****-8800',
+            pelapor: `${citizenName} (Warga Terdaftar)`,
+            nik: citizenNik,
+            telepon: citizenTel,
             deskripsi: ticketData.deskripsi,
             foto: ticketData.foto,
             petugas: 'Menunggu Verifikator',

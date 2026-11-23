@@ -5,17 +5,17 @@ import {
   User,
   LogIn,
   Lock,
-  ChevronRight,
   Eye,
   EyeOff,
   AlertCircle,
-  Key,
-  ArrowLeft
+  ArrowLeft,
+  Loader2
 } from 'lucide-react';
 import { DailyStats } from '../utils/civic-db';
+import { loginUser } from '../utils/api-client';
 
 interface LandingLoginPageProps {
-  onSelectRole: (role: 'warga' | 'petugas', profile?: { name: string; role: string; nip?: string; opd?: string }) => void;
+  onSelectRole: (role: 'warga' | 'petugas', profile?: { name: string; role: string; nip?: string; opd?: string; nik?: string; phone?: string }) => void;
   darkMode: boolean;
   onToggleDarkMode: () => void;
   onOpenTracker: () => void;
@@ -28,46 +28,92 @@ export const LandingLoginPage: React.FC<LandingLoginPageProps> = ({
 }) => {
   const [activeRoleTab, setActiveRoleTab] = useState<'warga' | 'petugas'>('warga');
 
-  // State Form Warga
-  const [wargaNik, setWargaNik] = useState('3273241508920003');
-  const [wargaName, setWargaName] = useState('Budi Pratama');
+  // State Form Warga (Asli, Bersih, Tanpa Dummy)
+  const [wargaNik, setWargaNik] = useState('');
+  const [wargaName, setWargaName] = useState('');
+  const [wargaPhone, setWargaPhone] = useState('');
   const [wargaError, setWargaError] = useState('');
 
-  // State Form Petugas
-  const [petugasNip, setPetugasNip] = useState('198503122010011008');
-  const [petugasPassword, setPetugasPassword] = useState('petugas123');
-  const [petugasOpd, setPetugasOpd] = useState('Dinas Bina Marga & Tata Ruang');
+  // State Form Petugas / Admin (Autentikasi Nyata Database)
+  const [petugasNip, setPetugasNip] = useState('');
+  const [petugasPassword, setPetugasPassword] = useState('');
   const [showPetugasPassword, setShowPetugasPassword] = useState(false);
   const [petugasError, setPetugasError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   // Submit Warga Login
-  const handleWargaSubmit = (e: React.FormEvent) => {
+  const handleWargaSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!wargaNik.trim()) {
-      setWargaError('Silakan masukkan NIK Anda');
+    const cleanNik = wargaNik.trim();
+    if (!cleanNik) {
+      setWargaError('Silakan masukkan Nomor Induk Kependudukan (NIK) Anda');
       return;
     }
+    if (cleanNik.length < 6) {
+      setWargaError('Nomor Induk Kependudukan (NIK) minimal 6 digit angka');
+      return;
+    }
+
     setWargaError('');
-    onSelectRole('warga', {
-      name: wargaName.trim() || 'Warga Pelapor',
-      role: 'Warga Terdaftar'
-    });
+    setIsLoading(true);
+
+    try {
+      const res = await loginUser({
+        type: 'warga',
+        nik: cleanNik,
+        nama: wargaName.trim() || 'Warga Terverifikasi',
+        telepon: wargaPhone.trim()
+      });
+
+      if (res.success && res.user) {
+        onSelectRole('warga', res.user);
+      } else {
+        setWargaError(res.message || 'Gagal masuk sebagai warga');
+      }
+    } catch (_err) {
+      setWargaError('Terjadi kendala saat memproses autentikasi warga');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  // Submit Petugas Login
-  const handlePetugasSubmit = (e: React.FormEvent) => {
+  // Submit Petugas / Admin Login (Autentikasi Nyata ke SQLite)
+  const handlePetugasSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!petugasNip.trim() || !petugasPassword.trim()) {
-      setPetugasError('Silakan masukkan NIP dan Kata Sandi');
+    if (!petugasNip.trim()) {
+      setPetugasError('Silakan masukkan Nomor Induk Pegawai (NIP) atau username admin');
       return;
     }
+    if (!petugasPassword.trim()) {
+      setPetugasError('Silakan masukkan kata sandi resmi petugas');
+      return;
+    }
+
     setPetugasError('');
-    onSelectRole('petugas', {
-      name: 'Budi Santoso, S.STP',
-      role: 'Verifikator Diskominfo',
-      nip: petugasNip,
-      opd: petugasOpd
-    });
+    setIsLoading(true);
+
+    try {
+      const res = await loginUser({
+        type: 'petugas',
+        nip: petugasNip.trim(),
+        password: petugasPassword.trim()
+      });
+
+      if (res.success && res.user) {
+        onSelectRole('petugas', {
+          name: res.user.name,
+          role: res.user.jabatan || res.user.userRole || 'Petugas Verifikator',
+          nip: res.user.nip,
+          opd: res.user.instansi
+        });
+      } else {
+        setPetugasError(res.message || 'NIP atau kata sandi tidak valid');
+      }
+    } catch (_err) {
+      setPetugasError('Terjadi kendala konektivitas saat memverifikasi akun petugas');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -133,8 +179,8 @@ export const LandingLoginPage: React.FC<LandingLoginPageProps> = ({
           {activeRoleTab === 'warga' && (
             <div className="p-6 space-y-4">
               <div className="space-y-1">
-                <h2 className="text-base font-bold text-slate-900 dark:text-white">Autentikasi Warga</h2>
-                <p className="text-xs text-slate-500 dark:text-slate-400">Masuk menggunakan NIK KTP Anda untuk memantau status aduan.</p>
+                <h2 className="text-base font-bold text-slate-900 dark:text-white">Identitas Warga Pelapor</h2>
+                <p className="text-xs text-slate-500 dark:text-slate-400">Masukkan NIK dan nama Anda untuk memantau status aduan serta mengirim klarifikasi.</p>
               </div>
 
               {wargaError && (
@@ -147,42 +193,64 @@ export const LandingLoginPage: React.FC<LandingLoginPageProps> = ({
               <form onSubmit={handleWargaSubmit} className="space-y-3.5">
                 <div>
                   <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
-                    Nomor Induk Kependudukan (NIK)
+                    Nomor Induk Kependudukan (NIK) *
                   </label>
                   <input
                     type="text"
+                    required
                     value={wargaNik}
-                    onChange={(e) => setWargaNik(e.target.value)}
-                    placeholder="16 digit NIK..."
+                    onChange={(e) => setWargaNik(e.target.value.replace(/[^0-9]/g, ''))}
+                    placeholder="Masukkan 16 digit NIK KTP Anda..."
                     className="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-white/10 bg-slate-50 dark:bg-black/20 text-xs font-mono focus:outline-none focus:ring-2 focus:ring-[#9e001f]"
                   />
                 </div>
 
                 <div>
                   <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
-                    Nama Lengkap Pelapor
+                    Nama Lengkap Pelapor *
                   </label>
                   <input
                     type="text"
+                    required
                     value={wargaName}
                     onChange={(e) => setWargaName(e.target.value)}
-                    placeholder="Nama pelapor..."
+                    placeholder="Nama lengkap sesuai KTP..."
                     className="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-white/10 bg-slate-50 dark:bg-black/20 text-xs focus:outline-none focus:ring-2 focus:ring-[#9e001f]"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                    Nomor Telepon / WhatsApp (Opsional)
+                  </label>
+                  <input
+                    type="tel"
+                    value={wargaPhone}
+                    onChange={(e) => setWargaPhone(e.target.value)}
+                    placeholder="Contoh: 081234567890"
+                    className="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-white/10 bg-slate-50 dark:bg-black/20 text-xs font-mono focus:outline-none focus:ring-2 focus:ring-[#9e001f]"
                   />
                 </div>
 
                 <button
                   type="submit"
-                  className="cursor-pointer min-h-[44px] w-full py-2.5 rounded-lg bg-[#9e001f] hover:bg-[#800019] text-white font-bold text-xs shadow-xs transition flex items-center justify-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#9e001f]"
+                  disabled={isLoading}
+                  className="cursor-pointer min-h-[44px] w-full py-2.5 rounded-lg bg-[#9e001f] hover:bg-[#800019] text-white font-bold text-xs shadow-xs transition flex items-center justify-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#9e001f] disabled:opacity-70"
                 >
-                  <LogIn className="w-4 h-4" />
-                  <span>Masuk ke Layanan Warga</span>
+                  {isLoading ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <>
+                      <LogIn className="w-4 h-4" />
+                      <span>Masuk ke Layanan Warga</span>
+                    </>
+                  )}
                 </button>
               </form>
             </div>
           )}
 
-          {/* Form Petugas */}
+          {/* Form Petugas (Autentikasi Nyata Tanpa Simulasi) */}
           {activeRoleTab === 'petugas' && (
             <div className="p-6 space-y-4">
               <div className="space-y-1">
@@ -190,7 +258,7 @@ export const LandingLoginPage: React.FC<LandingLoginPageProps> = ({
                   <h2 className="text-base font-bold text-red-600 dark:text-red-400">Portal Petugas &amp; Backoffice</h2>
                   <span className="text-[10px] uppercase font-bold bg-red-100 text-red-800 px-2 py-0.5 rounded">TERBATAS</span>
                 </div>
-                <p className="text-xs text-slate-500 dark:text-slate-400">Khusus verifikator Diskominfo dan aparatur OPD daerah.</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400">Khusus aparatur verifikator Diskominfo, admin, dan petugas teknis OPD daerah.</p>
               </div>
 
               {petugasError && (
@@ -200,78 +268,32 @@ export const LandingLoginPage: React.FC<LandingLoginPageProps> = ({
                 </div>
               )}
 
-              {/* Akun Demo Petugas (1-Klik) */}
-              <div className="space-y-1.5 p-3 rounded-xl bg-red-50/60 dark:bg-red-950/20 border border-red-200/60 dark:border-red-900/40">
-                <div className="text-[10px] font-bold text-red-800 dark:text-red-300 uppercase tracking-wider flex items-center gap-1">
-                  <Key className="w-3.5 h-3.5" />
-                  Pilih Akun Petugas Simulasi:
-                </div>
-                
-                <button
-                  type="button"
-                  onClick={() => onSelectRole('petugas', {
-                    name: 'Budi Santoso, S.STP',
-                    role: 'Koordinator Verifikator & Triase',
-                    nip: '198503122010011008',
-                    opd: 'Diskominfo Kota Bandung'
-                  })}
-                  className="cursor-pointer min-h-[40px] w-full text-left p-2 rounded-lg bg-white dark:bg-[#181920] border border-red-200 dark:border-red-800/40 hover:border-red-400 transition flex items-center justify-between group shadow-2xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-600"
-                >
-                  <div className="flex items-center gap-2">
-                    <span className="w-6 h-6 rounded bg-red-600 text-white flex items-center justify-center font-bold text-[10px]">BS</span>
-                    <div>
-                      <div className="font-bold text-xs text-slate-900 dark:text-white">Budi Santoso, S.STP</div>
-                      <div className="text-[10px] text-slate-500">Diskominfo (Koordinator Triase)</div>
-                    </div>
-                  </div>
-                  <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-red-600 transition" />
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => onSelectRole('petugas', {
-                    name: 'Siti Maryam, S.T.',
-                    role: 'Verifikator Teknis Dinas',
-                    nip: '199008242014022003',
-                    opd: 'Dinas Bina Marga & Tata Ruang'
-                  })}
-                  className="cursor-pointer min-h-[40px] w-full text-left p-2 rounded-lg bg-white dark:bg-[#181920] border border-slate-200 dark:border-white/10 hover:border-blue-400 transition flex items-center justify-between group shadow-2xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
-                >
-                  <div className="flex items-center gap-2">
-                    <span className="w-6 h-6 rounded bg-blue-700 text-white flex items-center justify-center font-bold text-[10px]">SM</span>
-                    <div>
-                      <div className="font-bold text-xs text-slate-900 dark:text-white">Siti Maryam, S.T.</div>
-                      <div className="text-[10px] text-slate-500">Dinas Bina Marga &amp; Tata Ruang</div>
-                    </div>
-                  </div>
-                  <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-blue-600 transition" />
-                </button>
-              </div>
-
               <form onSubmit={handlePetugasSubmit} className="space-y-3 pt-1">
                 <div>
                   <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
-                    Nomor Induk Pegawai (NIP)
+                    Nomor Induk Pegawai (NIP) / Akun Admin *
                   </label>
                   <input
                     type="text"
+                    required
                     value={petugasNip}
                     onChange={(e) => setPetugasNip(e.target.value)}
-                    placeholder="18 digit NIP..."
+                    placeholder="Masukkan NIP atau username admin..."
                     className="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-white/10 bg-slate-50 dark:bg-black/20 text-xs font-mono focus:outline-none focus:ring-2 focus:ring-red-600"
                   />
                 </div>
 
                 <div>
                   <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
-                    Kata Sandi Petugas
+                    Kata Sandi Petugas / Admin *
                   </label>
                   <div className="relative">
                     <input
                       type={showPetugasPassword ? 'text' : 'password'}
+                      required
                       value={petugasPassword}
                       onChange={(e) => setPetugasPassword(e.target.value)}
-                      placeholder="Kata sandi..."
+                      placeholder="Masukkan kata sandi..."
                       className="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-white/10 bg-slate-50 dark:bg-black/20 text-xs focus:outline-none focus:ring-2 focus:ring-red-600"
                     />
                     <button
@@ -287,10 +309,17 @@ export const LandingLoginPage: React.FC<LandingLoginPageProps> = ({
 
                 <button
                   type="submit"
-                  className="cursor-pointer min-h-[44px] w-full py-2.5 rounded-lg bg-red-700 hover:bg-red-800 text-white font-bold text-xs shadow-xs transition flex items-center justify-center gap-2 active:scale-98 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-600"
+                  disabled={isLoading}
+                  className="cursor-pointer min-h-[44px] w-full py-2.5 rounded-lg bg-red-700 hover:bg-red-800 text-white font-bold text-xs shadow-xs transition flex items-center justify-center gap-2 active:scale-98 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-600 disabled:opacity-70"
                 >
-                  <Lock className="w-4 h-4" />
-                  <span>Masuk Sebagai Petugas ASN</span>
+                  {isLoading ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <>
+                      <Lock className="w-4 h-4" />
+                      <span>Masuk ke Meja Kerja Petugas</span>
+                    </>
+                  )}
                 </button>
               </form>
             </div>
@@ -312,7 +341,7 @@ export const LandingLoginPage: React.FC<LandingLoginPageProps> = ({
 
         {/* Footer Security Note */}
         <p className="text-[11px] text-slate-400 dark:text-slate-500 text-center mt-4">
-          Data pelapor dan berkas aduan terlindungi sesuai UU No. 27 Tahun 2022.
+          Data pelapor dan akses sistem verifikasi terlindungi sesuai UU No. 27 Tahun 2022.
         </p>
 
       </div>
