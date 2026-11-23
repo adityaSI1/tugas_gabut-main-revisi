@@ -35,7 +35,12 @@ import {
   LogOut,
   Menu,
   Copy,
-  Keyboard
+  Keyboard,
+  MessageSquare,
+  ImagePlus,
+  Send,
+  Camera,
+  Wrench
 } from 'lucide-react';
 
 import {
@@ -1076,19 +1081,21 @@ export default function App() {
 
                   {/* KOMUNIKASI DUA ARAH WARGA & PETUGAS */}
                   <div className="pt-4 border-t border-[#e5bdbb] dark:border-white/10 space-y-3">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <div className="w-7 h-7 rounded-lg bg-[#9e001f] text-white flex items-center justify-center">
-                          <span className="material-symbols-outlined text-base">forum</span>
+                    <div className="flex items-center justify-between gap-3">
+                      <div className="flex items-center gap-2.5 min-w-0">
+                        <div className="w-8 h-8 rounded-lg bg-[#9e001f] text-white flex items-center justify-center shrink-0 shadow-xs">
+                          <MessageSquare className="w-4 h-4 text-white" />
                         </div>
-                        <div>
-                          <h5 className="text-xs font-bold uppercase tracking-wider text-[#1b1b1f] dark:text-white">
-                            Komunikasi Dua Arah Warga & Petugas
+                        <div className="min-w-0">
+                          <h5 className="text-xs font-bold uppercase tracking-wider text-[#1b1b1f] dark:text-white leading-tight">
+                            Komunikasi Dua Arah Warga &amp; Petugas
                           </h5>
-                          <p className="text-[11px] text-[#5c403f] dark:text-gray-400">Klarifikasi & pertukaran foto kondisi terkini</p>
+                          <p className="text-[11px] text-[#5c403f] dark:text-gray-400 leading-normal mt-0.5">
+                            Klarifikasi &amp; pertukaran foto kondisi terkini
+                          </p>
                         </div>
                       </div>
-                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-white dark:bg-[#1e1e22] border border-[#e5bdbb] dark:border-white/10 text-[#5c403f] dark:text-gray-300 font-mono font-bold">
+                      <span className="shrink-0 text-[10px] px-2.5 py-1 rounded-full bg-white dark:bg-[#1e1e22] border border-[#e5bdbb] dark:border-white/10 text-[#5c403f] dark:text-gray-300 font-mono font-bold">
                         {(trackerResult.messages || []).length} Pesan
                       </span>
                     </div>
@@ -1096,7 +1103,7 @@ export default function App() {
                     {/* Chat Bubble List */}
                     <div className="space-y-2.5 max-h-56 overflow-y-auto pr-1">
                       {(!trackerResult.messages || trackerResult.messages.length === 0) ? (
-                        <div className="p-3 text-center rounded-xl bg-white dark:bg-[#1e1e22] border border-dashed border-[#e5bdbb] dark:border-white/10 text-[#5c403f] dark:text-gray-400 text-xs">
+                        <div className="p-3.5 text-center rounded-xl bg-white dark:bg-[#1e1e22] border border-dashed border-[#e5bdbb] dark:border-white/10 text-[#5c403f] dark:text-gray-400 text-xs">
                           Belum ada pesan pada tiket ini. Kirim pesan klarifikasi atau foto di bawah ini.
                         </div>
                       ) : (
@@ -1136,11 +1143,11 @@ export default function App() {
                     </div>
 
                     {/* Input Balasan Dua Arah & Prompt Chips */}
-                    <div className="p-3 bg-white dark:bg-[#1e1e22] rounded-xl border border-[#e5bdbb] dark:border-white/10 space-y-2.5">
+                    <div className="p-3.5 bg-white dark:bg-[#1e1e22] rounded-xl border border-[#e5bdbb] dark:border-white/10 space-y-3">
                       <div className="flex flex-wrap items-center justify-between gap-2 text-xs">
                         <div className="flex items-center gap-2">
                           <span className="font-bold text-[#5c403f] dark:text-gray-300">Kirim Sebagai:</span>
-                          <label className="inline-flex items-center gap-1 cursor-pointer">
+                          <label className="inline-flex items-center gap-1.5 cursor-pointer">
                             <input
                               type="radio"
                               name="app-reply-role"
@@ -1150,11 +1157,11 @@ export default function App() {
                                 setReplyRole('warga');
                                 setReplyName('Budi Pratama (Warga)');
                               }}
-                              className="text-[#c8102e]"
+                              className="accent-[#9e001f]"
                             />
                             <span className="font-semibold text-emerald-800 dark:text-emerald-400">Warga Pelapor</span>
                           </label>
-                          <label className="inline-flex items-center gap-1 cursor-pointer ml-1">
+                          <label className="inline-flex items-center gap-1.5 cursor-pointer ml-1">
                             <input
                               type="radio"
                               name="app-reply-role"
@@ -1164,7 +1171,7 @@ export default function App() {
                                 setReplyRole('petugas');
                                 setReplyName('Siti M. (Petugas OPD)');
                               }}
-                              className="text-[#c8102e]"
+                              className="accent-[#9e001f]"
                             />
                             <span className="font-semibold text-[#9e001f] dark:text-[#ffb4ab]">Petugas OPD</span>
                           </label>
@@ -1172,8 +1179,8 @@ export default function App() {
                       </div>
 
                       {/* Saran Cepat / Prompt Chips */}
-                      <div className="flex flex-wrap items-center gap-1 pt-1 border-t border-[#e5bdbb]/40 dark:border-white/10">
-                        <span className="text-[10px] text-gray-500 font-semibold flex items-center gap-0.5 mr-1">
+                      <div className="flex flex-wrap items-center gap-1.5 pt-1 border-t border-[#e5bdbb]/40 dark:border-white/10">
+                        <span className="text-[10px] text-gray-500 font-semibold flex items-center gap-1 mr-1">
                           <Sparkles className="w-3 h-3 text-amber-500" /> Saran:
                         </span>
                         {(replyRole === 'warga' ? QUICK_PROMPTS_WARGA : QUICK_PROMPTS_PETUGAS).map((prompt, pIdx) => (
@@ -1181,7 +1188,7 @@ export default function App() {
                             key={pIdx}
                             type="button"
                             onClick={() => setReplyText(prompt)}
-                            className="px-2 py-0.5 rounded-full bg-[#fbf8fe] dark:bg-white/5 border border-[#e5bdbb] dark:border-white/10 text-[10px] text-[#5c403f] dark:text-gray-300 hover:bg-[#ffdad8]/50 hover:text-[#9e001f] transition truncate max-w-[200px]"
+                            className="cursor-pointer px-2.5 py-1 rounded-full bg-[#fbf8fe] dark:bg-white/5 border border-[#e5bdbb] dark:border-white/10 text-[10px] text-[#5c403f] dark:text-gray-300 hover:bg-[#ffdad8]/50 hover:text-[#9e001f] transition truncate max-w-[200px]"
                             title={prompt}
                           >
                             {prompt}
@@ -1195,7 +1202,7 @@ export default function App() {
                           value={replyName}
                           onChange={(e) => setReplyName(e.target.value)}
                           placeholder="Nama pengirim..."
-                          className="w-1/3 px-3 py-1.5 rounded-lg border border-[#e5bdbb] dark:border-white/20 bg-white dark:bg-[#2b2b30] text-xs focus:outline-none focus:border-[#9e001f]"
+                          className="w-1/3 px-3 py-2 rounded-lg border border-[#e5bdbb] dark:border-white/20 bg-white dark:bg-[#2b2b30] text-xs focus:outline-none focus:border-[#9e001f] focus:ring-1 focus:ring-[#9e001f]"
                         />
                         <input
                           type="text"
@@ -1203,7 +1210,7 @@ export default function App() {
                           onChange={(e) => setReplyText(e.target.value)}
                           onKeyDown={(e) => e.key === 'Enter' && handleSendAppReply()}
                           placeholder="Tulis pesan klarifikasi..."
-                          className="flex-1 px-3 py-1.5 rounded-lg border border-[#e5bdbb] dark:border-white/20 bg-white dark:bg-[#2b2b30] text-xs focus:outline-none focus:border-[#9e001f]"
+                          className="flex-1 px-3 py-2 rounded-lg border border-[#e5bdbb] dark:border-white/20 bg-white dark:bg-[#2b2b30] text-xs focus:outline-none focus:border-[#9e001f] focus:ring-1 focus:ring-[#9e001f]"
                         />
                       </div>
 
@@ -1226,10 +1233,10 @@ export default function App() {
                         </div>
                       )}
 
-                      <div className="flex items-center justify-between pt-1 border-t border-[#e5bdbb]/60 dark:border-white/10">
-                        <div className="flex items-center gap-1.5">
-                          <label className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg border border-[#e5bdbb] dark:border-white/20 bg-[#fbf8fe] dark:bg-white/10 hover:bg-[#ffdad8]/40 text-[#9e001f] dark:text-[#ffdad8] font-semibold text-xs cursor-pointer transition">
-                            <span className="material-symbols-outlined text-sm">add_photo_alternate</span>
+                      <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-[#e5bdbb]/60 dark:border-white/10">
+                        <div className="flex flex-wrap items-center gap-1.5">
+                          <label className="cursor-pointer inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-[#e5bdbb] dark:border-white/20 bg-[#fbf8fe] dark:bg-white/10 hover:bg-[#ffdad8]/40 text-[#9e001f] dark:text-[#ffdad8] font-semibold text-xs transition">
+                            <ImagePlus className="w-3.5 h-3.5 shrink-0" />
                             <span>Unggah Foto</span>
                             <input
                               type="file"
@@ -1248,25 +1255,27 @@ export default function App() {
                           <button
                             type="button"
                             onClick={() => setReplyPhoto('https://lh3.googleusercontent.com/aida-public/AB6AXuDF8T8kAUNM-_2HbGnXu8uBKMJ2muGoOIIVwsW-LJXlvjeUyggI0kmrcFyCrJjw5DGqCVi2YjGD6kjq4_gY3-wkkU7CUJuk3ewvRC13mHt8lJyLnqVDv-klbEXOR1R1qkaKxAKpJP1LKp9Pib0NfqapWtlBZyChM_CTjE5aay9TegQ8LnoxrCAjItLPcfcuLGBXQVWqAm4o_HFnPV0BLEExLo7eqWfAbvwqq5KEy88')}
-                            className="cursor-pointer px-2 py-1 rounded bg-gray-100 dark:bg-white/10 text-gray-700 dark:text-gray-300 text-[10px] hover:bg-gray-200 transition focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-gray-400"
+                            className="cursor-pointer inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-gray-100 dark:bg-white/10 text-gray-700 dark:text-gray-300 text-[11px] font-medium hover:bg-gray-200 dark:hover:bg-white/20 transition focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-gray-400"
                           >
-                            📷 Bukti Warga
+                            <Camera className="w-3 h-3 text-gray-500 dark:text-gray-400 shrink-0" />
+                            <span>Bukti Warga</span>
                           </button>
                           <button
                             type="button"
                             onClick={() => setReplyPhoto('https://images.unsplash.com/photo-1578328819058-b69f3a3b0f6b?auto=format&fit=crop&w=600&q=80')}
-                            className="cursor-pointer px-2 py-1 rounded bg-blue-50 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 text-[10px] hover:bg-blue-100 transition focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-blue-400"
+                            className="cursor-pointer inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-blue-50 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 text-[11px] font-medium hover:bg-blue-100 dark:hover:bg-blue-900/60 transition focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-blue-400"
                           >
-                            🛠️ Foto URC
+                            <Wrench className="w-3 h-3 text-blue-500 dark:text-blue-400 shrink-0" />
+                            <span>Foto URC</span>
                           </button>
                         </div>
 
                         <button
                           type="button"
                           onClick={handleSendAppReply}
-                          className="cursor-pointer min-h-[36px] inline-flex items-center gap-1.5 px-4 py-1.5 rounded-lg bg-[#c8102e] hover:bg-[#9e001f] text-white font-bold text-xs transition shadow-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#9e001f]"
+                          className="cursor-pointer inline-flex items-center gap-1.5 px-4 py-1.5 rounded-lg bg-[#c8102e] hover:bg-[#9e001f] text-white font-bold text-xs transition shadow-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#9e001f]"
                         >
-                          <span className="material-symbols-outlined text-sm">send</span>
+                          <Send className="w-3.5 h-3.5 shrink-0" />
                           <span>Kirim</span>
                         </button>
                       </div>

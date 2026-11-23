@@ -690,21 +690,21 @@
     container.innerHTML = `
       <div class="space-y-4">
         <!-- Header Komunikasi -->
-        <div class="flex items-center justify-between pb-2 border-b border-[#e5bdbb]/80">
-          <div class="flex items-center gap-2">
-            <div class="w-8 h-8 rounded-lg bg-[#9e001f] text-white flex items-center justify-center shadow-xs">
-              <span class="material-symbols-outlined text-lg">forum</span>
+        <div class="flex items-center justify-between pb-2 border-b border-[#e5bdbb]/80 gap-3">
+          <div class="flex items-center gap-2.5 min-w-0">
+            <div class="w-8 h-8 rounded-lg bg-[#9e001f] text-white flex items-center justify-center shrink-0 shadow-xs">
+              <svg class="w-4 h-4 fill-none stroke-current" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
             </div>
-            <div>
-              <h4 class="font-bold text-sm text-[#1b1b1f]" style="font-family:'Plus Jakarta Sans',sans-serif;">
-                Komunikasi Dua Arah Warga & Petugas OPD
+            <div class="min-w-0">
+              <h4 class="font-bold text-sm text-[#1b1b1f] leading-tight" style="font-family:'Plus Jakarta Sans',sans-serif;">
+                Komunikasi Dua Arah Warga &amp; Petugas OPD
               </h4>
-              <p class="text-[11px] text-[#5c403f]">
-                Klarifikasi tindak lanjut & bukti foto terkini untuk tiket <strong class="font-mono text-[#9e001f]">${ticket.id}</strong>
+              <p class="text-[11px] text-[#5c403f] leading-normal mt-0.5">
+                Klarifikasi tindak lanjut &amp; bukti foto terkini untuk tiket <strong class="font-mono text-[#9e001f]">${ticket.id}</strong>
               </p>
             </div>
           </div>
-          <span class="text-[11px] px-2.5 py-0.5 rounded-full bg-white border border-[#e5bdbb] text-[#5c403f] font-mono font-semibold">
+          <span class="shrink-0 text-[11px] px-2.5 py-0.5 rounded-full bg-white border border-[#e5bdbb] text-[#5c403f] font-mono font-semibold">
             ${messages.length} Pesan
           </span>
         </div>
@@ -813,24 +813,24 @@
           </div>
 
           <!-- Toolbar Tombol Aksi & Foto -->
-          <div class="flex flex-wrap items-center justify-between gap-2 pt-1 border-t border-[#e5bdbb]/60">
-            <div class="flex items-center gap-1.5">
+          <div class="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-[#e5bdbb]/60">
+            <div class="flex flex-wrap items-center gap-1.5">
               <input type="file" id="reply-file-input-${ticket.id.replace('#', '')}" accept="image/*" class="hidden" />
-              <button type="button" id="btn-trigger-upload-${ticket.id.replace('#', '')}" class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg border border-[#e5bdbb] bg-[#fbf8fe] hover:bg-[#ffdad8]/40 text-[#9e001f] font-semibold text-xs transition">
-                <span class="material-symbols-outlined text-sm">add_photo_alternate</span>
+              <button type="button" id="btn-trigger-upload-${ticket.id.replace('#', '')}" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-[#e5bdbb] bg-[#fbf8fe] hover:bg-[#ffdad8]/40 text-[#9e001f] font-semibold text-xs transition">
+                <svg class="w-3.5 h-3.5 fill-none stroke-current shrink-0" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
                 <span>Unggah Foto</span>
               </button>
 
-              <button type="button" id="btn-sample-warga-photo-${ticket.id.replace('#', '')}" class="hidden sm:inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-700 text-[11px] transition">
+              <button type="button" id="btn-sample-warga-photo-${ticket.id.replace('#', '')}" class="cursor-pointer inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-700 text-[11px] font-medium transition">
                 <span>📷 Bukti Warga</span>
               </button>
-              <button type="button" id="btn-sample-petugas-photo-${ticket.id.replace('#', '')}" class="hidden sm:inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-700 text-[11px] transition">
+              <button type="button" id="btn-sample-petugas-photo-${ticket.id.replace('#', '')}" class="cursor-pointer inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-700 text-[11px] font-medium transition">
                 <span>🛠️ Foto URC</span>
               </button>
             </div>
 
-            <button type="button" id="btn-send-reply-${ticket.id.replace('#', '')}" class="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-lg bg-[#c8102e] hover:bg-[#9e001f] text-white font-bold text-xs transition shadow-xs">
-              <span class="material-symbols-outlined text-sm">send</span>
+            <button type="button" id="btn-send-reply-${ticket.id.replace('#', '')}" class="cursor-pointer inline-flex items-center gap-1.5 px-4 py-1.5 rounded-lg bg-[#c8102e] hover:bg-[#9e001f] text-white font-bold text-xs transition shadow-xs">
+              <svg class="w-3.5 h-3.5 fill-none stroke-current shrink-0" stroke-width="2" viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
               <span>Kirim Tanggapan</span>
             </button>
           </div>
