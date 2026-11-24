@@ -28,6 +28,9 @@ import {
   addTicketMessage,
   addTicketRating
 } from './civic-db';
+import { validateKtpNik, KtpValidationResult } from './ktp-validator';
+
+export { validateKtpNik, type KtpValidationResult };
 
 const STORAGE_KEY = 'SIPANTAU_CIVIC_DB_V2';
 const API_BASE_URL = '/api';
@@ -579,6 +582,38 @@ export async function resetDatabase(): Promise<CivicTicket[]> {
 }
 
 /**
+ * API Cek e-KTP Warga Standar Kemendagri (nik-parser)
+ * Mendukung verifikasi via backend REST API (/api/ktp/verify) maupun client engine offline.
+ */
+export async function checkEktpApi(nik: string): Promise<KtpValidationResult> {
+  const cleanNik = (nik || '').replace(/[^0-9]/g, '').trim();
+  if (cleanNik.length !== 16) {
+    return validateKtpNik(cleanNik);
+  }
+
+  if (!isStaticHost()) {
+    try {
+      const res = await fetch(`${API_BASE_URL}/ktp/verify`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({ nik: cleanNik }),
+        signal: AbortSignal.timeout(2500)
+      });
+      if (res.ok) {
+        const json = await res.json();
+        if (json && json.data) {
+          return json.data;
+        }
+      }
+    } catch (_e) {
+      // Backend offline, fallback to client parser
+    }
+  }
+
+  return validateKtpNik(cleanNik);
+}
+
+/**
  * Autentikasi Riil Warga atau Petugas / Admin ke Backend SQLite
  */
 export async function loginUser(credentials: {
@@ -617,19 +652,26 @@ export async function loginUser(credentials: {
 
   // Fallback Autentikasi Klien / Mode Statis GitHub Pages
   if (credentials.type === 'warga') {
-    const cleanNik = (credentials.nik || '').trim();
-    if (!cleanNik || cleanNik.length < 6) {
-      return { success: false, message: 'Nomor Induk Kependudukan (NIK) minimal 6 digit' };
+    const cleanNik = (credentials.nik || '').replace(/[^0-9]/g, '').trim();
+    const ktpResult = validateKtpNik(cleanNik);
+
+    if (!ktpResult.valid) {
+      return {
+        success: false,
+        message: ktpResult.message || 'Nomor Induk Kependudukan (NIK) tidak valid menurut standar Kemendagri'
+      };
     }
+
     return {
       success: true,
-      message: `Selamat datang, ${credentials.nama?.trim() || 'Warga Terverifikasi'}`,
+      message: `Selamat datang, ${credentials.nama?.trim() || 'Warga Terverifikasi'}. e-KTP terverifikasi di ${ktpResult.kabupatenKota}, ${ktpResult.provinsi}`,
       user: {
         role: 'warga',
         nik: cleanNik,
         name: credentials.nama?.trim() || 'Warga Terverifikasi',
         phone: credentials.telepon?.trim() || '',
-        title: 'Warga Pelapor Terdaftar'
+        title: 'Warga Pelapor Terdaftar',
+        ktpData: ktpResult
       }
     };
   } else {

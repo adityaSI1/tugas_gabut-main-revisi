@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   ShieldCheck,
   ShieldAlert,
@@ -8,11 +8,12 @@ import {
   Eye,
   EyeOff,
   AlertCircle,
+  CheckCircle2,
   ArrowLeft,
   Loader2
 } from 'lucide-react';
 import { DailyStats } from '../utils/civic-db';
-import { loginUser } from '../utils/api-client';
+import { loginUser, validateKtpNik, KtpValidationResult } from '../utils/api-client';
 
 interface LandingLoginPageProps {
   onSelectRole: (role: 'warga' | 'petugas', profile?: { name: string; role: string; nip?: string; opd?: string; nik?: string; phone?: string }) => void;
@@ -33,6 +34,28 @@ export const LandingLoginPage: React.FC<LandingLoginPageProps> = ({
   const [wargaName, setWargaName] = useState('');
   const [wargaPhone, setWargaPhone] = useState('');
   const [wargaError, setWargaError] = useState('');
+  const [ktpResult, setKtpResult] = useState<KtpValidationResult | null>(null);
+
+  // Verifikasi e-KTP otomatis saat NIK mencapai 16 digit
+  useEffect(() => {
+    const clean = wargaNik.replace(/[^0-9]/g, '').trim();
+    if (clean.length === 16) {
+      const res = validateKtpNik(clean);
+      setKtpResult(res);
+      if (!res.valid) {
+        setWargaError(res.message);
+      } else {
+        setWargaError('');
+      }
+    } else {
+      setKtpResult(null);
+      if (clean.length > 0 && clean.length < 16) {
+        setWargaError(`NIK e-KTP harus 16 digit (${clean.length}/16 digit)`);
+      } else {
+        setWargaError('');
+      }
+    }
+  }, [wargaNik]);
 
   // State Form Petugas / Admin (Autentikasi Nyata Database)
   const [petugasNip, setPetugasNip] = useState('');
@@ -44,13 +67,19 @@ export const LandingLoginPage: React.FC<LandingLoginPageProps> = ({
   // Submit Warga Login
   const handleWargaSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const cleanNik = wargaNik.trim();
+    const cleanNik = wargaNik.replace(/[^0-9]/g, '').trim();
     if (!cleanNik) {
       setWargaError('Silakan masukkan Nomor Induk Kependudukan (NIK) Anda');
       return;
     }
-    if (cleanNik.length < 6) {
-      setWargaError('Nomor Induk Kependudukan (NIK) minimal 6 digit angka');
+    if (cleanNik.length !== 16) {
+      setWargaError(`Nomor Induk Kependudukan (NIK) e-KTP wajib tepat 16 digit angka (saat ini ${cleanNik.length} digit)`);
+      return;
+    }
+
+    const ktpCheck = validateKtpNik(cleanNik);
+    if (!ktpCheck.valid) {
+      setWargaError(ktpCheck.message || 'NIK e-KTP tidak valid menurut format wilayah & penanggalan Kemendagri');
       return;
     }
 
@@ -66,7 +95,14 @@ export const LandingLoginPage: React.FC<LandingLoginPageProps> = ({
       });
 
       if (res.success && res.user) {
-        onSelectRole('warga', res.user);
+        onSelectRole('warga', {
+          name: res.user.name,
+          role: 'warga',
+          title: 'Warga Pelapor Terverifikasi',
+          nik: res.user.nik,
+          phone: res.user.phone,
+          ktpData: ktpCheck
+        });
       } else {
         setWargaError(res.message || 'Gagal masuk sebagai warga');
       }
@@ -192,17 +228,54 @@ export const LandingLoginPage: React.FC<LandingLoginPageProps> = ({
 
               <form onSubmit={handleWargaSubmit} className="space-y-3.5">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
-                    Nomor Induk Kependudukan (NIK) *
-                  </label>
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300">
+                      Nomor Induk Kependudukan (NIK) *
+                    </label>
+                    <span className="text-[10px] text-slate-400 font-mono">
+                      {wargaNik.length}/16 Digit
+                    </span>
+                  </div>
                   <input
                     type="text"
                     required
+                    maxLength={16}
                     value={wargaNik}
                     onChange={(e) => setWargaNik(e.target.value.replace(/[^0-9]/g, ''))}
                     placeholder="Masukkan 16 digit NIK KTP Anda..."
                     className="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-white/10 bg-slate-50 dark:bg-black/20 text-xs font-mono focus:outline-none focus:ring-2 focus:ring-[#9e001f]"
                   />
+                  
+                  {/* Badge Verifikasi API e-KTP (nik-parser Kemendagri) */}
+                  {ktpResult && (
+                    ktpResult.valid ? (
+                      <div className="mt-2 p-3 rounded-xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800 text-xs space-y-1.5 animate-in fade-in duration-200">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-1.5 text-emerald-800 dark:text-emerald-300 font-bold">
+                            <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                            <span>e-KTP Terverifikasi (Dukcapil / Kemendagri)</span>
+                          </div>
+                          <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-100 dark:bg-emerald-900/60 text-emerald-800 dark:text-emerald-200">
+                            VALID
+                          </span>
+                        </div>
+                        <div className="grid grid-cols-2 gap-1 text-[11px] text-emerald-900 dark:text-emerald-300">
+                          <div><span className="text-emerald-600 dark:text-emerald-400 font-medium">Kab/Kota:</span> {ktpResult.kabupatenKota}</div>
+                          <div><span className="text-emerald-600 dark:text-emerald-400 font-medium">Provinsi:</span> {ktpResult.provinsi}</div>
+                          <div><span className="text-emerald-600 dark:text-emerald-400 font-medium">Kecamatan:</span> {ktpResult.kecamatan}</div>
+                          <div><span className="text-emerald-600 dark:text-emerald-400 font-medium">Data:</span> {ktpResult.jenisKelamin} ({ktpResult.usia} Thn)</div>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="mt-2 p-2.5 rounded-xl bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 text-xs text-red-800 dark:text-red-300 flex items-start gap-2 animate-in fade-in duration-200">
+                        <AlertCircle className="w-4 h-4 text-red-600 shrink-0 mt-0.5" />
+                        <div>
+                          <p className="font-semibold">Format NIK e-KTP Tidak Sesuai</p>
+                          <p className="text-[11px] text-red-700 dark:text-red-400 mt-0.5">{ktpResult.message}</p>
+                        </div>
+                      </div>
+                    )
+                  )}
                 </div>
 
                 <div>

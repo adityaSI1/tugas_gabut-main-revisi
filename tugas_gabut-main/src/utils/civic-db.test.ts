@@ -239,7 +239,7 @@ test('loginUser authenticates admin and officers in offline/GitHub Pages fallbac
     assert.equal(failedLogin.success, false);
     assert.ok(failedLogin.message?.includes('tidak sesuai'));
 
-    // 5. Warga login dengan NIK
+    // 5. Warga login dengan NIK valid
     const citizenLogin = await loginUser({
       type: 'warga',
       nik: '3273012908920019',
@@ -247,9 +247,50 @@ test('loginUser authenticates admin and officers in offline/GitHub Pages fallbac
     });
     assert.equal(citizenLogin.success, true);
     assert.equal(citizenLogin.user?.name, 'Ahmad Pelapor');
+    assert.equal(citizenLogin.user?.ktpData?.kabupatenKota, 'KOTA BANDUNG');
+
+    // 6. Warga login dengan NIK tidak valid
+    const invalidCitizen = await loginUser({
+      type: 'warga',
+      nik: '1234567890123456',
+      nama: 'Pelapor Palsu'
+    });
+    assert.equal(invalidCitizen.success, false);
   } finally {
     globalThis.fetch = originalFetch;
   }
+});
+
+test('validateKtpNik parses and verifies real Indonesian e-KTP numbers according to Kemendagri rules', async () => {
+  const { validateKtpNik } = await import('./ktp-validator.ts');
+
+  // Kota Bandung
+  const bandung = validateKtpNik('3273012908920019');
+  assert.equal(bandung.valid, true);
+  assert.equal(bandung.provinsi, 'JAWA BARAT');
+  assert.equal(bandung.kabupatenKota, 'KOTA BANDUNG');
+  assert.equal(bandung.jenisKelamin, 'Laki-laki');
+  assert.ok(bandung.usia! >= 30);
+
+  // DKI Jakarta
+  const jakarta = validateKtpNik('3171010101900001');
+  assert.equal(jakarta.valid, true);
+  assert.equal(jakarta.provinsi, 'DKI JAKARTA');
+  assert.equal(jakarta.kabupatenKota, 'KOTA ADM. JAKARTA PUSAT');
+
+  // Kab. Lamongan
+  const lamongan = validateKtpNik('3524010101900001');
+  assert.equal(lamongan.valid, true);
+  assert.equal(lamongan.provinsi, 'JAWA TIMUR');
+  assert.equal(lamongan.kabupatenKota, 'KAB. LAMONGAN');
+
+  // Invalid NIK (random digits)
+  const invalid = validateKtpNik('1234567890123456');
+  assert.equal(invalid.valid, false);
+
+  // Incomplete NIK
+  const short = validateKtpNik('327301');
+  assert.equal(short.valid, false);
 });
 
 

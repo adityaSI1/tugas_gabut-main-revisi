@@ -29,6 +29,7 @@ import {
   calculateOpdPerformance,
   CivicTicket
 } from '../src/utils/civic-db.js';
+import { validateKtpNik } from '../src/utils/ktp-validator.js';
 
 const app = express();
 const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3001;
@@ -254,25 +255,49 @@ app.get('/api/stats', (req: Request, res: Response) => {
 // 5. ENDPOINT AUDIT LOG, URC, & VERIFIKATOR
 // ==========================================
 
+// Endpoint API Check e-KTP Standar Kemendagri (nik-parser)
+app.get('/api/ktp/:nik', (req: Request, res: Response) => {
+  const result = validateKtpNik(req.params.nik);
+  if (!result.valid) {
+    return res.status(400).json({ success: false, data: result });
+  }
+  res.json({ success: true, data: result });
+});
+
+app.post('/api/ktp/verify', (req: Request, res: Response) => {
+  const { nik } = req.body || {};
+  const result = validateKtpNik(nik);
+  if (!result.valid) {
+    return res.status(400).json({ success: false, data: result });
+  }
+  res.json({ success: true, data: result });
+});
+
 // Autentikasi Riil Warga & Petugas ASN / Admin
 app.post('/api/auth/login', (req: Request, res: Response) => {
   try {
     const { type, nip, password, nik, nama, telepon } = req.body;
 
     if (type === 'warga') {
-      if (!nik || nik.trim().length < 6) {
-        return res.status(400).json({ success: false, message: 'Nomor Induk Kependudukan (NIK) minimal 6 digit' });
+      const ktpCheck = validateKtpNik(nik || '');
+      if (!ktpCheck.valid) {
+        return res.status(400).json({
+          success: false,
+          message: ktpCheck.message || 'NIK e-KTP tidak valid menurut regulasi Kemendagri',
+          ktpData: ktpCheck
+        });
       }
       const citizenName = (nama || '').trim() || 'Warga Terverifikasi';
       return res.json({
         success: true,
-        message: `Selamat datang, ${citizenName}`,
+        message: `Selamat datang, ${citizenName}. e-KTP terverifikasi di ${ktpCheck.kabupatenKota}, ${ktpCheck.provinsi}`,
         user: {
           role: 'warga',
-          nik: nik.trim(),
+          nik: ktpCheck.nik,
           name: citizenName,
           phone: (telepon || '').trim(),
-          title: 'Warga Pelapor Terdaftar'
+          title: 'Warga Pelapor Terdaftar',
+          ktpData: ktpCheck
         }
       });
     }

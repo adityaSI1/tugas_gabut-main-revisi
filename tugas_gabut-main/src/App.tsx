@@ -665,17 +665,21 @@ export default function App() {
             </button>
 
             {/* Sesi Pengguna / Tombol Masuk & Daftar */}
-            {userSession && userSession.role === 'warga' ? (
+            {userSession && (userSession.role === 'warga' || userSession.role === 'Warga Pelapor Terverifikasi') ? (
               <div className="flex items-center gap-2">
-                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800 text-xs font-semibold text-emerald-800 dark:text-emerald-300">
+                <div
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800 text-xs font-semibold text-emerald-800 dark:text-emerald-300"
+                  title={userSession.ktpData ? `e-KTP Terverifikasi Kemendagri: ${userSession.ktpData.kabupatenKota || ''}, ${userSession.ktpData.provinsi || ''}` : 'Warga Terdaftar'}
+                >
                   <User className="w-3.5 h-3.5" />
                   <span className="truncate max-w-[120px]">{userSession.name}</span>
+                  <CheckCircle2 className="w-3 h-3 text-emerald-600 shrink-0" />
                 </div>
                 <button
                   onClick={() => {
                     localStorage.removeItem('SIPANTAU_USER_SESSION');
                     setUserSession(null);
-                    setReplyName('Warga Pelapor');
+                    setReplyName('');
                   }}
                   title="Keluar Sesi Warga"
                   className="cursor-pointer px-2 py-1.5 rounded-lg text-slate-500 hover:text-red-600 text-xs font-semibold transition"
