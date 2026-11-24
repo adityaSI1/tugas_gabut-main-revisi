@@ -32,6 +32,15 @@ import {
 const STORAGE_KEY = 'SIPANTAU_CIVIC_DB_V2';
 const API_BASE_URL = '/api';
 
+/**
+ * Deteksi apakah aplikasi berjalan di hosting statis (misal GitHub Pages)
+ */
+export const isStaticHost = (): boolean => {
+  if (typeof window === 'undefined') return false;
+  const host = window.location.hostname;
+  return host.includes('github.io') || host.includes('pages.dev') || host.includes('netlify.app') || host.includes('vercel.app');
+};
+
 export interface BackendHealth {
   connected: boolean;
   service?: string;
@@ -54,6 +63,15 @@ let cachedBackendStatus: BackendHealth = {
  * Cek status konektivitas ke Backend REST API & Database SQLite
  */
 export async function checkBackendHealth(): Promise<BackendHealth> {
+  if (isStaticHost()) {
+    cachedBackendStatus = {
+      connected: false,
+      database: 'LocalStorage Browser Cache (Mode GitHub Pages)',
+      mode: 'localStorage'
+    };
+    return cachedBackendStatus;
+  }
+
   try {
     const res = await fetch(`${API_BASE_URL}/health`, {
       method: 'GET',
@@ -571,30 +589,30 @@ export async function loginUser(credentials: {
   nip?: string;
   password?: string;
 }): Promise<{ success: boolean; user?: any; message?: string }> {
-  try {
-    const res = await fetch(`${API_BASE_URL}/auth/login`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-      body: JSON.stringify(credentials),
-      signal: AbortSignal.timeout(3500)
-    });
+  // Jika di hosting statis (misal GitHub Pages), langsung verifikasi secara klien tanpa mengirim POST (menghindari error 405)
+  if (!isStaticHost()) {
+    try {
+      const res = await fetch(`${API_BASE_URL}/auth/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify(credentials),
+        signal: AbortSignal.timeout(3000)
+      });
 
-    // Pada GitHub Pages (hosting statis), route /api/auth/login mengembalikan 404 HTML
-    // Jika endpoint tidak tersedia atau bukan JSON, alihkan ke fallback autentikasi klien
-    const contentType = res.headers.get('content-type') || '';
-    if (res.status === 404 || res.status === 405 || !contentType.includes('application/json')) {
-      throw new Error('Static host - fallback to client authentication');
-    }
-
-    const json = await res.json().catch(() => null);
-    if (json) {
-      if (res.ok && json.success) {
-        return json;
+      if (res.ok) {
+        const json = await res.json().catch(() => null);
+        if (json && json.success) {
+          return json;
+        }
+      } else if (res.status === 401 || res.status === 400) {
+        const json = await res.json().catch(() => null);
+        if (json && json.message) {
+          return { success: false, message: json.message };
+        }
       }
-      return { success: false, message: json.message || 'NIP atau kata sandi tidak valid' };
+    } catch (_e) {
+      // Backend offline / network error
     }
-  } catch (_e) {
-    // Mode Offline / GitHub Pages Fallback
   }
 
   // Fallback Autentikasi Klien / Mode Statis GitHub Pages
