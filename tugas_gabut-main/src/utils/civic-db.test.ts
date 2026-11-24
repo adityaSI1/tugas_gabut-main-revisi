@@ -190,3 +190,66 @@ test('calculateOpdPerformance aggregates metrics for municipal OPDs', () => {
   assert.ok(bm?.slaCompliancePercent > 90);
 });
 
+test('loginUser authenticates admin and officers in offline/GitHub Pages fallback mode', async () => {
+  // Simulasikan lingkungan GitHub Pages statis di mana fetch mengembalikan 404 HTML
+  const originalFetch = globalThis.fetch;
+  globalThis.fetch = async () => {
+    return new Response('<html>404 Not Found</html>', {
+      status: 404,
+      headers: { 'Content-Type': 'text/html' }
+    });
+  };
+
+  try {
+    const { loginUser } = await import('./api-client.ts');
+
+    // 1. Admin login dengan sandi sipantau2026
+    const adminLogin = await loginUser({
+      type: 'petugas',
+      nip: 'admin',
+      password: 'sipantau2026'
+    });
+    assert.equal(adminLogin.success, true);
+    assert.equal(adminLogin.user?.role, 'petugas');
+    assert.equal(adminLogin.user?.name, 'Budi Santoso, S.STP');
+
+    // 2. Admin login dengan sandi admin123
+    const adminLogin2 = await loginUser({
+      type: 'petugas',
+      nip: 'admin',
+      password: 'admin123'
+    });
+    assert.equal(adminLogin2.success, true);
+
+    // 3. Petugas teknis login dengan NIP
+    const officerLogin = await loginUser({
+      type: 'petugas',
+      nip: '198907242014022003',
+      password: 'petugas123'
+    });
+    assert.equal(officerLogin.success, true);
+    assert.equal(officerLogin.user?.name, 'Siti Maryam, S.T.');
+
+    // 4. Kata sandi salah harus ditolak
+    const failedLogin = await loginUser({
+      type: 'petugas',
+      nip: 'admin',
+      password: 'passwordsalah'
+    });
+    assert.equal(failedLogin.success, false);
+    assert.ok(failedLogin.message?.includes('tidak sesuai'));
+
+    // 5. Warga login dengan NIK
+    const citizenLogin = await loginUser({
+      type: 'warga',
+      nik: '3273012908920019',
+      nama: 'Ahmad Pelapor'
+    });
+    assert.equal(citizenLogin.success, true);
+    assert.equal(citizenLogin.user?.name, 'Ahmad Pelapor');
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+
+

@@ -574,64 +574,76 @@ export async function loginUser(credentials: {
   try {
     const res = await fetch(`${API_BASE_URL}/auth/login`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
       body: JSON.stringify(credentials),
       signal: AbortSignal.timeout(3500)
     });
 
-    const json = await res.json().catch(() => ({}));
-    if (res.ok && json.success) {
-      return json;
+    // Pada GitHub Pages (hosting statis), route /api/auth/login mengembalikan 404 HTML
+    // Jika endpoint tidak tersedia atau bukan JSON, alihkan ke fallback autentikasi klien
+    const contentType = res.headers.get('content-type') || '';
+    if (res.status === 404 || res.status === 405 || !contentType.includes('application/json')) {
+      throw new Error('Static host - fallback to client authentication');
     }
-    return { success: false, message: json.message || 'Autentikasi gagal' };
+
+    const json = await res.json().catch(() => null);
+    if (json) {
+      if (res.ok && json.success) {
+        return json;
+      }
+      return { success: false, message: json.message || 'NIP atau kata sandi tidak valid' };
+    }
   } catch (_e) {
-    // Mode Offline / GitHub Pages
-    if (credentials.type === 'warga') {
-      const cleanNik = (credentials.nik || '').trim();
-      if (!cleanNik || cleanNik.length < 6) {
-        return { success: false, message: 'Nomor Induk Kependudukan (NIK) minimal 6 digit' };
-      }
-      return {
-        success: true,
-        user: {
-          role: 'warga',
-          nik: cleanNik,
-          name: credentials.nama?.trim() || 'Warga Terverifikasi',
-          phone: credentials.telepon?.trim() || '',
-          title: 'Warga Pelapor Terdaftar'
-        }
-      };
-    } else {
-      const cleanNip = (credentials.nip || '').replace(/\s+/g, '').trim().toLowerCase();
-      const pwd = credentials.password?.trim() || '';
-      if (!cleanNip || !pwd) {
-        return { success: false, message: 'NIP dan Kata Sandi wajib diisi' };
-      }
-      const matched = INITIAL_VERIFIER_ACCOUNTS.find((v) => {
-        const vClean = v.nip.replace(/\s+/g, '').trim().toLowerCase();
-        return vClean === cleanNip || (cleanNip === 'admin' && v.role === 'Superadmin');
-      });
-      if (!matched) {
-        return { success: false, message: 'NIP tidak ditemukan dalam daftar aparatur verifikator OPD' };
-      }
-      const isSuperadmin = cleanNip === 'admin' || matched.role === 'Superadmin';
-      const validSuperadmin = isSuperadmin && (pwd === 'admin123' || pwd === 'sipantau2026' || pwd === 'petugas123');
-      const validOfficer = !isSuperadmin && (pwd === 'petugas123' || pwd === 'sipantau2026');
-      if (!validSuperadmin && !validOfficer) {
-        return { success: false, message: 'Kata sandi tidak sesuai untuk akun petugas ini' };
-      }
-      return {
-        success: true,
-        message: `Autentikasi berhasil. Selamat datang, ${matched.nama}`,
-        user: {
-          role: 'petugas',
-          nip: matched.nip,
-          name: matched.nama,
-          instansi: matched.instansi,
-          jabatan: matched.jabatan,
-          userRole: matched.role
-        }
-      };
+    // Mode Offline / GitHub Pages Fallback
+  }
+
+  // Fallback Autentikasi Klien / Mode Statis GitHub Pages
+  if (credentials.type === 'warga') {
+    const cleanNik = (credentials.nik || '').trim();
+    if (!cleanNik || cleanNik.length < 6) {
+      return { success: false, message: 'Nomor Induk Kependudukan (NIK) minimal 6 digit' };
     }
+    return {
+      success: true,
+      message: `Selamat datang, ${credentials.nama?.trim() || 'Warga Terverifikasi'}`,
+      user: {
+        role: 'warga',
+        nik: cleanNik,
+        name: credentials.nama?.trim() || 'Warga Terverifikasi',
+        phone: credentials.telepon?.trim() || '',
+        title: 'Warga Pelapor Terdaftar'
+      }
+    };
+  } else {
+    const cleanNip = (credentials.nip || '').replace(/\s+/g, '').trim().toLowerCase();
+    const pwd = credentials.password?.trim() || '';
+    if (!cleanNip || !pwd) {
+      return { success: false, message: 'NIP dan Kata Sandi wajib diisi' };
+    }
+    const matched = INITIAL_VERIFIER_ACCOUNTS.find((v) => {
+      const vClean = v.nip.replace(/\s+/g, '').trim().toLowerCase();
+      return vClean === cleanNip || (cleanNip === 'admin' && v.role === 'Superadmin');
+    });
+    if (!matched) {
+      return { success: false, message: 'NIP tidak ditemukan dalam daftar aparatur verifikator OPD' };
+    }
+    const isSuperadmin = cleanNip === 'admin' || matched.role === 'Superadmin';
+    const validSuperadmin = isSuperadmin && (pwd === 'admin123' || pwd === 'sipantau2026' || pwd === 'petugas123');
+    const validOfficer = !isSuperadmin && (pwd === 'petugas123' || pwd === 'sipantau2026');
+    if (!validSuperadmin && !validOfficer) {
+      return { success: false, message: 'Kata sandi tidak sesuai untuk akun petugas ini' };
+    }
+    return {
+      success: true,
+      message: `Autentikasi berhasil. Selamat datang, ${matched.nama}`,
+      user: {
+        role: 'petugas',
+        nip: matched.nip,
+        name: matched.nama,
+        instansi: matched.instansi,
+        jabatan: matched.jabatan,
+        userRole: matched.role
+      }
+    };
   }
 }
